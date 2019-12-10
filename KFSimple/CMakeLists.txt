@@ -11,7 +11,7 @@ include_directories(${CMAKE_SOURCE_DIR}/KFParticle
 add_library(KFParticleSimple SHARED ${SOURCES} G__KFParticleSimple.cxx)
 
 if(ROOT_FOUND)
-    ROOT_GENERATE_DICTIONARY(G__KFParticleSimple ${HEADERS} LINKDEF KFParticleSimpleLinkDef.h OPTIONS "-DDO_TPCCATRACKER_EFF_PERFORMANCE" "-DNonhomogeneousField" "-DCBM" "-DUSE_TIMERS")
+    ROOT_GENERATE_DICTIONARY(G__KFParticleSimple ${HEADERS} LINKDEF KFSimpleLinkDef.h OPTIONS "-DDO_TPCCATRACKER_EFF_PERFORMANCE" "-DNonhomogeneousField" "-DCBM" "-DUSE_TIMERS")
     add_dependencies(KFParticleSimple KFParticle)
     target_link_libraries(KFParticleSimple ${ROOT_LIBRARIES} KFParticle ${Vc_LIBRARIES})
 endif(ROOT_FOUND)
@@ -22,7 +22,7 @@ set(PCM_FILE_NAME libKFParticleSimple)
 install(FILES ${HEADERS} ${NODICT_HEADERS} DESTINATION include)
 #install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}KFParticle.rootmap DESTINATION lib)
 
-install(TARGETS KFParticleSimple EXPORT KFParticleTargets
+install(TARGETS KFParticleSimple EXPORT KFParticleSimpleTargets
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
         RUNTIME DESTINATION bin

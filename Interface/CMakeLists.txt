@@ -21,7 +21,7 @@ set(PCM_FILE_NAME libKFParticleInterface)
 install(FILES ${HEADERS} ${NODICT_HEADERS} DESTINATION include)
 #install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}KFParticle.rootmap DESTINATION lib)
 
-install(TARGETS KFParticleInterface EXPORT KFParticleTargets
+install(TARGETS KFParticleInterface EXPORT KFParticleSimpleTargets
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
         RUNTIME DESTINATION bin
