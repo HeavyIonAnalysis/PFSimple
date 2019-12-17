@@ -5,15 +5,14 @@ set(SOURCES
 string(REPLACE ".cxx" ".h" HEADERS "${SOURCES}")
 list(APPEND HEADERS "Constants.h")
 
-include_directories(${CMAKE_SOURCE_DIR}/KFParticle
-                    ${CMAKE_SOURCE_DIR}/Interface)
+include_directories(${CMAKE_SOURCE_DIR}/Interface ${CMAKE_SOURCE_DIR}/KFSimple)
 
 add_library(KFParticleSimple SHARED ${SOURCES} G__KFParticleSimple.cxx)
 
 if(ROOT_FOUND)
     ROOT_GENERATE_DICTIONARY(G__KFParticleSimple ${HEADERS} LINKDEF KFSimpleLinkDef.h OPTIONS "-DDO_TPCCATRACKER_EFF_PERFORMANCE" "-DNonhomogeneousField" "-DCBM" "-DUSE_TIMERS")
-    add_dependencies(KFParticleSimple KFParticle)
-    target_link_libraries(KFParticleSimple ${ROOT_LIBRARIES} KFParticle ${Vc_LIBRARIES})
+    add_dependencies(KFParticleSimple KFParticleInterface)
+    target_link_libraries(KFParticleSimple ${ROOT_LIBRARIES} KFParticle ${Vc_LIBRARIES} KFParticleInterface)
 endif(ROOT_FOUND)
 
 add_target_property(KFParticleSimple COMPILE_FLAGS "-DDO_TPCCATRACKER_EFF_PERFORMANCE -DNonhomogeneousField -DCBM -DUSE_TIMERS")
