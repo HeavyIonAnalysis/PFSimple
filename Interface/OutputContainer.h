@@ -37,7 +37,7 @@ class OutputContainer
   void SetSigmaMassRatio(float value) {sigma_mass_ratio_ = value;};
   void SetChi2Topo(float value) {chi2_topo_ = value;};
   
-  void SetParticle(KFParticle particle) {particle_ = particle;};
+  void SetParticle(const KFParticle& particle) {particle_ = particle;};
   
   //  lambda candidate parameters getters
   float GetChi2PrimPos() const {return chi2_prim_pos_;};

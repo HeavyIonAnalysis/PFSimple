@@ -40,7 +40,9 @@
   constexpr int pdg_proton = 2212;
   constexpr int pdg_pionMinus = -211;
   constexpr int pdg_lambda = 3122;
-  
+
+  constexpr int NumberOfCovElements = 21;
+
   constexpr float mass_lambda = 1.115683;
   constexpr float sigma_lambda = 2.7e-3;
 
