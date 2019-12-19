@@ -1,3 +1,4 @@
+#include <KFSimple/Constants.h>
 #include "InputContainer.h"
 
 #include "TMath.h"
@@ -7,53 +8,44 @@ void InputContainer::SetPV(float x, float y, float z)
 {
   KFPVertex primVtx_tmp;
   primVtx_tmp.SetXYZ(x, y, z);
-  primVtx_tmp.SetCovarianceMatrix( 0,0,0,0,0,0 );
+  primVtx_tmp.SetCovarianceMatrix( 0,0,0,0,0,0 ); //NOTE
   primVtx_tmp.SetNContributors( 0 );
   primVtx_tmp.SetChi2( -100 );
 
   vtx_ = KFVertex(primVtx_tmp);  
 }
 
-void InputContainer::SetPV(KFVertex vertex)
+void InputContainer::AddTrack(const std::vector<float>& par,
+                              const std::vector<float>& cov,
+                              const std::vector<float>& field,
+                              int charge,
+                              int pdg,
+                              int id)
 {
-  vtx_ = vertex;
-}
+  if( par.size() != kNumberOfTrackPars || cov.size() != kNumberOfTrackPars || field.size() !=  kNumberOfFieldPars){
+    std::cout << "InputContainer::AddTrack - Wrong size of input vector!!" << std::endl;
+    exit(kError);
+  }
 
-
-void InputContainer::SetPV(KFPVertex vertex)
-{
-  vtx_ = KFVertex(vertex);
-}
-
-void InputContainer::AddTrack(float x, float y, float z,
-                                 float px, float py, float pz,
-                                 std::vector<float> cov,
-                                 float field[10],
-                                 int charge,
-                                 int pdg,
-                                 int id,
-                                 int nhits,
-                                 int passcuts)
-{
-  if(passcuts == 0 || pdg == 0 || pdg == -2)
-    return;  
-  
   KFParticle particle;
-  particle.X() = x;
-  particle.Y() = y;
-  particle.Z() = z;
-  particle.Px() = px;
-  particle.Py() = py;
-  particle.Pz() = pz;
+  particle.X() = par[kX];
+  particle.Y() = par[kY];
+  particle.Z() = par[kZ];
+  particle.Px() = par[kPx];
+  particle.Py() = par[kPy];
+  particle.Pz() = par[kPz];
+
   for(int i=0; i<21; i++)
     particle.Covariance(i) = cov[i];
-  for(int i=0; i<10; i++)
+
+  for(int i=0; i<kNumberOfFieldPars; i++)
     particle.SetFieldCoeff(field[i], i);
-  particle.Q() = charge;
+
+  particle.Q() = char(charge);  //NOTE: is not safe
   particle.SetPDG(pdg);
   particle.SetId(id);
   
-  tracks_.push_back(particle);
+  tracks_.emplace_back(particle);
 }
 
 KFParticleTopoReconstructor* InputContainer::CreateTopoReconstructor()
@@ -97,7 +89,7 @@ KFParticleTopoReconstructor* InputContainer::CreateTopoReconstructor()
 // SimpleFinder InputContainer::CreateSimpleFinder()
 // {
 //   /*
-//    * Creates the SimpleFinder object with all necessary input information in oreder to
+//    * Creates the SimpleFinder object with all necessary input information in order to
 //    * perform particle selection using KFSimple algorithm.
 //    */
 //     

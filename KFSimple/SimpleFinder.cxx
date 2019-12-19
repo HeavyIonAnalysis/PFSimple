@@ -27,7 +27,7 @@ void SimpleFinder::Init(const InputContainer& input)
     track_tmp.SetQ(tracks[iTr].GetQ(), iTr);
     track_tmp.SetPVIndex(-1, iTr);   
     track_tmp.SetId(tracks[iTr].Id(), iTr);
-  }  
+  }
   
   Init(track_tmp, input.GetVertex());
   SetCuts(input.GetCuts());  
