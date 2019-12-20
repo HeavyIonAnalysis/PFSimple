@@ -189,20 +189,20 @@ void SimpleFinder::CalculateMotherProperties(const KFParticleSIMD& mother, float
 
 float SimpleFinder::CalculateCosTopo(const KFParticleSIMD& mother) const
 {
-  float x_mother = mother.GetX()[0];
-  float y_mother = mother.GetY()[0];
-  float z_mother = mother.GetZ()[0];
-  
-  float px_mother = mother.GetPx()[0];
-  float py_mother = mother.GetPy()[0];
-  float pz_mother = mother.GetPz()[0];  
-  
-  float delta_x = x_mother - prim_vx_.GetX();
-  float delta_y = y_mother - prim_vx_.GetY();
-  float delta_z = z_mother - prim_vx_.GetZ();
-  
-  float sp = delta_x*px_mother + delta_y*py_mother + delta_z*pz_mother;
-  float norm = sqrt(delta_x*delta_x + delta_y*delta_y + delta_z*delta_z) * sqrt(px_mother*px_mother + py_mother*py_mother + pz_mother*pz_mother);
+  const float x_mother = mother.GetX()[0];
+  const float y_mother = mother.GetY()[0];
+  const float z_mother = mother.GetZ()[0];
+
+  const float px_mother = mother.GetPx()[0];
+  const float py_mother = mother.GetPy()[0];
+  const float pz_mother = mother.GetPz()[0];
+
+  const float delta_x = x_mother - prim_vx_.GetX();
+  const float delta_y = y_mother - prim_vx_.GetY();
+  const float delta_z = z_mother - prim_vx_.GetZ();
+
+  const float sp = delta_x*px_mother + delta_y*py_mother + delta_z*pz_mother;
+  const float norm = sqrt(delta_x*delta_x + delta_y*delta_y + delta_z*delta_z) * sqrt(px_mother*px_mother + py_mother*py_mother + pz_mother*pz_mother);
   
   return sp/norm;  
 }

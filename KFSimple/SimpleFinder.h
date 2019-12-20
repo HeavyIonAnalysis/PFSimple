@@ -69,10 +69,10 @@ class SimpleFinder
              
   CutsContainer cuts_;
   
-  float mass_;                             // TODO remove after debug procedure
-  std::vector<float> vec_mass_;            // TODO remove after debug procedure
-  
-  std::vector<OutputContainer> vec_lambda_;
+  float mass_{0.};                             // TODO remove after debug procedure
+  std::vector<float> vec_mass_{};            // TODO remove after debug procedure
+
+  std::vector<OutputContainer> vec_lambda_{};
 };
 
 #endif//SimpleFinder_H
