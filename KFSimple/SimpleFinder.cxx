@@ -114,10 +114,10 @@ void SimpleFinder::CalculateParamsInPCA(const KFPTrack &track1, int pid1, const 
 
 float SimpleFinder::CalculateDistanceBetweenParticles(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2) const
 {
-  float dx = pars1.at(0) - pars2.at(0);
-  float dy = pars1.at(1) - pars2.at(1);
-  float dz = pars1.at(2) - pars2.at(2);
-  float dr = sqrt(dx*dx+dy*dy+dz*dz);
+  const float dx = pars1.at(0) - pars2.at(0);
+  const float dy = pars1.at(1) - pars2.at(1);
+  const float dz = pars1.at(2) - pars2.at(2);
+  const float dr = sqrt(dx*dx+dy*dy+dz*dz);
   
   return dr;
 }
@@ -237,7 +237,7 @@ void SimpleFinder::FindParticles()
   for(int iSecPos=0; iSecPos<nSecPoses; iSecPos++)
   {
     for(int iSecNeg=0; iSecNeg<nSecNegs; iSecNeg++)
-    {    
+    {
       KFPTrack trackPos;
       tracks_.GetTrack(trackPos, trIndex_[kSecPos][iSecPos]);
       int pidPos = tracks_.PDG()[trIndex_[kSecPos][iSecPos]];
