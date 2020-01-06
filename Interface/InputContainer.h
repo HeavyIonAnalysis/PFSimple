@@ -30,7 +30,7 @@
 
 #include "KFParticle.h"
 #include "KFVertex.h"
-#include "KFParticleTopoReconstructor.h"
+// #include "KFParticleTopoReconstructor.h"
 #include "CutsContainer.h"
 
 class InputContainer{
@@ -43,7 +43,7 @@ class InputContainer{
   void SetPV(KFVertex vertex);
   void SetPV(KFPVertex vertex);
   void AddTrack(float x, float y, float z, float px, float py, float pz, std::vector<float> cov, float field[10], int charge, int pdg, int id, int nhits=4, int passcuts=1);
-  KFParticleTopoReconstructor* CreateTopoReconstructor();                                                                                                   //^ not good
+//   KFParticleTopoReconstructor* CreateTopoReconstructor();                                                                                                   //^ not good
 
   void SetCuts(const CutsContainer& cuts) { cuts_ = cuts; };
   

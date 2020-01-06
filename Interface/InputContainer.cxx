@@ -56,43 +56,43 @@ void InputContainer::AddTrack(float x, float y, float z,
   tracks_.push_back(particle);
 }
 
-KFParticleTopoReconstructor* InputContainer::CreateTopoReconstructor()
-{
-  /*
-   * Creates the pointer on the KFParticleTopoReconstructor object
-   * with all necessary input information in order to perform particle selection using
-   * non-simplified "standard" KFParticle algorithm. 
-   */
-  auto* TR = new KFParticleTopoReconstructor;
-  
-  // cuts setting
-  TR -> GetKFParticleFinder() -> SetChiPrimaryCut2D(cuts_.GetCutChi2PrimPos());
-  TR -> GetKFParticleFinder() -> SetMaxDistanceBetweenParticlesCut(cuts_.GetCutDistance());
-  TR -> GetKFParticleFinder() -> SetChi2Cut2D(cuts_.GetCutChi2Geo());
-  TR -> GetKFParticleFinder() -> SetLCut(cuts_.GetCutLDown());
-  TR -> GetKFParticleFinder() -> SetLdLCut2D(cuts_.GetCutLdL());
-    
-  KFPTrackVector track_tmp, track_empty;
-  track_tmp.Resize(tracks_.size());
-  for(int iTr=0; iTr<tracks_.size(); iTr++)
-  {
-    for(Int_t iP=0; iP<6; iP++)
-      track_tmp.SetParameter(tracks_[iTr].GetParameter(iP), iP, iTr);
-    for(Int_t iC=0; iC<21; iC++)
-      track_tmp.SetCovariance(tracks_[iTr].GetCovariance(iC), iC, iTr);
-    for(Int_t iF=0; iF<10; iF++)
-      track_tmp.SetFieldCoefficient(tracks_[iTr].GetFieldCoeff()[iF], iF, iTr);
-    track_tmp.SetPDG(tracks_[iTr].GetPDG(), iTr);
-    track_tmp.SetQ(tracks_[iTr].GetQ(), iTr);
-    track_tmp.SetPVIndex(-1, iTr);    
-    track_tmp.SetId(tracks_[iTr].Id(), iTr);
-  }
-  TR->Init(track_tmp, track_empty);
-  
-  TR->AddPV(vtx_);
-  
-  return TR;
-}
+// KFParticleTopoReconstructor* InputContainer::CreateTopoReconstructor()
+// {
+//   /*
+//    * Creates the pointer on the KFParticleTopoReconstructor object
+//    * with all necessary input information in order to perform particle selection using
+//    * non-simplified "standard" KFParticle algorithm. 
+//    */
+//   auto* TR = new KFParticleTopoReconstructor;
+//   
+//   // cuts setting
+//   TR -> GetKFParticleFinder() -> SetChiPrimaryCut2D(cuts_.GetCutChi2PrimPos());
+//   TR -> GetKFParticleFinder() -> SetMaxDistanceBetweenParticlesCut(cuts_.GetCutDistance());
+//   TR -> GetKFParticleFinder() -> SetChi2Cut2D(cuts_.GetCutChi2Geo());
+//   TR -> GetKFParticleFinder() -> SetLCut(cuts_.GetCutLDown());
+//   TR -> GetKFParticleFinder() -> SetLdLCut2D(cuts_.GetCutLdL());
+//     
+//   KFPTrackVector track_tmp, track_empty;
+//   track_tmp.Resize(tracks_.size());
+//   for(int iTr=0; iTr<tracks_.size(); iTr++)
+//   {
+//     for(Int_t iP=0; iP<6; iP++)
+//       track_tmp.SetParameter(tracks_[iTr].GetParameter(iP), iP, iTr);
+//     for(Int_t iC=0; iC<21; iC++)
+//       track_tmp.SetCovariance(tracks_[iTr].GetCovariance(iC), iC, iTr);
+//     for(Int_t iF=0; iF<10; iF++)
+//       track_tmp.SetFieldCoefficient(tracks_[iTr].GetFieldCoeff()[iF], iF, iTr);
+//     track_tmp.SetPDG(tracks_[iTr].GetPDG(), iTr);
+//     track_tmp.SetQ(tracks_[iTr].GetQ(), iTr);
+//     track_tmp.SetPVIndex(-1, iTr);    
+//     track_tmp.SetId(tracks_[iTr].Id(), iTr);
+//   }
+//   TR->Init(track_tmp, track_empty);
+//   
+//   TR->AddPV(vtx_);
+//   
+//   return TR;
+// }
 
 // SimpleFinder InputContainer::CreateSimpleFinder()
 // {
