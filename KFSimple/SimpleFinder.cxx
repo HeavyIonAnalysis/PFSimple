@@ -12,7 +12,7 @@ void SimpleFinder::Init(const KFPTrackVector& tracks, const KFVertex& pv)
 void SimpleFinder::Init(const InputContainer& input)
 {
   KFPTrackVector track_tmp;
-  const std::vector<KFParticle> tracks = input.GetTracks();
+  const std::vector<KFParticle>& tracks = input.GetTracks();
   track_tmp.Resize(tracks.size());
   
   for(int iTr=0; iTr<tracks.size(); iTr++)
@@ -27,7 +27,7 @@ void SimpleFinder::Init(const InputContainer& input)
     track_tmp.SetQ(tracks[iTr].GetQ(), iTr);
     track_tmp.SetPVIndex(-1, iTr);   
     track_tmp.SetId(tracks[iTr].Id(), iTr);
-  }  
+  }
   
   Init(track_tmp, input.GetVertex());
   SetCuts(input.GetCuts());  
@@ -73,7 +73,7 @@ void SimpleFinder::SortTracks()
   return tmpPart.GetDeviationFromVertex(prim_vx_);
 }*/
 
-float SimpleFinder::CalculateChiToPrimaryVertex(const KFPTrack &track, const int pid) const
+float SimpleFinder::CalculateChiToPrimaryVertex(const KFPTrack &track, int pid) const
 {
   // SIMD'ized version
   KFParticle tmpPart(track, pid);
@@ -89,7 +89,7 @@ float SimpleFinder::CalculateChiToPrimaryVertex(const KFPTrack &track, const int
   return chi2vec[0];
 }
 
-void SimpleFinder::CalculateParamsInPCA(const KFPTrack &track1, const int pid1, const KFPTrack &track2, const int pid2, std::array<float, 8> &pars1, std::array<float, 8> &pars2) const
+void SimpleFinder::CalculateParamsInPCA(const KFPTrack &track1, int pid1, const KFPTrack &track2, int pid2, std::array<float, 8> &pars1, std::array<float, 8> &pars2) const
 {
   KFParticle particle1(track1, pid1);
   KFParticle particle2(track2, pid2);
@@ -158,14 +158,14 @@ KFParticleSIMD SimpleFinder::ConstructMother(const KFPTrack &track1, const int p
   return mother;
 }
 
-float SimpleFinder::CalculateChi2Geo(const KFParticleSIMD mother) const
+float SimpleFinder::CalculateChi2Geo(const KFParticleSIMD& mother) const
 {
  float_v chi2 = mother.Chi2()/simd_cast<float_v>(mother.NDF());
  
  return chi2[0];
 }
 
-void SimpleFinder::CalculateMotherProperties(const KFParticleSIMD mother, float &l, float &ldl, int &isFromPV) const
+void SimpleFinder::CalculateMotherProperties(const KFParticleSIMD& mother, float &l, float &ldl, int &isFromPV) const
 {
   float_v l_Simd;
   float_v dl_Simd;
@@ -187,7 +187,7 @@ void SimpleFinder::CalculateMotherProperties(const KFParticleSIMD mother, float 
     isFromPV = 0;  
 }
 
-float SimpleFinder::CalculateCosTopo(const KFParticleSIMD mother) const
+float SimpleFinder::CalculateCosTopo(const KFParticleSIMD& mother) const
 {
   float x_mother = mother.GetX()[0];
   float y_mother = mother.GetY()[0];
@@ -207,7 +207,7 @@ float SimpleFinder::CalculateCosTopo(const KFParticleSIMD mother) const
   return sp/norm;  
 }
 
-float SimpleFinder::CalculateChi2Topo(const KFParticleSIMD mother) const
+float SimpleFinder::CalculateChi2Topo(const KFParticleSIMD& mother) const
 {
   KFParticleSIMD motherTopo = mother;
   KFVertex prim_vx_tmp = prim_vx_;
@@ -218,7 +218,7 @@ float SimpleFinder::CalculateChi2Topo(const KFParticleSIMD mother) const
   return chi2[0];
 }
 
-void SimpleFinder::SaveParticle(OutputContainer Lambda)
+void SimpleFinder::SaveParticle(const OutputContainer& Lambda)
 {
   vec_mass_.push_back(mass_);
   vec_lambda_.push_back(Lambda);
@@ -257,8 +257,8 @@ void SimpleFinder::FindParticles()
       lambda.SetChi2PrimNeg(CalculateChiToPrimaryVertex(trackNeg, pidNeg));
       if(lambda.GetChi2PrimNeg() <= cuts_.GetCutChi2PrimNeg() || lambda.GetChi2PrimNeg()!=lambda.GetChi2PrimNeg()) continue;
                   
-      std::array<float, 8> pars1;
-      std::array<float, 8> pars2;
+      std::array<float, 8> pars1{};
+      std::array<float, 8> pars2{};
       CalculateParamsInPCA(trackNeg, pidNeg, trackPos, pidPos, pars1, pars2);
       
       lambda.SetDistance(CalculateDistanceBetweenParticles(pars1, pars2));

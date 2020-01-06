@@ -32,6 +32,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -ftree-vectorize -ffast-math -DNO
 message(STATUS "Using CXX flags for ${CMAKE_BUILD_TYPE}: ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}}")
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 
+set(FIXTARGET TRUE CACHE BOOL "Compile for fix target geometry.")
+
 find_package(KFParticle REQUIRED)
 find_package(Vc REQUIRED)
 find_package(ROOT REQUIRED RIO)
