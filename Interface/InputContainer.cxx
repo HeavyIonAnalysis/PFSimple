@@ -22,8 +22,12 @@ void InputContainer::AddTrack(const std::vector<float>& par,
                               const std::vector<float>& field,
                               int charge,
                               int pdg,
-                              int id)
+                              int id,
+                              int passcuts)
 {
+  if (passcuts==0 || pdg==0 || pdg==-2)
+    return;
+  
   if( par.size() != kNumberOfTrackPars || cov.size() != NumberOfCovElements || field.size() !=  kNumberOfFieldPars){
     std::cout << "InputContainer::AddTrack - Wrong size of input vector!!" << std::endl;
     exit(kError);
