@@ -11,8 +11,8 @@ float signum(float x)
 void check_magnetic_field(const TString& infile="/home/user/cbmdir/kfpf/kfpf_analysis_tree_converter/input/reference.aTree.root",
                           const TString& field_file_name="/home/user/cbmdir/kfpf/kfpf_analysis_tree_converter/input/field_mapF.root",
 //                           const TString& field_name="histoBx"
-//                           const TString& field_name="histoBy"
-                          const TString& field_name="histoBz"
+                          const TString& field_name="histoBy"
+//                           const TString& field_name="histoBz"
                          )
 {
   std::unique_ptr<TFile> field_file {TFile::Open(field_file_name)};
@@ -29,9 +29,17 @@ void check_magnetic_field(const TString& infile="/home/user/cbmdir/kfpf/kfpf_ana
   tree->SetBranchAddress("KfpfTracks", &rec_tracks);
 
   TProfile2D out("diff", "", 50, -50, 50, 50, -50, 50);
-  TH1F histodeltaX("deltaX", "", 1000, -0.1, 1.1);
-  TH1F histodeltaY("deltaY", "", 1000, -0.1, 1.1);
-  TH1F histodeltaZ("deltaZ", "", 1000, -0.1, 1.1);
+//   TH1F histodeltaX("deltaX", "", 1000, -0.1, 1.1);
+//   TH1F histodeltaY("deltaY", "", 1000, -0.1, 1.1);
+//   TH1F histodeltaZ("deltaZ", "", 1000, -0.1, 1.1);
+  float Range = 0.002;
+  TH1F hMF_bin("MFbin", "", 1000, -1.15, -0.9);
+  TH1F hMF_Inter("MFInter", "", 1000, -1.15, -0.9);
+  TH1F hMF_Param("MFParam", "", 1000, -1.15, -0.9);
+  
+  TH2F hInt_Par("IntPar", "", 1000, -1.15, -0.9, 1000, -1.15, -0.9);
+  hInt_Par.GetXaxis()->SetTitle("Interpolation");
+  hInt_Par.GetYaxis()->SetTitle("Parametrization");
   
   const int n_entries = tree->GetEntries();
   for(int i_event=0; i_event<n_entries; ++i_event)
@@ -49,13 +57,13 @@ void check_magnetic_field(const TString& infile="/home/user/cbmdir/kfpf/kfpf_ana
 //       const float cy1 = track.GetField<float>(i_field_coff + kCx1);
 //       const float cy2 = track.GetField<float>(i_field_coff + kCx2);
       
-//       const float cy0 = track.GetField<float>(i_field_coff + kCy0);
-//       const float cy1 = track.GetField<float>(i_field_coff + kCy1);
-//       const float cy2 = track.GetField<float>(i_field_coff + kCy2);
+      const float cy0 = track.GetField<float>(i_field_coff + kCy0);
+      const float cy1 = track.GetField<float>(i_field_coff + kCy1);
+      const float cy2 = track.GetField<float>(i_field_coff + kCy2);
       
-      const float cy0 = track.GetField<float>(i_field_coff + kCz0);
-      const float cy1 = track.GetField<float>(i_field_coff + kCz1);
-      const float cy2 = track.GetField<float>(i_field_coff + kCz2);
+//       const float cy0 = track.GetField<float>(i_field_coff + kCz0);
+//       const float cy1 = track.GetField<float>(i_field_coff + kCz1);
+//       const float cy2 = track.GetField<float>(i_field_coff + kCz2);
       
       const float x = track.GetField<float>(i_par);
       const float y = track.GetField<float>(i_par+1);
@@ -67,65 +75,86 @@ void check_magnetic_field(const TString& infile="/home/user/cbmdir/kfpf/kfpf_ana
 //       const float mf_map = field_map->GetBinContent(field_map->FindBin(fabs(x), fabs(y), fabs(z-40.)));  //Y
 //       const float mf_map = (field_map->GetBinContent(field_map->FindBin(fabs(x), fabs(y), fabs(z-40.))))*signum(y)*signum(z-40.);  //Z
       
-      // BEGIN interpolation ##################################################################################
-      const float stepX = 2., stepY = 2., stepZ = 2.;
+//       hMF_bin.Fill((field_map->GetBinContent(field_map->FindBin(fabs(x), fabs(y), fabs(z-40.))))*signum(x)*signum(y));        //X
+      hMF_bin.Fill(field_map->GetBinContent(field_map->FindBin(fabs(x), fabs(y), fabs(z-40.))));                     //Y
+//       hMF_bin.Fill((field_map->GetBinContent(field_map->FindBin(fabs(x), fabs(y), fabs(z-40.))))*signum(y)*signum(z-40.));    //Z
+      
+//       // BEGIN interpolation ##################################################################################
+//       const float stepX = 2., stepY = 2., stepZ = 2.;
+//       const float x_l = fabs(x);
+//       const float y_l = fabs(y);
+//       const float z_l = fabs(z-40.);
+//       
+//       if(x_l<0 || x_l>300. || y_l<0 || y_l>300. || z_l<0. || z_l>500.) continue;
+//       
+//       float delta_X = (x_l - field_map->GetXaxis()->GetBinCenter(field_map->GetXaxis()->FindBin(x_l)))/stepX;
+//       float delta_Y = (y_l - field_map->GetYaxis()->GetBinCenter(field_map->GetYaxis()->FindBin(y_l)))/stepY;
+//       float delta_Z = (z_l - field_map->GetZaxis()->GetBinCenter(field_map->GetZaxis()->FindBin(z_l)))/stepZ;
+//       
+//       if(delta_X < 0.)
+//         delta_X = 1. + delta_X;
+//       if(delta_Y < 0.)
+//         delta_Y = 1. + delta_Y;
+//       if(delta_Z < 0.)
+//         delta_Z = 1. + delta_Z;
+//       
+// //       if(z>1.)
+//       {
+//         histodeltaX.Fill(delta_X);
+//         histodeltaY.Fill(delta_Y);
+//         histodeltaZ.Fill(delta_Z);
+//       }
+//       
+//       float Ha[2][2][2];
+//       
+//       
+//       Ha[0][0][0] = field_map -> GetBinContent(field_map->FindBin(x_l-stepX/2., y_l-stepY/2., z_l-stepZ/2.));
+//       Ha[0][0][1] = field_map -> GetBinContent(field_map->FindBin(x_l-stepX/2., y_l-stepY/2., z_l+stepZ/2.));
+//       Ha[0][1][0] = field_map -> GetBinContent(field_map->FindBin(x_l-stepX/2., y_l+stepY/2., z_l-stepZ/2.));
+//       Ha[0][1][1] = field_map -> GetBinContent(field_map->FindBin(x_l-stepX/2., y_l+stepY/2., z_l+stepZ/2.));
+//       Ha[1][0][0] = field_map -> GetBinContent(field_map->FindBin(x_l+stepX/2., y_l-stepY/2., z_l-stepZ/2.));
+//       Ha[1][0][1] = field_map -> GetBinContent(field_map->FindBin(x_l+stepX/2., y_l-stepY/2., z_l+stepZ/2.));
+//       Ha[1][1][0] = field_map -> GetBinContent(field_map->FindBin(x_l+stepX/2., y_l+stepY/2., z_l-stepZ/2.));
+//       Ha[1][1][1] = field_map -> GetBinContent(field_map->FindBin(x_l+stepX/2., y_l+stepY/2., z_l+stepZ/2.));      
+//         
+//       
+//             // x-axis interpolation
+//       float Hb[2][2];
+//       Hb[0][0] = Ha[0][0][0]*(1.-delta_X) + Ha[1][0][0]*delta_X;
+//       Hb[0][1] = Ha[0][0][1]*(1.-delta_X) + Ha[1][0][1]*delta_X;
+//       Hb[1][0] = Ha[0][1][0]*(1.-delta_X) + Ha[1][1][0]*delta_X;
+//       Hb[1][1] = Ha[0][1][1]*(1.-delta_X) + Ha[1][1][1]*delta_X;
+//       
+//       // y-axis interpolation
+//       float Hc[2];
+//       Hc[0] = Hb[0][0]*(1.-delta_Y) + Hb[1][0]*delta_Y;
+//       Hc[1] = Hb[0][1]*(1.-delta_Y) + Hb[1][1]*delta_Y;
+//       
+// //       const float mf_map = (Hc[0]*(1.-delta_Z) + Hc[1]*delta_Z)*signum(x)*signum(y);         //X
+// //       const float mf_map = Hc[0]*(1.-delta_Z) + Hc[1]*delta_Z;                               //Y
+//       const float mf_map = (Hc[0]*(1.-delta_Z) + Hc[1]*delta_Z)*signum(y)*signum(z-40.);     //Z
+// 
+//       // END interpolation ####################################################################################
+      
+      // BEGIN root interpolation
+      
       const float x_l = fabs(x);
       const float y_l = fabs(y);
       const float z_l = fabs(z-40.);
+      if(x_l<=0 || x_l>=300. || y_l<=0 || y_l>=300. || z_l<=0. || z_l>=500.) continue;
+      if(x_l!=x_l || y_l!=y_l || z_l!=z_l) continue;
       
-      if(x_l<0 || x_l>300. || y_l<0 || y_l>300. || z_l<0. || z_l>500.) continue;
+//       const float mf_map = (field_map -> Interpolate(x_l, y_l, z_l))*signum(x)*signum(y);           //X
+      const float mf_map = field_map -> Interpolate(x_l, y_l, z_l);                                 //Y
+//       const float mf_map = (field_map -> Interpolate(x_l, y_l, z_l))*signum(y)*signum(z-40.);       //Z
+           
+      // END root interpolation
       
-      float delta_X = (x_l - field_map->GetXaxis()->GetBinCenter(field_map->GetXaxis()->FindBin(x_l)))/stepX;
-      float delta_Y = (y_l - field_map->GetYaxis()->GetBinCenter(field_map->GetYaxis()->FindBin(y_l)))/stepY;
-      float delta_Z = (z_l - field_map->GetZaxis()->GetBinCenter(field_map->GetZaxis()->FindBin(z_l)))/stepZ;
-      
-      if(delta_X < 0.)
-        delta_X = 1. + delta_X;
-      if(delta_Y < 0.)
-        delta_Y = 1. + delta_Y;
-      if(delta_Z < 0.)
-        delta_Z = 1. + delta_Z;
-      
-//       if(z>1.)
-      {
-        histodeltaX.Fill(delta_X);
-        histodeltaY.Fill(delta_Y);
-        histodeltaZ.Fill(delta_Z);
-      }
-      
-      float Ha[2][2][2];
-      
-      
-      Ha[0][0][0] = field_map -> GetBinContent(field_map->FindBin(x_l-stepX/2., y_l-stepY/2., z_l-stepZ/2.));
-      Ha[0][0][1] = field_map -> GetBinContent(field_map->FindBin(x_l-stepX/2., y_l-stepY/2., z_l+stepZ/2.));
-      Ha[0][1][0] = field_map -> GetBinContent(field_map->FindBin(x_l-stepX/2., y_l+stepY/2., z_l-stepZ/2.));
-      Ha[0][1][1] = field_map -> GetBinContent(field_map->FindBin(x_l-stepX/2., y_l+stepY/2., z_l+stepZ/2.));
-      Ha[1][0][0] = field_map -> GetBinContent(field_map->FindBin(x_l+stepX/2., y_l-stepY/2., z_l-stepZ/2.));
-      Ha[1][0][1] = field_map -> GetBinContent(field_map->FindBin(x_l+stepX/2., y_l-stepY/2., z_l+stepZ/2.));
-      Ha[1][1][0] = field_map -> GetBinContent(field_map->FindBin(x_l+stepX/2., y_l+stepY/2., z_l-stepZ/2.));
-      Ha[1][1][1] = field_map -> GetBinContent(field_map->FindBin(x_l+stepX/2., y_l+stepY/2., z_l+stepZ/2.));      
-        
-      
-            // x-axis interpolation
-      float Hb[2][2];
-      Hb[0][0] = Ha[0][0][0]*(1.-delta_X) + Ha[1][0][0]*delta_X;
-      Hb[0][1] = Ha[0][0][1]*(1.-delta_X) + Ha[1][0][1]*delta_X;
-      Hb[1][0] = Ha[0][1][0]*(1.-delta_X) + Ha[1][1][0]*delta_X;
-      Hb[1][1] = Ha[0][1][1]*(1.-delta_X) + Ha[1][1][1]*delta_X;
-      
-      // y-axis interpolation
-      float Hc[2];
-      Hc[0] = Hb[0][0]*(1.-delta_Y) + Hb[1][0]*delta_Y;
-      Hc[1] = Hb[0][1]*(1.-delta_Y) + Hb[1][1]*delta_Y;
-      
-//       const float mf_map = (Hc[0]*(1.-delta_Z) + Hc[1]*delta_Z)*signum(x)*signum(y);         //X
-//       const float mf_map = Hc[0]*(1.-delta_Z) + Hc[1]*delta_Z;                               //Y
-      const float mf_map = (Hc[0]*(1.-delta_Z) + Hc[1]*delta_Z)*signum(y)*signum(z-40.);     //Z
-
-      // END interpolation ####################################################################################
-      
+      hMF_Inter.Fill(mf_map);
       
       const float mf_y0 = 0.1*(cy0 + cy1*(z-z0) + cy2*(z-z0)*(z-z0));
+      hMF_Param.Fill(mf_y0);
+      hInt_Par.Fill(mf_map, mf_y0);
 
       out.Fill(x, y, fabs(mf_map-mf_y0) / fabs(mf_map+mf_y0) );
 //      std::cout << mf_map << " " << mf_y0 << std::endl;
@@ -135,8 +164,9 @@ void check_magnetic_field(const TString& infile="/home/user/cbmdir/kfpf/kfpf_ana
 
   auto *out_file = TFile::Open("out.root", "recreate");
   out.Write();
-  histodeltaX.Write();
-  histodeltaY.Write();
-  histodeltaZ.Write();
+  hMF_bin.Write();
+  hMF_Inter.Write();
+  hMF_Param.Write();
+  hInt_Par.Write();
   out_file->Close();
 }
