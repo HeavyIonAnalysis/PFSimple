@@ -8,7 +8,7 @@ float signum(float x)
     return -1.;
 }
 
-void check_magnetic_field(const TString& infile="/home/user/cbmdir/kfpf/kfpf_analysis_tree_converter/input/dcmqgsm_150.analysistree_more.root",
+void check_magnetic_field(const TString& infile="/home/user/cbmdir/kfpf/kfpf_analysis_tree_converter/input/DaTree.root",
 //                           const TString& field_file_name="/home/user/cbmdir/kfpf/kfpf_analysis_tree_converter/input/field_x.root",
 //                           const TString& field_file_name="/home/user/cbmdir/kfpf/kfpf_analysis_tree_converter/input/field_y.root",
                           const TString& field_file_name="/home/user/cbmdir/kfpf/kfpf_analysis_tree_converter/input/field_z.root",
@@ -32,7 +32,7 @@ void check_magnetic_field(const TString& infile="/home/user/cbmdir/kfpf/kfpf_ana
 
   TProfile2D out("diff", "", 300, -150, 150, 120, -60, 60);
 
-  float Range = 0.004;
+  float Range = 0.02;
   TH1F hMF_bin("MFbin", "", 1000, -Range, Range);
   TH1F hMF_Inter("MFInter", "", 1000, -Range, Range);
   TH1F hMF_Param("MFParam", "", 1000, -Range, Range);
