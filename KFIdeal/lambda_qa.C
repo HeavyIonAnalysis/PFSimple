@@ -1,6 +1,6 @@
 std::vector<int> FindDaughters(const AnalysisTree::Track& mc_track, const AnalysisTree::TrackDetector* sim_tracks);
 
-void lambda_qa(const TString infile="/home/user/cbmdir/kfpf/kfpf_analysis_tree_converter/input/na61.aTree.root")
+void lambda_qa(const TString infile="/home/user/cbmdir/kfpf/kfpf_analysis_tree_converter/input/reference.aTree.root")
 {
   TFile* file = TFile::Open(infile);
   TTree* tree = file->Get<TTree>("aTree");
@@ -22,7 +22,7 @@ void lambda_qa(const TString infile="/home/user/cbmdir/kfpf/kfpf_analysis_tree_c
   tree->SetBranchAddress("SimTracks", &sim_tracks);
   tree->SetBranchAddress("KfpfTracks", &rec_tracks);
   tree->SetBranchAddress("VKfpfTracks2SimTracks", &matching);
-  
+    
   const int n_entries = tree->GetEntries();
   for(int i_event=0; i_event<n_entries; ++i_event)
   {
@@ -34,26 +34,28 @@ void lambda_qa(const TString infile="/home/user/cbmdir/kfpf/kfpf_analysis_tree_c
       {
         auto daughters_ids = FindDaughters(mc_track, sim_tracks);
         if(daughters_ids.size() != 2) continue;
-
         const auto& mc_daughter0 = sim_tracks->GetChannel(daughters_ids[0]);
         const auto& mc_daughter1 = sim_tracks->GetChannel(daughters_ids[1]);
         
+        if(mc_daughter0.GetField<int>(1)!=2212 && mc_daughter0.GetField<int>(1)!=-211) continue;
+        if(mc_daughter1.GetField<int>(1)!=2212 && mc_daughter1.GetField<int>(1)!=-211) continue;
+                
         const auto mc_daughter0_mom = mc_daughter0.GetMomentum(mc_daughter0.GetField<int>(1));
         const auto mc_daughter1_mom = mc_daughter1.GetMomentum(mc_daughter1.GetField<int>(1));
-                
+        
         const auto mc_mother_mom = mc_daughter0_mom + mc_daughter1_mom;
         h_mc_mother.Fill(mc_mother_mom.M());
         
         const int rec_ids[2] = {matching->GetMatchInverted(daughters_ids[0]), matching->GetMatchInverted(daughters_ids[1])};
         if (rec_ids[0] < 0 || rec_ids[1] < 0) continue;
         if (rec_ids[0] >= rec_tracks->GetNumberOfChannels() || rec_ids[1] >= rec_tracks->GetNumberOfChannels()) continue;
-        
+
         const auto& reco_daughter0 = rec_tracks->GetChannel(rec_ids[0]);
         const auto& reco_daughter1 = rec_tracks->GetChannel(rec_ids[1]);
-        
+
         const auto reco_daughter0_mom = reco_daughter0.GetField<int>(1) < 0 ? reco_daughter0.GetMomentum(0.140f) : reco_daughter0.GetMomentum(0.938f);
         const auto reco_daughter1_mom = reco_daughter1.GetField<int>(1) < 0 ? reco_daughter1.GetMomentum(0.140f) : reco_daughter1.GetMomentum(0.938f);
-        
+
         if(reco_daughter0.GetField<int>(1) < 0)
         {
           h_pion_px.Fill(mc_daughter0_mom.Px(), reco_daughter0_mom.Px());
@@ -101,7 +103,8 @@ std::vector<int> FindDaughters(const AnalysisTree::Track& mc_track, const Analys
   for(int id=lambda_id; id<sim_tracks->GetNumberOfChannels(); ++id)
   {
     const auto& daughter = sim_tracks->GetChannel(id);
-    if( daughter.GetField<int>(2) == lambda_id )
+//     if( daughter.GetField<int>(2) == lambda_id )          // SHINE
+    if( daughter.GetField<int>(0) == lambda_id )          // CBM
       daughters_ids.emplace_back(daughter.GetId());
   }
 
