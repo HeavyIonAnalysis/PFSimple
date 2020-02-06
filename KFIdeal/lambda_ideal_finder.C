@@ -1,10 +1,10 @@
 std::vector<int> FindDaughters(const AnalysisTree::Track& mc_track, const AnalysisTree::TrackDetector* sim_tracks);
 
-void lambda_ideal_finder(const TString infile="/home/vklochkov/Data/na61/pbpb/13gev/mc/dcmqgsm_150.analysistree.root")
+void lambda_ideal_finder(const TString infile="/home/user/cbmdir/kfpf/kfpf_analysis_tree_converter/input/na61.aTree.root")
 {
   TFile* file = TFile::Open(infile);
   TTree* tree = file->Get<TTree>("aTree");
-  TH1F inv_mass("inv_mass", "", 100, 1.05, 1.15);
+  TH1F inv_mass("inv_mass", "", 1000, 1.0, 2.);
 
   TH3F h3_rec_tracks("rec_tracks", "", 50, -3.2, 3.2, 50, 0, 3, 50, 0.5, 4);
   TH3F h3_not_rec_tracks("not_rec_tracks", "", 50, -3.2, 3.2, 50, 0, 3, 50, -0.5, 4);
@@ -17,8 +17,9 @@ void lambda_ideal_finder(const TString infile="/home/vklochkov/Data/na61/pbpb/13
   tree->SetBranchAddress("SimTracks", &sim_tracks);
   tree->SetBranchAddress("KfpfTracks", &rec_tracks);
   tree->SetBranchAddress("VtxTracks", &vtx_tracks);
+  tree->SetBranchAddress("VKfpfTracks2SimTracks", &matching);
   tree->SetBranchAddress("KfpfracksToSimTracks", &matching);
-  tree->SetBranchAddress("VtxTracksToSimTracks", &vtx_matching);
+//   tree->SetBranchAddress("VtxTracksToSimTracks", &vtx_matching);
 
   const int n_entries = tree->GetEntries();
   for(int i_event=0; i_event<n_entries; ++i_event)
@@ -34,6 +35,9 @@ void lambda_ideal_finder(const TString infile="/home/vklochkov/Data/na61/pbpb/13
 
         const auto& mc_daughter0 = sim_tracks->GetChannel(daughters_ids[0]);
         const auto& mc_daughter1 = sim_tracks->GetChannel(daughters_ids[1]);
+        
+        if(mc_daughter0.GetField<int>(1)!=2212 && mc_daughter0.GetField<int>(1)!=-211) continue;
+        if(mc_daughter1.GetField<int>(1)!=2212 && mc_daughter1.GetField<int>(1)!=-211) continue;
 
         const int rec_ids[2] = {matching->GetMatchInverted(daughters_ids[0]), matching->GetMatchInverted(daughters_ids[1])};
 
@@ -55,8 +59,10 @@ void lambda_ideal_finder(const TString infile="/home/vklochkov/Data/na61/pbpb/13
         const auto& daughter0 = rec_tracks->GetChannel(rec_ids[0]);
         const auto& daughter1 = rec_tracks->GetChannel(rec_ids[1]);
 
-        const auto daughter0_mom = daughter0.GetField<int>(1) < 0 ? daughter0.GetMomentum(0.14f) : daughter0.GetMomentum(0.938f);
-        const auto daughter1_mom = daughter1.GetField<int>(1) < 0 ? daughter1.GetMomentum(0.14f) : daughter1.GetMomentum(0.938f);
+        const auto daughter0_mom = mc_daughter0.GetField<int>(0) < 0 ? daughter0.GetMomentum(0.14f) : daughter0.GetMomentum(0.938f);
+        const auto daughter1_mom = mc_daughter1.GetField<int>(0) < 0 ? daughter1.GetMomentum(0.14f) : daughter1.GetMomentum(0.938f);
+        
+//         if(!(  (daughter0.GetField<int>(1)==1 && daughter1.GetField<int>(1)==-1 ) || (daughter0.GetField<int>(1)==-1 && daughter1.GetField<int>(1)==1 ) )) continue;
 
         const auto mc_daughter0_mom = mc_daughter0.GetMomentum(mc_daughter0.GetField<int>(1));
         const auto mc_daughter1_mom = mc_daughter1.GetMomentum(mc_daughter1.GetField<int>(1));
