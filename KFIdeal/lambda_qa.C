@@ -1,4 +1,5 @@
 std::vector<int> FindDaughters(const AnalysisTree::Track& mc_track, const AnalysisTree::TrackDetector* sim_tracks);
+AnalysisTree::Cuts* GetShineTrackCuts();
 
 void lambda_qa(const TString infile="/home/user/cbmdir/kfpf/kfpf_analysis_tree_converter/input/na61.aTree.root")
 {
@@ -14,16 +15,22 @@ void lambda_qa(const TString infile="/home/user/cbmdir/kfpf/kfpf_analysis_tree_c
   TH2F h_proton_py("proton_py", "x=sim", 1000, -1, 1, 1000, -1, 1);
   TH2F h_proton_pz("proton_pz", "x=sim", 1000, -1, 10, 1000, -1, 10);
   TH2F h_proton_e("proton_e", "x=sim", 1000, 0, 10, 1000, 0, 10);
-  TH2F h_reco_charge("reco_charge", "x=mc0", 3, -1.5, 1.5, 3, -1.5, 1.5);
+  TH2F h_reco_charge("reco_charge", "x=reco0", 3, -1.5, 1.5, 3, -1.5, 1.5);
   
   auto* sim_tracks = new AnalysisTree::TrackDetector();
   auto* rec_tracks = new AnalysisTree::TrackDetector();
   auto* matching = new AnalysisTree::Matching();
+  AnalysisTree::Configuration* config{nullptr};
+  config = (AnalysisTree::Configuration*) file->Get("Configuration");
   
   tree->SetBranchAddress("SimTracks", &sim_tracks);
   tree->SetBranchAddress("KfpfTracks", &rec_tracks);
 //   tree->SetBranchAddress("VKfpfTracks2SimTracks", &matching);      // CBM
   tree->SetBranchAddress("KfpfracksToSimTracks", &matching);        // SHINE
+  
+  AnalysisTree::Cuts* track_cuts = GetShineTrackCuts();
+  
+  track_cuts->Init(*config);
     
   const int n_entries = tree->GetEntries();
   for(int i_event=0; i_event<n_entries; ++i_event)
@@ -59,7 +66,9 @@ void lambda_qa(const TString infile="/home/user/cbmdir/kfpf/kfpf_analysis_tree_c
 
         const auto& reco_daughter0 = rec_tracks->GetChannel(rec_ids[0]);
         const auto& reco_daughter1 = rec_tracks->GetChannel(rec_ids[1]);
-
+                
+        if ( !(track_cuts->Apply(reco_daughter0) && track_cuts->Apply(reco_daughter0)) ) continue;
+        
         const auto reco_daughter0_mom = mc_daughter0.GetField<int>(0) < 0 ? reco_daughter0.GetMomentum(0.140f) : reco_daughter0.GetMomentum(0.938f);
         const auto reco_daughter1_mom = mc_daughter1.GetField<int>(0) < 0 ? reco_daughter1.GetMomentum(0.140f) : reco_daughter1.GetMomentum(0.938f);
         
@@ -134,3 +143,20 @@ std::vector<int> FindDaughters(const AnalysisTree::Track& mc_track, const Analys
 
   return daughters_ids;
 }
+
+AnalysisTree::Cuts* GetShineTrackCuts() {
+//   AnalysisTree::SimpleCut dcax("dcax", -2-0.083, 2-0.083);
+//   AnalysisTree::SimpleCut dcay("dcay", -1+0.006, 1+0.006);
+  AnalysisTree::SimpleCut hits({"nhits_vtpc1", "nhits_vtpc2", "nhits_mtpc"},
+                               [](std::vector<double>& hits) { return hits[0]+hits[1]>=15 && hits[0]+hits[1]+hits[2]>=30; } );
+
+  AnalysisTree::SimpleCut hits_pot({"nhits_vtpc1", "nhits_vtpc2", "nhits_mtpc", "nhits_pot_vtpc1", "nhits_pot_vtpc2", "nhits_pot_mtpc"},
+                                   [](std::vector<double>& hits) {
+                                     const double total = hits[0]+hits[1]+hits[2];
+                                     const double total_pot = hits[3]+hits[4]+hits[5];
+                                     return total/total_pot>0.55 && total/total_pot<1.1;  } );
+
+  AnalysisTree::Cuts* rec_track_cuts{ new AnalysisTree::Cuts("KfpfTracks")};
+  rec_track_cuts->AddCuts({hits, hits_pot});
+  return rec_track_cuts;
+};
