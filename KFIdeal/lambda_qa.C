@@ -22,11 +22,10 @@ void lambda_qa(const TString infile="/home/user/cbmdir/kfpf/kfpf_analysis_tree_c
   auto* matching = new AnalysisTree::Matching();
   
   AnalysisTree::Configuration* config = (AnalysisTree::Configuration*) file->Get("Configuration");
-  config->Print();
   
   tree->SetBranchAddress("SimTracks", &sim_tracks);
   tree->SetBranchAddress("KfpfTracks", &rec_tracks);
-  tree->SetBranchAddress(config->GetMatchName("KfpfTracks", "SimTracks").c_str(), &matching);        // SHINE
+  tree->SetBranchAddress(config->GetMatchName("KfpfTracks", "SimTracks").c_str(), &matching);
   
   AnalysisTree::Cuts* track_cuts = GetShineTrackCuts();
   track_cuts->Init(*config);
@@ -66,7 +65,7 @@ void lambda_qa(const TString infile="/home/user/cbmdir/kfpf/kfpf_analysis_tree_c
         const auto& reco_daughter0 = rec_tracks->GetChannel(rec_ids[0]);
         const auto& reco_daughter1 = rec_tracks->GetChannel(rec_ids[1]);
                 
-//         if ( !(track_cuts->Apply(reco_daughter0) && track_cuts->Apply(reco_daughter0)) ) continue;
+        if ( !(track_cuts->Apply(reco_daughter0) && track_cuts->Apply(reco_daughter1)) ) continue;
         
         const auto reco_daughter0_mom = mc_daughter0.GetField<int>(0) < 0 ? reco_daughter0.GetMomentum(0.140f) : reco_daughter0.GetMomentum(0.938f);
         const auto reco_daughter1_mom = mc_daughter1.GetField<int>(0) < 0 ? reco_daughter1.GetMomentum(0.140f) : reco_daughter1.GetMomentum(0.938f);
