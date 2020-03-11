@@ -253,27 +253,27 @@ void SimpleFinder::FindParticles()
       OutputContainer lambda;
             
       lambda.SetChi2PrimPos(CalculateChiToPrimaryVertex(trackPos, pidPos));
-      if(lambda.GetChi2PrimPos() <= cuts_.GetCutChi2PrimPos() || lambda.GetChi2PrimPos()!=lambda.GetChi2PrimPos()) continue;
+      if(((cuts_.GetIsApplyCutChi2PrimPos())&&(lambda.GetChi2PrimPos() <= cuts_.GetCutChi2PrimPos())) || lambda.GetChi2PrimPos()!=lambda.GetChi2PrimPos()) continue;
       lambda.SetChi2PrimNeg(CalculateChiToPrimaryVertex(trackNeg, pidNeg));
-      if(lambda.GetChi2PrimNeg() <= cuts_.GetCutChi2PrimNeg() || lambda.GetChi2PrimNeg()!=lambda.GetChi2PrimNeg()) continue;
+      if(((cuts_.GetIsApplyCutChi2PrimNeg())&&(lambda.GetChi2PrimNeg() <= cuts_.GetCutChi2PrimNeg())) || lambda.GetChi2PrimNeg()!=lambda.GetChi2PrimNeg()) continue;
                   
       std::array<float, 8> pars1{};
       std::array<float, 8> pars2{};
       CalculateParamsInPCA(trackNeg, pidNeg, trackPos, pidPos, pars1, pars2);
       
       lambda.SetDistance(CalculateDistanceBetweenParticles(pars1, pars2));
-      if(lambda.GetDistance() >= cuts_.GetCutDistance() || lambda.GetDistance()!=lambda.GetDistance()) continue;
+      if(((cuts_.GetIsApplyCutDistance())&&(lambda.GetDistance() >= cuts_.GetCutDistance())) || lambda.GetDistance()!=lambda.GetDistance()) continue;
       
       lambda.SetCosineDaughterPos(CalculateCosMomentumSum(pars2, pars1));
       lambda.SetCosineDaughterNeg(CalculateCosMomentumSum(pars1, pars2));
-      if(lambda.GetCosineDaughterPos() < cuts_.GetCutCosineDaughterPos() || lambda.GetCosineDaughterNeg() < cuts_.GetCutCosineDaughterNeg()
+      if(((cuts_.GetIsApplyCutCosineDaughterPos())&&(lambda.GetCosineDaughterPos() < cuts_.GetCutCosineDaughterPos())) || ((cuts_.GetIsApplyCutCosineDaughterNeg())&&(lambda.GetCosineDaughterNeg() < cuts_.GetCutCosineDaughterNeg()))
          || lambda.GetCosineDaughterPos()!=lambda.GetCosineDaughterPos() || lambda.GetCosineDaughterNeg()!=lambda.GetCosineDaughterNeg()) continue;
             
       KFParticleSIMD mother = ConstructMother(trackNeg, pidNeg, trackPos, pidPos);
       
       lambda.SetChi2Geo(CalculateChi2Geo(mother));
-      if(!finite(lambda.GetChi2Geo()) || lambda.GetChi2Geo() <= 0) continue;
-      if(lambda.GetChi2Geo() >= cuts_.GetCutChi2Geo()) continue;
+      if(!finite(lambda.GetChi2Geo()) || lambda.GetChi2Geo() < 0.) continue;
+      if((cuts_.GetIsApplyCutChi2Geo())&&(lambda.GetChi2Geo() >= cuts_.GetCutChi2Geo())) continue;
       
       float l, ldl;
       int isfrompv = -1;
@@ -284,14 +284,14 @@ void SimpleFinder::FindParticles()
       
       lambda.SetCosineTopo(CalculateCosTopo(mother));
       
-      if(lambda.GetL() >= cuts_.GetCutLUp() || lambda.GetL()!=lambda.GetL()) continue;
-      if(lambda.GetLdL() <= cuts_.GetCutLdL() || lambda.GetLdL()!=lambda.GetLdL()) continue;
-      if(lambda.GetIsFromPV() == cuts_.GetCutIsFromPV()) continue;
-//       if(lambda.GetCosineTopo() <= cuts_.GetCutCosineTopo()) continue;
-      if(lambda.GetL() <= cuts_.GetCutLDown()) continue;
+      if(((cuts_.GetIsApplyCutLUp())&&(lambda.GetL() >= cuts_.GetCutLUp())) || lambda.GetL()!=lambda.GetL()) continue;
+      if(((cuts_.GetIsApplyCutLdL())&&(lambda.GetLdL() <= cuts_.GetCutLdL())) || lambda.GetLdL()!=lambda.GetLdL()) continue;
+//       if((cuts_.GetIsApplyCutIsFromPV())&&(lambda.GetIsFromPV() == cuts_.GetCutIsFromPV())) continue;
+//       if((cuts_.GetIsApplyCutCosineTopo())&&(lambda.GetCosineTopo() <= cuts_.GetCutCosineTopo())) continue;
+      if((cuts_.GetIsApplyCutLDown())&&(lambda.GetL() <= cuts_.GetCutLDown())) continue;
       
       lambda.SetChi2Topo(CalculateChi2Topo(mother));
-//       if(lambda.GetChi2Topo() > cuts_.GetCutChi2Topo()) continue;
+      if((cuts_.GetIsApplyCutChi2Topo())&&(lambda.GetChi2Topo() > cuts_.GetCutChi2Topo()) || lambda.GetChi2Topo()!=lambda.GetChi2Topo()) continue;
       
       KFParticle particle;
       mother.GetKFParticle(particle, 0);
