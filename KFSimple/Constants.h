@@ -36,7 +36,6 @@
     kNumberOfTrackPars
   };
 
-
   constexpr int pdg_proton = 2212;
   constexpr int pdg_pionMinus = -211;
   constexpr int pdg_lambda = 3122;

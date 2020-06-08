@@ -161,7 +161,6 @@ KFParticleSIMD SimpleFinder::ConstructMother(const KFPTrack &track1, const int p
 float SimpleFinder::CalculateChi2Geo(const KFParticleSIMD& mother) const
 {
  float_v chi2 = mother.Chi2()/simd_cast<float_v>(mother.NDF());
- 
  return chi2[0];
 }
 
@@ -181,10 +180,11 @@ void SimpleFinder::CalculateMotherProperties(const KFParticleSIMD& mother, float
   
   l = l_Simd[0];
   ldl = l_Simd[0]/dl_Simd[0];
-  if(isFromPV_Simd[0] == true)
-    isFromPV = 1;
-  else
-    isFromPV = 0;  
+  isFromPV = isFromPV_Simd[0];
+//  if(isFromPV_Simd[0] == true)
+//    isFromPV = 1;
+//  else
+//    isFromPV = 0;
 }
 
 float SimpleFinder::CalculateCosTopo(const KFParticleSIMD& mother) const
@@ -202,7 +202,7 @@ float SimpleFinder::CalculateCosTopo(const KFParticleSIMD& mother) const
   const float delta_z = z_mother - prim_vx_.GetZ();
 
   const float sp = delta_x*px_mother + delta_y*py_mother + delta_z*pz_mother;
-  const float norm = sqrt(delta_x*delta_x + delta_y*delta_y + delta_z*delta_z) * sqrt(px_mother*px_mother + py_mother*py_mother + pz_mother*pz_mother);
+  const float norm = std::sqrt(delta_x*delta_x + delta_y*delta_y + delta_z*delta_z) * std::sqrt(px_mother*px_mother + py_mother*py_mother + pz_mother*pz_mother);
   
   return sp/norm;  
 }
