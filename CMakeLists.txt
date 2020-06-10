@@ -3,6 +3,8 @@ project(KFParticleSimple CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(PROJECT_VERSION 1.0)
 
+include(ExternalProject)
+
 macro(add_target_property _target _prop _value)
    get_target_property(_oldprop "${_target}" ${_prop})
    if(NOT _oldprop)
@@ -34,9 +36,26 @@ list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 
 set(FIXTARGET TRUE CACHE BOOL "Compile for fix target geometry.")
 
-find_package(KFParticle REQUIRED)
-find_package(Vc REQUIRED)
 find_package(ROOT REQUIRED RIO)
+find_package(KFParticle QUIET)
+find_package(Vc QUIET)
+
+set(EXTERNAL_DIR ${CMAKE_BINARY_DIR}/external)
+set(EXTERNAL_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/external)
+
+if(Vc_FOUND)
+    Message("Vc found")
+Else()
+    Message("Vc is not found. It will be installed as external package")
+    include(cmake_modules/Vc.cmake)
+EndIf()
+
+if(KFParticle_FOUND)
+    Message("KFParticle found")
+Else()
+    Message("KFParticle is not found. It will be installed as external package")
+    include(cmake_modules/KFParticle.cmake)
+EndIf()
 
 if (ROOT_FOUND)
     message(STATUS "Using ROOT: ${ROOT_VERSION} <${ROOT_CONFIG}>")

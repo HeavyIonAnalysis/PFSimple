@@ -5,7 +5,8 @@ set(SOURCES
 string(REPLACE ".cxx" ".h" HEADERS "${SOURCES}")
 list(APPEND HEADERS "Constants.h")
 
-include_directories(${CMAKE_SOURCE_DIR}/Interface ${CMAKE_SOURCE_DIR}/KFSimple)
+include_directories(${CMAKE_SOURCE_DIR}/Interface ${CMAKE_SOURCE_DIR}/KFSimple ${PROJECT_INCLUDE_DIRECTORIES} )
+link_directories(${PROJECT_LINK_DIRECTORIES})
 
 add_library(KFParticleSimple SHARED ${SOURCES} G__KFParticleSimple.cxx)
 
