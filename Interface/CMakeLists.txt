@@ -12,7 +12,6 @@ add_library(KFParticleInterface SHARED ${SOURCES} G__KFParticleInterface.cxx)
 
 if(ROOT_FOUND)
     ROOT_GENERATE_DICTIONARY(G__KFParticleInterface ${HEADERS} LINKDEF KFParticleInterfaceLinkDef.h OPTIONS "-DDO_TPCCATRACKER_EFF_PERFORMANCE" "-DNonhomogeneousField" "-DCBM" "-DUSE_TIMERS")
-    add_dependencies(KFParticleInterface ${PROJECT_DEPENDENCIES})
     target_link_libraries(KFParticleInterface ${ROOT_LIBRARIES} KFParticle ${Vc_LIBRARIES})
 endif(ROOT_FOUND)
 
