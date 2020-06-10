@@ -6,6 +6,7 @@ set(SOURCES
 
 string(REPLACE ".cxx" ".h" HEADERS "${SOURCES}")
 include_directories(${CMAKE_SOURCE_DIR}/Interface )
+link_directories(${PROJECT_LINK_DIRECTORIES})
 
 add_library(KFParticleInterface SHARED ${SOURCES} G__KFParticleInterface.cxx)
 
