@@ -42,23 +42,28 @@ class InputContainer{
   void SetPV(float x, float y, float z);
   void SetPV(KFVertex vertex);
   void SetPV(KFPVertex vertex);
-  void AddTrack(const std::vector<float>& par, const std::vector<float>& cov, const std::vector<float>& field, int charge, int pdg, int id, int passcuts=1);
+  void AddTrack(const std::vector<float>& par, const std::vector<float>& cov, const std::vector<float>& field, int charge, int pdg, int id);
 //   KFParticleTopoReconstructor* CreateTopoReconstructor();                                                                                                   //^ not good
-
 
   void SetCuts(const CutsContainer& cuts) { cuts_ = cuts; };
   
   const KFVertex& GetVertex() const {return vtx_;};
   const std::vector<KFParticle>& GetTracks() const {return tracks_;};
   const CutsContainer& GetCuts() const {return cuts_;};
-  
 
+  void Clear() {
+    if(!tracks_.empty()){
+      tracks_.clear();
+    }
+  }
+
+  void Reserve(size_t n);
  protected:
   
-  double InversedChi2Prob(double p, int ndf) const;
+  static double InversedChi2Prob(double p, int ndf) ;
     
   KFVertex vtx_;
-  std::vector<KFParticle> tracks_;
+  std::vector<KFParticle> tracks_{};
   CutsContainer cuts_;
 
 };

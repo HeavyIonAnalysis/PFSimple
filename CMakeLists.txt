@@ -19,7 +19,7 @@ message(STATUS "Using C++${CMAKE_CXX_STANDARD}")
 
 # by default build optimized code with debug symbols
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    set(CMAKE_BUILD_TYPE RELWITHDEBINFO)
+    set(CMAKE_BUILD_TYPE RELEASE)
 endif ()
 
 # in DEBUG mode make verbose Makefile
@@ -30,7 +30,8 @@ endif ()
 # set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb -g -DDEBUG -D__DEBUG -Wall")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb -DDEBUG -D__DEBUG -Wall")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELEASE} -ggdb")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -ftree-vectorize -ffast-math -DNODEBUG")
+# set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -ftree-vectorize -ffast-math -DNODEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ftree-vectorize -ffast-math -DNODEBUG")
 message(STATUS "Using CXX flags for ${CMAKE_BUILD_TYPE}: ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}}")
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 
@@ -38,32 +39,33 @@ set(FIXTARGET TRUE CACHE BOOL "Compile for fix target geometry.")
 
 find_package(ROOT REQUIRED RIO)
 find_package(KFParticle QUIET)
-find_package(Vc QUIET)
+find_package(AnalysisTree QUIET)
 
 set(EXTERNAL_DIR ${CMAKE_BINARY_DIR}/external)
 set(EXTERNAL_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/external)
 
-if(Vc_FOUND)
-    Message("Vc found")
-Else()
-    Message("Vc is not found. It will be installed as external package")
-    include(cmake_modules/Vc.cmake)
-EndIf()
-
 if(KFParticle_FOUND)
     Message("KFParticle found")
+    find_package(Vc REQUIRED)
+    include_directories(${KFParticle_INCLUDE_DIR} ${Vc_INCLUDE_DIR})
 Else()
     Message("KFParticle is not found. It will be installed as external package")
     include(cmake_modules/KFParticle.cmake)
+    include_directories(${CMAKE_SOURCE_DIR} ${ROOT_INCLUDE_DIRS} ${PROJECT_INCLUDE_DIRECTORIES})
 EndIf()
 
-if (ROOT_FOUND)
-    message(STATUS "Using ROOT: ${ROOT_VERSION} <${ROOT_CONFIG}>")
-    include_directories(${CMAKE_SOURCE_DIR} ${ROOT_INCLUDE_DIR} ${ROOT_INCLUDE_DIRS})
-    include(${ROOT_USE_FILE})
-endif (ROOT_FOUND)
+#message(STATUS "PROJECT_INCLUDE_DIRECTORIES ${PROJECT_INCLUDE_DIRECTORIES}")
 
-include_directories(${CMAKE_SOURCE_DIR} ${KFParticle_INCLUDE_DIR} ${Vc_INCLUDE_DIR})
+message(STATUS "Using ROOT: ${ROOT_VERSION} <${ROOT_CONFIG}>")
+include_directories(${CMAKE_SOURCE_DIR} ${ROOT_INCLUDE_DIRS})
+include(${ROOT_USE_FILE})
+
+if(AnalysisTree_FOUND)
+    Message("AnalysisTree found. Corresponding interface will be compiled")
+    add_subdirectory(AnalysisTreeInterface)
+Else()
+    Message("AnalysisTree is not found. Corresponding interface will not be compiled")
+EndIf()
 
 add_subdirectory(KFSimple)
 add_subdirectory(Interface)

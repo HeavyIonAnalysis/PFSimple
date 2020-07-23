@@ -10,6 +10,7 @@ ExternalProject_Add(KFParticle_Ext
         BINARY_DIR      "${EXTERNAL_DIR}/KFParticle_build"
         INSTALL_DIR     "${KFParticle_INSTALL_DIR}"
         CMAKE_ARGS
+        "-DEXTERNAL_INSTALL_DIR=${KFParticle_INSTALL_DIR}"
         "-DCMAKE_INSTALL_PREFIX=${KFParticle_INSTALL_DIR}"
         "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
         "-DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}"

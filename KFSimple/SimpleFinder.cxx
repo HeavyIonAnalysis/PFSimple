@@ -14,7 +14,7 @@ void SimpleFinder::Init(const InputContainer& input)
   KFPTrackVector track_tmp;
   const std::vector<KFParticle>& tracks = input.GetTracks();
   track_tmp.Resize(tracks.size());
-  
+
   for(int iTr=0; iTr<tracks.size(); iTr++)
   {
     for(Int_t iP=0; iP<6; iP++)
@@ -25,12 +25,12 @@ void SimpleFinder::Init(const InputContainer& input)
       track_tmp.SetFieldCoefficient(tracks[iTr].GetFieldCoeff()[iF], iF, iTr);
     track_tmp.SetPDG(tracks[iTr].GetPDG(), iTr);
     track_tmp.SetQ(tracks[iTr].GetQ(), iTr);
-    track_tmp.SetPVIndex(-1, iTr);   
+    track_tmp.SetPVIndex(-1, iTr);
     track_tmp.SetId(tracks[iTr].Id(), iTr);
   }
-  
+
   Init(track_tmp, input.GetVertex());
-  SetCuts(input.GetCuts());  
+  SetCuts(input.GetCuts());
 }
 
 void SimpleFinder::SortTracks()
@@ -117,7 +117,7 @@ float SimpleFinder::CalculateDistanceBetweenParticles(const std::array<float, 8>
   const float dx = pars1.at(0) - pars2.at(0);
   const float dy = pars1.at(1) - pars2.at(1);
   const float dz = pars1.at(2) - pars2.at(2);
-  const float dr = sqrt(dx*dx+dy*dy+dz*dz);
+  const float dr = std::sqrt(dx*dx+dy*dy+dz*dz);
   
   return dr;
 }
@@ -132,7 +132,7 @@ float SimpleFinder::CalculateCosMomentumSum(const std::array<float, 8> &pars1, c
   const std::array<float, 3> PSum = {P1.at(0)+P2.at(0), P1.at(1)+P2.at(1), P1.at(2)+P2.at(2)};
   
   return (P1.at(0)*PSum.at(0) + P1.at(1)*PSum.at(1) + P1.at(2)*PSum.at(2)) /
-         (sqrt(P1.at(0)*P1.at(0) + P1.at(1)*P1.at(1) + P1.at(2)*P1.at(2)) * sqrt(PSum.at(0)*PSum.at(0) + PSum.at(1)*PSum.at(1) + PSum.at(2)*PSum.at(2)));
+         (sqrt(P1.at(0)*P1.at(0) + P1.at(1)*P1.at(1) + P1.at(2)*P1.at(2)) * std::sqrt(PSum.at(0)*PSum.at(0) + PSum.at(1)*PSum.at(1) + PSum.at(2)*PSum.at(2)));
 }
 
 KFParticleSIMD SimpleFinder::ConstructMother(const KFPTrack &track1, const int pid1, const KFPTrack &track2, const int pid2) const
@@ -202,7 +202,7 @@ float SimpleFinder::CalculateCosTopo(const KFParticleSIMD& mother) const
   const float delta_z = z_mother - prim_vx_.GetZ();
 
   const float sp = delta_x*px_mother + delta_y*py_mother + delta_z*pz_mother;
-  const float norm = sqrt(delta_x*delta_x + delta_y*delta_y + delta_z*delta_z) * sqrt(px_mother*px_mother + py_mother*py_mother + pz_mother*pz_mother);
+  const float norm = std::sqrt(delta_x*delta_x + delta_y*delta_y + delta_z*delta_z) * std::sqrt(px_mother*px_mother + py_mother*py_mother + pz_mother*pz_mother);
   
   return sp/norm;  
 }
@@ -291,7 +291,7 @@ void SimpleFinder::FindParticles()
       if((cuts_.GetIsApplyCutLDown())&&(lambda.GetL() <= cuts_.GetCutLDown())) continue;
       
       lambda.SetChi2Topo(CalculateChi2Topo(mother));
-      if((cuts_.GetIsApplyCutChi2Topo())&&(lambda.GetChi2Topo() > cuts_.GetCutChi2Topo()) || lambda.GetChi2Topo()!=lambda.GetChi2Topo()) continue;
+      if((cuts_.GetIsApplyCutChi2Topo() && lambda.GetChi2Topo() > cuts_.GetCutChi2Topo()) || lambda.GetChi2Topo()!=lambda.GetChi2Topo()) continue;
       
       KFParticle particle;
       mother.GetKFParticle(particle, 0);

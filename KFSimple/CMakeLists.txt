@@ -10,11 +10,9 @@ link_directories(${PROJECT_LINK_DIRECTORIES})
 
 add_library(KFParticleSimple SHARED ${SOURCES} G__KFParticleSimple.cxx)
 
-if(ROOT_FOUND)
-    ROOT_GENERATE_DICTIONARY(G__KFParticleSimple ${HEADERS} LINKDEF KFSimpleLinkDef.h OPTIONS "-DDO_TPCCATRACKER_EFF_PERFORMANCE" "-DNonhomogeneousField" "-DCBM" "-DUSE_TIMERS")
-    add_dependencies(KFParticleSimple KFParticleInterface)
-    target_link_libraries(KFParticleSimple ${ROOT_LIBRARIES} KFParticle ${Vc_LIBRARIES} KFParticleInterface)
-endif(ROOT_FOUND)
+ROOT_GENERATE_DICTIONARY(G__KFParticleSimple ${HEADERS} LINKDEF KFSimpleLinkDef.h OPTIONS "-DDO_TPCCATRACKER_EFF_PERFORMANCE" "-DNonhomogeneousField" "-DCBM" "-DUSE_TIMERS")
+add_dependencies(KFParticleSimple KFParticleInterface)
+target_link_libraries(KFParticleSimple ${ROOT_LIBRARIES} KFParticle KFParticleInterface)
 
 add_target_property(KFParticleSimple COMPILE_FLAGS "-DDO_TPCCATRACKER_EFF_PERFORMANCE -DNonhomogeneousField -DCBM -DUSE_TIMERS")
 
