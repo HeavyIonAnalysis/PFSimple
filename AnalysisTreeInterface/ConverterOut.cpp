@@ -16,7 +16,7 @@ void ConverterOut::Exec()
     const KFParticle& particle = candidate.GetParticle();
     float mass, masserr;
     particle.GetMass(mass, masserr);
-    lambdarec->SetField(mass, mass_field_id_);
+//    lambdarec->SetField(mass, mass_field_id_);
     lambdarec->SetField(particle.DaughterIds()[0], daughter1_id_field_id_);
     lambdarec->SetField(particle.DaughterIds()[1], daughter2_id_field_id_);
 //     std::cout << "FC\t" << particle.DaughterIds()[0] << "\t" << particle.DaughterIds()[1] << "\n";
@@ -25,9 +25,9 @@ void ConverterOut::Exec()
     lambdarec->SetField(particle.Y(), y_field_id_);
     lambdarec->SetField(particle.Z(), z_field_id_);
     lambdarec->SetMomentum(particle.GetPx(), particle.GetPy(), particle.GetPz());
-    lambdarec->SetField( particle.GetRapidity(), rap_lab_field_id_);
+//    lambdarec->SetField( particle.GetRapidity(), rap_lab_field_id_);
     lambdarec->SetField( particle.GetRapidity() - data_header_->GetBeamRapidity(), rap_cm_field_id_);
-    lambdarec->SetField( particle.GetPDG(), pdg_field_id_w_ );
+//    lambdarec->SetField( particle.GetPDG(), pdg_field_id_w_ );
 
     lambdarec->SetPid( particle.GetPDG());
     lambdarec->SetMass(mass);
@@ -51,8 +51,9 @@ void ConverterOut::Exec()
 void ConverterOut::Init(std::map<std::string, void*>& branches)
 {
   assert(out_config_ && out_tree_);
+  out_branch_ = "LambdaCandidates";
 
-  AnalysisTree::BranchConfig LambdaRecoBranch("LambdaCandidates", AnalysisTree::DetType::kParticle);
+  AnalysisTree::BranchConfig LambdaRecoBranch(out_branch_, AnalysisTree::DetType::kParticle);
 
   LambdaRecoBranch.AddField<float>("chi2primpos");
   LambdaRecoBranch.AddField<float>("chi2primneg");
@@ -69,24 +70,24 @@ void ConverterOut::Init(std::map<std::string, void*>& branches)
   LambdaRecoBranch.AddField<float>("x");
   LambdaRecoBranch.AddField<float>("y");
   LambdaRecoBranch.AddField<float>("z");
-  LambdaRecoBranch.AddField<float>("invmass");
-  LambdaRecoBranch.AddField<float>("rapidity_lab");
+//  LambdaRecoBranch.AddField<float>("invmass");
+//  LambdaRecoBranch.AddField<float>("rapidity_lab");
   LambdaRecoBranch.AddField<float>("rapidity_cm");
-  LambdaRecoBranch.AddField<int>("pdg");
+//  LambdaRecoBranch.AddField<int>("pdg");
   LambdaRecoBranch.AddField<int>("daughter1id");
   LambdaRecoBranch.AddField<int>("daughter2id");
 
   out_config_->AddBranchConfig( LambdaRecoBranch );
   lambda_reco_ = new AnalysisTree::Particles(out_config_->GetLastId());
-  out_tree_ -> Branch("LambdaCandidates", "AnalysisTree::Particles", &lambda_reco_);
+  out_tree_ -> Branch(out_branch_.c_str(), "AnalysisTree::Particles", &lambda_reco_);
 
   x_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("x");
   y_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("y");
   z_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("z");
-  mass_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("invmass");
-  rap_lab_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("rapidity_lab");
+//  mass_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("invmass");
+//  rap_lab_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("rapidity_lab");
   rap_cm_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("rapidity_cm");
-  pdg_field_id_w_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("pdg");
+//  pdg_field_id_w_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("pdg");
   daughter1_id_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("daughter1id");
   daughter2_id_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("daughter2id");
 

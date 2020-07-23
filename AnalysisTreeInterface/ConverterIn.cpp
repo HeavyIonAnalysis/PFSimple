@@ -55,7 +55,7 @@ InputContainer ConverterIn::CreateInputContainer() const {
 
   InputContainer input_container;
   const int n_tracks = kf_tracks_->GetNumberOfChannels();
-  std::cout << " Ntracks = " << n_tracks << std::endl;
+//  std::cout << " Ntracks = " << n_tracks << std::endl;
   input_container.SetCuts(cuts_);
   input_container.SetPV(rec_event_header_->GetVertexX(), rec_event_header_->GetVertexY(), rec_event_header_->GetVertexZ());
 
@@ -67,7 +67,7 @@ InputContainer ConverterIn::CreateInputContainer() const {
     FillParticle(rec_track, input_container);
     n_good_tracks++;
   }
-  std::cout << "Good tracks = " << n_good_tracks << "\n" << std::endl;
+//  std::cout << "Good tracks = " << n_good_tracks << "\n" << std::endl;
   return input_container;
 }
 

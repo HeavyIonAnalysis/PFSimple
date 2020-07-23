@@ -27,9 +27,9 @@ class ConverterOut : public AnalysisTree::FillTask {
   int y_field_id_{-1};
   int z_field_id_{-1};
   int mass_field_id_{-1};
-  int rap_lab_field_id_{-1};
+//  int rap_lab_field_id_{-1};
   int rap_cm_field_id_{-1};
-  int pdg_field_id_w_{-1};
+//  int pdg_field_id_w_{-1};
   int daughter1_id_field_id_{-1};
   int daughter2_id_field_id_{-1};
 

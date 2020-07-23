@@ -1,5 +1,7 @@
 #include "PFTaskManager.h"
 
+#include "AnalysisTree/PlainTreeFiller.hpp"
+
 int main(int argc, char** argv)
 {
   if(argc < 2){
@@ -7,10 +9,12 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
+  const bool make_plain_tree{true};
+
   CutsContainer cuts;
   cuts.CancelCuts();
-  cuts.SetCutChi2PrimPos(3.);
-  cuts.SetCutChi2PrimNeg(3.);
+  cuts.SetCutChi2PrimPos(18.6);
+  cuts.SetCutChi2PrimNeg(18.6);
   cuts.SetCutDistance(1.);
   cuts.SetCutChi2Geo(3.);
   cuts.SetCutLdL(5.);
@@ -27,8 +31,26 @@ int main(int argc, char** argv)
 
   man.AddTasks(in_converter, new ConverterOut);
   man.Init();
-  man.Run(-1); // -1 = all events
+  man.Run(100); // -1 = all events
   man.Finish();
+
+  if(make_plain_tree){
+    std::ofstream filelist;
+    filelist.open ("filelist.txt");
+    filelist << "PFSimpleOutput.root\n";
+    filelist.close();
+
+    AnalysisTree::TaskManager pl_man({{"filelist.txt"}}, {{"sTree"}});
+    pl_man.SetOutFileName("PFSimplePlainTree.root");
+
+    auto* tree_task = new AnalysisTree::PlainTreeFiller();
+    tree_task->SetInputBranchNames({"LambdaCandidates"});
+    pl_man.AddTask(tree_task);
+
+    pl_man.Init();
+    pl_man.Run(-1); // -1 = all events
+    pl_man.Finish();
+  }
 
   return EXIT_SUCCESS;
 }
