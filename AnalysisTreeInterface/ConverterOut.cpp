@@ -44,6 +44,7 @@ void ConverterOut::Exec()
     lambdarec->SetField( candidate.GetCosineTopo(), cosinetopo_field_id_);
     lambdarec->SetField( candidate.GetChi2Topo(), chi2topo_field_id_);
   }
+  MatchWithMc();
   out_tree_->Fill();
 }
 
@@ -52,6 +53,11 @@ void ConverterOut::Init(std::map<std::string, void*>& branches)
 {
   assert(out_config_ && out_tree_);
   out_branch_ = "LambdaCandidates";
+
+  if(!in_branches_.empty()){
+    mc_particles_ = (AnalysisTree::Particles*) branches.find(in_branches_[0])->second;
+    rec_tracks_ = (AnalysisTree::TrackDetector*) branches.find(in_branches_[1])->second;
+  }
 
   AnalysisTree::BranchConfig LambdaRecoBranch(out_branch_, AnalysisTree::DetType::kParticle);
 
@@ -70,36 +76,50 @@ void ConverterOut::Init(std::map<std::string, void*>& branches)
   LambdaRecoBranch.AddField<float>("x");
   LambdaRecoBranch.AddField<float>("y");
   LambdaRecoBranch.AddField<float>("z");
-//  LambdaRecoBranch.AddField<float>("invmass");
-//  LambdaRecoBranch.AddField<float>("rapidity_lab");
   LambdaRecoBranch.AddField<float>("rapidity_cm");
-//  LambdaRecoBranch.AddField<int>("pdg");
   LambdaRecoBranch.AddField<int>("daughter1id");
   LambdaRecoBranch.AddField<int>("daughter2id");
+  if(mc_particles_) {
+    LambdaRecoBranch.AddField<bool>("is_signal");
+  }
 
   out_config_->AddBranchConfig( LambdaRecoBranch );
   lambda_reco_ = new AnalysisTree::Particles(out_config_->GetLastId());
   out_tree_ -> Branch(out_branch_.c_str(), "AnalysisTree::Particles", &lambda_reco_);
 
-  x_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("x");
-  y_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("y");
-  z_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("z");
-//  mass_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("invmass");
-//  rap_lab_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("rapidity_lab");
-  rap_cm_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("rapidity_cm");
-//  pdg_field_id_w_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("pdg");
-  daughter1_id_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("daughter1id");
-  daughter2_id_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("daughter2id");
+  InitIndexes();
+}
 
-  chi2primpos_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("chi2primpos");
-  chi2primneg_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("chi2primneg");
-  distance_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("distance");
-  cosinepos_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("cosinepos");
-  cosineneg_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("cosineneg");
-  chi2geo_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("chi2geo");
-  l_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("l");
-  ldl_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("ldl");
-  isfrompv_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("isfrompv");
-  cosinetopo_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("cosinetopo");
-  chi2topo_field_id_ = out_config_->GetBranchConfig( lambda_reco_->GetId() ).GetFieldId("chi2topo");
+void ConverterOut::MatchWithMc(){
+
+  std::cout << mc_particles_->GetNumberOfChannels() << " " << rec_tracks_->GetNumberOfChannels() << std::endl;
+
+}
+
+
+void ConverterOut::InitIndexes(){
+
+  const auto& out_branch = out_config_->GetBranchConfig( lambda_reco_->GetId());
+
+  x_field_id_ = out_branch.GetFieldId("x");
+  y_field_id_ = out_branch.GetFieldId("y");
+  z_field_id_ = out_branch.GetFieldId("z");
+//  mass_field_id_ = out_branch.GetFieldId("invmass");
+//  rap_lab_field_id_ = out_branch.GetFieldId("rapidity_lab");
+  rap_cm_field_id_ = out_branch.GetFieldId("rapidity_cm");
+//  pdg_field_id_w_ = out_branch.GetFieldId("pdg");
+  daughter1_id_field_id_ = out_branch.GetFieldId("daughter1id");
+  daughter2_id_field_id_ = out_branch.GetFieldId("daughter2id");
+
+  chi2primpos_field_id_ = out_branch.GetFieldId("chi2primpos");
+  chi2primneg_field_id_ = out_branch.GetFieldId("chi2primneg");
+  distance_field_id_ = out_branch.GetFieldId("distance");
+  cosinepos_field_id_ = out_branch.GetFieldId("cosinepos");
+  cosineneg_field_id_ = out_branch.GetFieldId("cosineneg");
+  chi2geo_field_id_ = out_branch.GetFieldId("chi2geo");
+  l_field_id_ = out_branch.GetFieldId("l");
+  ldl_field_id_ = out_branch.GetFieldId("ldl");
+  isfrompv_field_id_ = out_branch.GetFieldId("isfrompv");
+  cosinetopo_field_id_ = out_branch.GetFieldId("cosinetopo");
+  chi2topo_field_id_ = out_branch.GetFieldId("chi2topo");
 }

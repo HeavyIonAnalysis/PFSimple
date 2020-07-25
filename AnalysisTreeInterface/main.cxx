@@ -5,7 +5,7 @@
 int main(int argc, char** argv)
 {
   if(argc < 2){
-    std::cout << "Wrong number of arguments! Please use:\n  ./main filename\n";
+    std::cout << "Wrong number of arguments! Please use:\n  ./main filelist.txt\n";
     return EXIT_FAILURE;
   }
 
@@ -29,9 +29,12 @@ int main(int argc, char** argv)
   in_converter->SetTrackCuts(new AnalysisTree::Cuts("Cut to reproduce KFPF", {{{"KfpfTracks", "pass_cuts"}, 1}}));
   in_converter->SetIsShine(false); //TODO maybe change name
 
-  man.AddTasks(in_converter, new ConverterOut);
+  auto* out_converter = new ConverterOut;
+  out_converter->SetInputBranchNames({"SimTracks", "KfpfTracks"});
+
+  man.AddTasks(in_converter, out_converter);
   man.Init();
-  man.Run(100); // -1 = all events
+  man.Run(10); // -1 = all events
   man.Finish();
 
   if(make_plain_tree){

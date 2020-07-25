@@ -19,7 +19,14 @@ class ConverterOut : public AnalysisTree::FillTask {
 
  protected:
 
+  void InitIndexes();
+  void MatchWithMc();
+
   AnalysisTree::Particles* lambda_reco_{nullptr};
+
+  AnalysisTree::Particles* mc_particles_{nullptr};
+  AnalysisTree::TrackDetector* rec_tracks_{nullptr};
+
   std::vector<OutputContainer> canditates_;
 
   // field ids for selected lambda candidates kinematic parameters
