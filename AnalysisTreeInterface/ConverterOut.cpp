@@ -57,6 +57,8 @@ void ConverterOut::Init(std::map<std::string, void*>& branches)
   if(!in_branches_.empty()){
     mc_particles_ = (AnalysisTree::Particles*) branches.find(in_branches_[0])->second;
     rec_tracks_ = (AnalysisTree::TrackDetector*) branches.find(in_branches_[1])->second;
+    const auto& match = config_->GetMatchName(in_branches_[1], in_branches_[0]);
+    rec_to_mc_ = (AnalysisTree::Matching*) branches.find(match)->second;
   }
 
   AnalysisTree::BranchConfig LambdaRecoBranch(out_branch_, AnalysisTree::DetType::kParticle);
@@ -92,7 +94,8 @@ void ConverterOut::Init(std::map<std::string, void*>& branches)
 
 void ConverterOut::MatchWithMc(){
 
-  std::cout << mc_particles_->GetNumberOfChannels() << " " << rec_tracks_->GetNumberOfChannels() << std::endl;
+//  std::cout << mc_particles_->GetNumberOfChannels() << " " << rec_tracks_->GetNumberOfChannels() << std::endl;
+//  std::cout << rec_to_mc_->GetMatch(0) << std::endl;
 
 }
 
