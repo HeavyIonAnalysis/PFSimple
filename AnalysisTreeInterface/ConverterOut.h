@@ -22,24 +22,28 @@ class ConverterOut : public AnalysisTree::FillTask {
   void InitIndexes();
   void MatchWithMc();
 
+  // output branches
   AnalysisTree::Particles* lambda_reco_{nullptr};
+  AnalysisTree::Matching* lambda_reco2sim_{nullptr};
 
+  // input branches
   AnalysisTree::Particles* mc_particles_{nullptr};
   AnalysisTree::TrackDetector* rec_tracks_{nullptr};
   AnalysisTree::Matching* rec_to_mc_{nullptr};
   
+  
   std::vector<OutputContainer> canditates_;
 
+  // field ids of input simulated lambdas
+  int mother_id_field_id_{-1};
+  
   // field ids for selected lambda candidates kinematic parameters
   int x_field_id_{-1};
   int y_field_id_{-1};
   int z_field_id_{-1};
-  int mass_field_id_{-1};
-//  int rap_lab_field_id_{-1};
-  int rap_cm_field_id_{-1};
-//  int pdg_field_id_w_{-1};
   int daughter1_id_field_id_{-1};
   int daughter2_id_field_id_{-1};
+  int is_signal_field_id_{-1};
 
   // field ids for lambda candidate cutting parameters
   int chi2primpos_field_id_{-1};
@@ -53,6 +57,8 @@ class ConverterOut : public AnalysisTree::FillTask {
   int isfrompv_field_id_{-1};
   int cosinetopo_field_id_{-1};
   int chi2topo_field_id_{-1};
+  
+  const int pdg_lambda = 3122;
 };
 
 #endif //KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_
