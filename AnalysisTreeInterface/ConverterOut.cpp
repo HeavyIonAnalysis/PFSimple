@@ -7,6 +7,7 @@
 void ConverterOut::Exec()
 {
   lambda_reco_->ClearChannels();
+  lambda_reco2sim_->Clear();
 
   for(const auto& candidate : canditates_)
   {
@@ -16,18 +17,13 @@ void ConverterOut::Exec()
     const KFParticle& particle = candidate.GetParticle();
     float mass, masserr;
     particle.GetMass(mass, masserr);
-//    lambdarec->SetField(mass, mass_field_id_);
     lambdarec->SetField(particle.DaughterIds()[0], daughter1_id_field_id_);
     lambdarec->SetField(particle.DaughterIds()[1], daughter2_id_field_id_);
-//     std::cout << "FC\t" << particle.DaughterIds()[0] << "\t" << particle.DaughterIds()[1] << "\n";
 
     lambdarec->SetField(particle.X(), x_field_id_);
     lambdarec->SetField(particle.Y(), y_field_id_);
     lambdarec->SetField(particle.Z(), z_field_id_);
     lambdarec->SetMomentum(particle.GetPx(), particle.GetPy(), particle.GetPz());
-//    lambdarec->SetField( particle.GetRapidity(), rap_lab_field_id_);
-    lambdarec->SetField( particle.GetRapidity() - data_header_->GetBeamRapidity(), rap_cm_field_id_);
-//    lambdarec->SetField( particle.GetPDG(), pdg_field_id_w_ );
 
     lambdarec->SetPid( particle.GetPDG());
     lambdarec->SetMass(mass);
@@ -78,7 +74,6 @@ void ConverterOut::Init(std::map<std::string, void*>& branches)
   LambdaRecoBranch.AddField<float>("x");
   LambdaRecoBranch.AddField<float>("y");
   LambdaRecoBranch.AddField<float>("z");
-  LambdaRecoBranch.AddField<float>("rapidity_cm");
   LambdaRecoBranch.AddField<int>("daughter1id");
   LambdaRecoBranch.AddField<int>("daughter2id");
   if(mc_particles_) {
@@ -87,16 +82,45 @@ void ConverterOut::Init(std::map<std::string, void*>& branches)
 
   out_config_->AddBranchConfig( LambdaRecoBranch );
   lambda_reco_ = new AnalysisTree::Particles(out_config_->GetLastId());
+  
+  lambda_reco2sim_ = new AnalysisTree::Matching(out_config_->GetBranchConfig(out_branch_.c_str()).GetId(), config_->GetBranchConfig(in_branches_[0]).GetId());
+  out_config_->AddMatch(out_branch_.c_str(), in_branches_[0], "LambdaCand2LambdaSim");
+  
   out_tree_ -> Branch(out_branch_.c_str(), "AnalysisTree::Particles", &lambda_reco_);
+  out_tree_ -> Branch("LambdaCand2LambdaSim", "AnalysisTree::Matching", &lambda_reco2sim_);
 
   InitIndexes();
 }
 
 void ConverterOut::MatchWithMc(){
+  
+  for(int i_ch=0; i_ch<lambda_reco_->GetNumberOfChannels(); i_ch++){
+    AnalysisTree::Particle* lambdarec = &(lambda_reco_->GetChannel(i_ch));
+    
+    const int simtrackid1 = rec_to_mc_->GetMatch(lambdarec->GetField<int>(daughter1_id_field_id_));
+    const int simtrackid2 = rec_to_mc_->GetMatch(lambdarec->GetField<int>(daughter2_id_field_id_));
+    bool is_signal = false;
+    int mother_id = -999;
+    int mother_pdg = -1;
+    if(!(simtrackid1 < 0 || simtrackid2 < 0))
+    {
+      const AnalysisTree::Particle& simtrack1 = mc_particles_->GetChannel(simtrackid1);
+      const AnalysisTree::Particle& simtrack2 = mc_particles_->GetChannel(simtrackid2);
+      if(simtrack1.GetField<int>(mother_id_field_id_) == simtrack2.GetField<int>(mother_id_field_id_))
+      {
+        mother_id = simtrack1.GetField<int>(mother_id_field_id_);
+        if(mother_id < 0) continue;
+        const AnalysisTree::Particle& simtrackmother = mc_particles_->GetChannel(mother_id);
+        mother_pdg = simtrackmother.GetPid();
+        if(mother_pdg == pdg_lambda)
+          is_signal = true;
+      }
+    }
+    lambdarec->SetField( is_signal, is_signal_field_id_);
 
-//  std::cout << mc_particles_->GetNumberOfChannels() << " " << rec_tracks_->GetNumberOfChannels() << std::endl;
-//  std::cout << rec_to_mc_->GetMatch(0) << std::endl;
-
+    if(is_signal==true)
+      lambda_reco2sim_->AddMatch(lambdarec->GetId(), mother_id);
+  }
 }
 
 
@@ -107,12 +131,15 @@ void ConverterOut::InitIndexes(){
   x_field_id_ = out_branch.GetFieldId("x");
   y_field_id_ = out_branch.GetFieldId("y");
   z_field_id_ = out_branch.GetFieldId("z");
-//  mass_field_id_ = out_branch.GetFieldId("invmass");
-//  rap_lab_field_id_ = out_branch.GetFieldId("rapidity_lab");
-  rap_cm_field_id_ = out_branch.GetFieldId("rapidity_cm");
-//  pdg_field_id_w_ = out_branch.GetFieldId("pdg");
+
   daughter1_id_field_id_ = out_branch.GetFieldId("daughter1id");
   daughter2_id_field_id_ = out_branch.GetFieldId("daughter2id");
+  
+  if(mc_particles_){
+    auto branch_conf_sim = config_->GetBranchConfig(in_branches_[0]);
+    mother_id_field_id_ = branch_conf_sim.GetFieldId("mother_id");
+    is_signal_field_id_ = out_branch.GetFieldId("is_signal");
+  }
 
   chi2primpos_field_id_ = out_branch.GetFieldId("chi2primpos");
   chi2primneg_field_id_ = out_branch.GetFieldId("chi2primneg");

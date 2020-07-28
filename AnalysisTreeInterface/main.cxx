@@ -34,7 +34,7 @@ int main(int argc, char** argv)
 
   man.AddTasks(in_converter, out_converter);
   man.Init();
-  man.Run(10); // -1 = all events
+  man.Run(-1); // -1 = all events
   man.Finish();
 
   if(make_plain_tree){
