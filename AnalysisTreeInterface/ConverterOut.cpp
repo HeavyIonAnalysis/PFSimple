@@ -83,8 +83,8 @@ void ConverterOut::Init(std::map<std::string, void*>& branches)
   out_config_->AddBranchConfig( LambdaRecoBranch );
   lambda_reco_ = new AnalysisTree::Particles(out_config_->GetLastId());
   
-  lambda_reco2sim_ = new AnalysisTree::Matching(out_config_->GetBranchConfig(out_branch_.c_str()).GetId(), config_->GetBranchConfig(in_branches_[0]).GetId());
-  out_config_->AddMatch(out_branch_.c_str(), in_branches_[0], "LambdaCand2LambdaSim");
+  lambda_reco2sim_ = new AnalysisTree::Matching(out_config_->GetBranchConfig(out_branch_).GetId(), config_->GetBranchConfig(in_branches_[0]).GetId());
+  out_config_->AddMatch(lambda_reco2sim_);
   
   out_tree_ -> Branch(out_branch_.c_str(), "AnalysisTree::Particles", &lambda_reco_);
   out_tree_ -> Branch("LambdaCand2LambdaSim", "AnalysisTree::Matching", &lambda_reco2sim_);
@@ -93,15 +93,15 @@ void ConverterOut::Init(std::map<std::string, void*>& branches)
 }
 
 void ConverterOut::MatchWithMc(){
-  
+
+//  for(auto& lambdarec : *lambda_reco_->Channels()) {
   for(int i_ch=0; i_ch<lambda_reco_->GetNumberOfChannels(); i_ch++){
-    AnalysisTree::Particle* lambdarec = &(lambda_reco_->GetChannel(i_ch));
-    
-    const int simtrackid1 = rec_to_mc_->GetMatch(lambdarec->GetField<int>(daughter1_id_field_id_));
-    const int simtrackid2 = rec_to_mc_->GetMatch(lambdarec->GetField<int>(daughter2_id_field_id_));
+    AnalysisTree::Particle& lambdarec = lambda_reco_->GetChannel(i_ch);
+
+    const int simtrackid1 = rec_to_mc_->GetMatch(lambdarec.GetField<int>(daughter1_id_field_id_));
+    const int simtrackid2 = rec_to_mc_->GetMatch(lambdarec.GetField<int>(daughter2_id_field_id_));
     bool is_signal = false;
     int mother_id = -999;
-    int mother_pdg = -1;
     if(!(simtrackid1 < 0 || simtrackid2 < 0))
     {
       const AnalysisTree::Particle& simtrack1 = mc_particles_->GetChannel(simtrackid1);
@@ -111,15 +111,14 @@ void ConverterOut::MatchWithMc(){
         mother_id = simtrack1.GetField<int>(mother_id_field_id_);
         if(mother_id < 0) continue;
         const AnalysisTree::Particle& simtrackmother = mc_particles_->GetChannel(mother_id);
-        mother_pdg = simtrackmother.GetPid();
-        if(mother_pdg == pdg_lambda)
-          is_signal = true;
+
+        is_signal = simtrackmother.GetPid() == pdg_lambda;
       }
     }
-    lambdarec->SetField( is_signal, is_signal_field_id_);
+    lambdarec.SetField( is_signal, is_signal_field_id_);
 
-    if(is_signal==true)
-      lambda_reco2sim_->AddMatch(lambdarec->GetId(), mother_id);
+    if(is_signal)
+      lambda_reco2sim_->AddMatch(lambdarec.GetId(), mother_id);
   }
 }
 
