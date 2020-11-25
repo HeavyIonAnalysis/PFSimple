@@ -9,7 +9,7 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  const bool make_plain_tree{true};
+  const bool make_plain_tree{false};
 
   CutsContainer cuts;
   cuts.CancelCuts();
