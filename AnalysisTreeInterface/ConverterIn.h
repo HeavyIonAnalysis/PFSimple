@@ -25,8 +25,8 @@ class ConverterIn : public AnalysisTree::FillTask {
     in_branches_.resize(kNumberOfInputBranches);
     in_branches_[kRecEventHeader] = "RecEventHeader";
     in_branches_[kSimEventHeader] = "SimEventHeader";
-    in_branches_[kKfpfTracks] = "KfpfTracks";
-    in_branches_[kSimTracks] = "SimTracks";
+    in_branches_[kKfpfTracks] = "VtxTracks";
+    in_branches_[kSimTracks] = "SimParticles";
   }
   ~ConverterIn() override = default;
 

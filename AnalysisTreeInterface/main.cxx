@@ -26,11 +26,11 @@ int main(int argc, char** argv)
   man.SetOutTreeName("sTree");
 
   auto* in_converter = new ConverterIn(cuts);
-  in_converter->SetTrackCuts(new AnalysisTree::Cuts("Cut to reproduce KFPF", {{{"KfpfTracks", "pass_cuts"}, 1}}));
+  in_converter->SetTrackCuts(new AnalysisTree::Cuts("Cut to reproduce KFPF", {{{"VtxTracks", "pass_cuts"}, 1}}));
   in_converter->SetIsShine(false); //TODO maybe change name
 
   auto* out_converter = new ConverterOut;
-  out_converter->SetInputBranchNames({"SimTracks", "KfpfTracks"});
+  out_converter->SetInputBranchNames({"SimParticles", "VtxTracks"});
 
   man.AddTasks(in_converter, out_converter);
   man.Init();
