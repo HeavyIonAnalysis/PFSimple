@@ -8,6 +8,7 @@
 void ConverterOut::Exec()
 {
   lambda_reco_->ClearChannels();
+  lambda_sim_->ClearChannels();
   lambda_reco2sim_->Clear();
 
   for(const auto& candidate : canditates_)
@@ -84,11 +85,17 @@ void ConverterOut::Init(std::map<std::string, void*>& branches)
   out_config_->AddBranchConfig( LambdaRecoBranch );
   lambda_reco_ = new AnalysisTree::Particles(out_config_->GetLastId());
   
-  lambda_reco2sim_ = new AnalysisTree::Matching(out_config_->GetBranchConfig(out_branch_).GetId(), config_->GetBranchConfig(in_branches_[0]).GetId());
+  AnalysisTree::BranchConfig LambdaSimBranch("LambdaSimulated", AnalysisTree::DetType::kParticle);
+  out_config_->AddBranchConfig(LambdaSimBranch);
+  lambda_sim_ = new AnalysisTree::Particles(out_config_->GetLastId());
+  
+  lambda_reco2sim_ = new AnalysisTree::Matching(out_config_->GetBranchConfig(out_branch_).GetId(), out_config_->GetBranchConfig("LambdaSimulated").GetId());
+
   out_config_->AddMatch(lambda_reco2sim_);
   
   out_tree_ -> Branch(out_branch_.c_str(), "AnalysisTree::Particles", &lambda_reco_);
-  out_tree_ -> Branch("LambdaCand2LambdaSim", "AnalysisTree::Matching", &lambda_reco2sim_);
+  out_tree_ -> Branch("LambdaSimulated", "AnalysisTree::Particles", &lambda_sim_);
+  out_tree_ -> Branch("LambdaCandidates2LambdaSimulated", "AnalysisTree::Matching", &lambda_reco2sim_);
 
   InitIndexes();
 }
@@ -118,8 +125,17 @@ void ConverterOut::MatchWithMc(){
     }
     lambdarec.SetField( is_signal, is_signal_field_id_);
 
-    if(is_signal)
-      lambda_reco2sim_->AddMatch(lambdarec.GetId(), mother_id);
+    if(is_signal) {
+      const AnalysisTree::Particle& simtrackmother = mc_particles_->GetChannel(mother_id);
+      
+      auto* lambdasim = lambda_sim_->AddChannel();
+      lambdasim->Init(out_config_->GetBranchConfig(lambda_sim_->GetId()));
+      lambdasim->SetMomentum(simtrackmother.GetPx(), simtrackmother.GetPy(), simtrackmother.GetPz());
+      lambdasim->SetPid(simtrackmother.GetPid());
+      lambdasim->SetMass(simtrackmother.GetMass());      
+      lambda_reco2sim_->AddMatch(lambdarec.GetId(), lambdasim->GetId());
+    }
+
   }
 }
 

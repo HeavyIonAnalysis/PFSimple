@@ -24,6 +24,7 @@ class ConverterOut : public AnalysisTree::FillTask {
 
   // output branches
   AnalysisTree::Particles* lambda_reco_{nullptr};
+  AnalysisTree::Particles* lambda_sim_{nullptr};
   AnalysisTree::Matching* lambda_reco2sim_{nullptr};
 
   // input branches
