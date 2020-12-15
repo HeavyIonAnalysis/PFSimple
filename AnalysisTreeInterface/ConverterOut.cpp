@@ -26,9 +26,14 @@ void ConverterOut::Exec()
     lambdarec->SetField(particle.Y(), y_field_id_);
     lambdarec->SetField(particle.Z(), z_field_id_);
     lambdarec->SetMomentum(particle.GetPx(), particle.GetPy(), particle.GetPz());
+    
+    lambdarec->SetField(particle.GetErrPx(), px_err_field_id_);
+    lambdarec->SetField(particle.GetErrPy(), py_err_field_id_);
+    lambdarec->SetField(particle.GetErrPz(), pz_err_field_id_);
 
     lambdarec->SetPid( particle.GetPDG());
     lambdarec->SetMass(mass);
+    lambdarec->SetField(masserr, mass_err_field_id_);
 
     lambdarec->SetField( candidate.GetChi2PrimPos(), chi2primpos_field_id_);
     lambdarec->SetField( candidate.GetChi2PrimNeg(), chi2primneg_field_id_);
@@ -82,6 +87,10 @@ void ConverterOut::Init(std::map<std::string, void*>& branches)
   LambdaRecoBranch.AddField<float>("z");
   LambdaRecoBranch.AddField<int>("daughter1id");
   LambdaRecoBranch.AddField<int>("daughter2id");
+  LambdaRecoBranch.AddField<float>("pxerr");
+  LambdaRecoBranch.AddField<float>("pyerr");
+  LambdaRecoBranch.AddField<float>("pzerr");
+  LambdaRecoBranch.AddField<float>("masserr");
   if(mc_particles_) {
     LambdaRecoBranch.AddField<int>("is_signal");
   }
@@ -160,6 +169,11 @@ void ConverterOut::InitIndexes(){
 
   daughter1_id_field_id_ = out_branch.GetFieldId("daughter1id");
   daughter2_id_field_id_ = out_branch.GetFieldId("daughter2id");
+  
+  px_err_field_id_ = out_branch.GetFieldId("pxerr");
+  py_err_field_id_ = out_branch.GetFieldId("pyerr");
+  pz_err_field_id_ = out_branch.GetFieldId("pzerr");
+  mass_err_field_id_ = out_branch.GetFieldId("masserr");
   
   if(mc_particles_){
     auto branch_conf_sim = config_->GetBranchConfig(in_branches_[0]);

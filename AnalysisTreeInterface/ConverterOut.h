@@ -45,6 +45,10 @@ class ConverterOut : public AnalysisTree::FillTask {
   int daughter1_id_field_id_{-1};
   int daughter2_id_field_id_{-1};
   int is_signal_field_id_{-1};
+  int px_err_field_id_{-1};
+  int py_err_field_id_{-1};
+  int pz_err_field_id_{-1};
+  int mass_err_field_id_{-1};
 
   // field ids for lambda candidate cutting parameters
   int chi2primpos_field_id_{-1};
