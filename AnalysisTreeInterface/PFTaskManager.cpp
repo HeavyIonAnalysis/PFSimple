@@ -7,7 +7,8 @@ void PFTaskManager::Run(long long int nEvents) {
 
   for (long long iEvent = 0; iEvent < nEvents; ++iEvent) {
     in_tree_->GetEntry(iEvent);
-    std::cout << "Event # " << iEvent << " out of " << nEvents << "\r" <<  std::flush;
+    if(iEvent%100==0)
+      std::cout << "Event # " << iEvent << " out of " << nEvents << "\r" <<  std::flush;
 
     auto* converter_in = ((ConverterIn*)tasks_.at(kInConverter));
     SetCuts(converter_in->GetCuts());
