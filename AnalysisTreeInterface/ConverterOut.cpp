@@ -83,7 +83,7 @@ void ConverterOut::Init(std::map<std::string, void*>& branches)
   LambdaRecoBranch.AddField<int>("daughter1id");
   LambdaRecoBranch.AddField<int>("daughter2id");
   if(mc_particles_) {
-    LambdaRecoBranch.AddField<bool>("is_signal");
+    LambdaRecoBranch.AddField<int>("is_signal");
   }
 
   out_config_->AddBranchConfig( LambdaRecoBranch );
@@ -112,7 +112,7 @@ void ConverterOut::MatchWithMc(){
 
     const int simtrackid1 = rec_to_mc_->GetMatch(lambdarec.GetField<int>(daughter1_id_field_id_));
     const int simtrackid2 = rec_to_mc_->GetMatch(lambdarec.GetField<int>(daughter2_id_field_id_));
-    bool is_signal = false;
+    int is_signal = 0;
     int mother_id = -999;
     if(!(simtrackid1 < 0 || simtrackid2 < 0))
     {
@@ -124,7 +124,13 @@ void ConverterOut::MatchWithMc(){
         if(mother_id < 0) continue;
         const AnalysisTree::Particle& simtrackmother = mc_particles_->GetChannel(mother_id);
 
-        is_signal = simtrackmother.GetPid() == pdg_lambda;
+        if(simtrackmother.GetPid() == pdg_lambda)
+          is_signal = 1;
+        else
+          continue;
+        if(simtrackmother.GetField<int>(mother_id_field_id_)>=0)    // feed down, cascade lambda
+          is_signal = 2;
+
       }
     }
     lambdarec.SetField( is_signal, is_signal_field_id_);
