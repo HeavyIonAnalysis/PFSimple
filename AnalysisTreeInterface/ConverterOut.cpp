@@ -41,6 +41,8 @@ void ConverterOut::Exec()
     lambdarec->SetField( candidate.GetIsFromPV(), isfrompv_field_id_);
     lambdarec->SetField( candidate.GetCosineTopo(), cosinetopo_field_id_);
     lambdarec->SetField( candidate.GetChi2Topo(), chi2topo_field_id_);
+    lambdarec->SetField( candidate.GetNHitsPos(), nhits_pos_field_id_);
+    lambdarec->SetField( candidate.GetNHitsNeg(), nhits_neg_field_id_);
   }
   MatchWithMc();
   out_tree_->Fill();
@@ -72,6 +74,8 @@ void ConverterOut::Init(std::map<std::string, void*>& branches)
   LambdaRecoBranch.AddField<int>  ("isfrompv");
   LambdaRecoBranch.AddField<float>("cosinetopo");
   LambdaRecoBranch.AddField<float>("chi2topo");
+  LambdaRecoBranch.AddField<int>  ("nhitspos");
+  LambdaRecoBranch.AddField<int>  ("nhitsneg");
 
   LambdaRecoBranch.AddField<float>("x");
   LambdaRecoBranch.AddField<float>("y");
@@ -168,4 +172,6 @@ void ConverterOut::InitIndexes(){
   isfrompv_field_id_ = out_branch.GetFieldId("isfrompv");
   cosinetopo_field_id_ = out_branch.GetFieldId("cosinetopo");
   chi2topo_field_id_ = out_branch.GetFieldId("chi2topo");
+  nhits_pos_field_id_ = out_branch.GetFieldId("nhitspos");
+  nhits_neg_field_id_ = out_branch.GetFieldId("nhitsneg");
 }

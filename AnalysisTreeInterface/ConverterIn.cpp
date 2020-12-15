@@ -21,7 +21,7 @@ void ConverterIn::FillParticle(const AnalysisTree::Track& rec_particle, InputCon
   const int pdg = rec_particle.GetField<int>(pdg_field_id_); //TODO
 //  const int pdg = rec_particle.GetPid();
 
-  input_info.AddTrack(par, cov_matrix, mf, rec_particle.GetField<int>(q_field_id_), pdg, rec_particle.GetId());
+  input_info.AddTrack(par, cov_matrix, mf, rec_particle.GetField<int>(q_field_id_), pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
 }
 
 
@@ -41,6 +41,7 @@ void ConverterIn::Init(std::map<std::string, void*>& branches) {
   cov_field_id_ = branch_conf_kftr.GetFieldId("cov1"); // cov matrix 0
   passcuts_field_id_ = branch_conf_kftr.GetFieldId("pass_cuts");
   pdg_field_id_ = branch_conf_kftr.GetFieldId("mc_pdg");
+  nhits_field_id_ = branch_conf_kftr.GetFieldId("nhits");
 
   auto branch_conf_simtr = config_->GetBranchConfig(in_branches_[kSimTracks]);
   mother_id_field_id_ = branch_conf_simtr.GetFieldId("mother_id");

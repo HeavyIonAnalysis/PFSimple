@@ -36,6 +36,8 @@ class OutputContainer
   void SetCosineTopo(float value) {cosine_topo_ = value;};
   void SetSigmaMassRatio(float value) {sigma_mass_ratio_ = value;};
   void SetChi2Topo(float value) {chi2_topo_ = value;};
+  void SetNHitsPos(int value) {nhits_pos_ = value;};
+  void SetNHitsNeg(int value) {nhits_neg_ = value;};
   
   void SetParticle(const KFParticle& particle) {particle_ = particle;};
   
@@ -52,7 +54,9 @@ class OutputContainer
   float GetCosineTopo() const {return cosine_topo_;};
   float GetSigmaMassRatio() const {return sigma_mass_ratio_;};
   float GetChi2Topo() const {return chi2_topo_;};
-             
+  int   GetNHitsPos() const {return nhits_pos_;};
+  int   GetNHitsNeg() const {return nhits_neg_;};
+           
   const KFParticle& GetParticle() const {return particle_;};
 
  protected:
@@ -70,6 +74,8 @@ class OutputContainer
   float cosine_topo_{-1.};          ///< Cosine of the angle between reconstructed mother's momentum and mother's radius vector beginning in the PV
   float sigma_mass_ratio_ {-1.};    ///< Difference between invariant and real mother's mass divided by the error (not used now)
   float chi2_topo_ {-1.};           ///< \f$\chi^2\f$ of the mother's track to the PV
+  int   nhits_pos_{-1};
+  int   nhits_neg_{-1};
 
   KFParticle particle_;
   

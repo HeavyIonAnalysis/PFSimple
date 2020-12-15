@@ -58,6 +58,8 @@ class ConverterOut : public AnalysisTree::FillTask {
   int isfrompv_field_id_{-1};
   int cosinetopo_field_id_{-1};
   int chi2topo_field_id_{-1};
+  int nhits_pos_field_id_{-1};
+  int nhits_neg_field_id_{-1};
   
   const int pdg_lambda = 3122;
 };

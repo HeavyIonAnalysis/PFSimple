@@ -42,7 +42,7 @@ class InputContainer{
   void SetPV(float x, float y, float z);
   void SetPV(KFVertex vertex);
   void SetPV(KFPVertex vertex);
-  void AddTrack(const std::vector<float>& par, const std::vector<float>& cov, const std::vector<float>& field, int charge, int pdg, int id);
+  void AddTrack(const std::vector<float>& par, const std::vector<float>& cov, const std::vector<float>& field, int charge, int pdg, int id, int nhits);
 //   KFParticleTopoReconstructor* CreateTopoReconstructor();                                                                                                   //^ not good
 
   void SetCuts(const CutsContainer& cuts) { cuts_ = cuts; };

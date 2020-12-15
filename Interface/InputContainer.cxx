@@ -22,7 +22,8 @@ void InputContainer::AddTrack(const std::vector<float>& par,
                               const std::vector<float>& field,
                               int charge,
                               int pdg,
-                              int id)
+                              int id,
+                              int nhits)
 {
   if (pdg==0 || pdg==-2)
     return;

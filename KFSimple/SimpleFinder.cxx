@@ -251,6 +251,9 @@ void SimpleFinder::FindParticles()
       if(!(pidPos==pdg_proton && pidNeg==pdg_pionMinus)) continue;
       
       OutputContainer lambda;
+      
+      lambda.SetNHitsPos(tracks_.NPixelHits()[trIndex_[kSecPos][iSecPos]]);
+      lambda.SetNHitsNeg(tracks_.NPixelHits()[trIndex_[kSecNeg][iSecNeg]]);
             
       lambda.SetChi2PrimPos(CalculateChiToPrimaryVertex(trackPos, pidPos));
       if(((cuts_.GetIsApplyCutChi2PrimPos())&&(lambda.GetChi2PrimPos() <= cuts_.GetCutChi2PrimPos())) || lambda.GetChi2PrimPos()!=lambda.GetChi2PrimPos()) continue;
