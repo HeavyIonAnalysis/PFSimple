@@ -161,7 +161,6 @@ KFParticleSIMD SimpleFinder::ConstructMother(const KFPTrack &track1, const int p
 float SimpleFinder::CalculateChi2Geo(const KFParticleSIMD& mother) const
 {
  float_v chi2 = mother.Chi2()/simd_cast<float_v>(mother.NDF());
- 
  return chi2[0];
 }
 
@@ -181,10 +180,11 @@ void SimpleFinder::CalculateMotherProperties(const KFParticleSIMD& mother, float
   
   l = l_Simd[0];
   ldl = l_Simd[0]/dl_Simd[0];
-  if(isFromPV_Simd[0] == true)
-    isFromPV = 1;
-  else
-    isFromPV = 0;  
+  isFromPV = isFromPV_Simd[0];
+//  if(isFromPV_Simd[0] == true)
+//    isFromPV = 1;
+//  else
+//    isFromPV = 0;
 }
 
 float SimpleFinder::CalculateCosTopo(const KFParticleSIMD& mother) const
