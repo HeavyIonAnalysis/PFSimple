@@ -8,6 +8,7 @@
 #include "AnalysisTree/FillTask.hpp"
 
 #include "Interface/InputContainer.h"
+#include "Interface/DecayContainer.h"
 
 class ConverterIn : public AnalysisTree::FillTask {
 
@@ -20,7 +21,7 @@ class ConverterIn : public AnalysisTree::FillTask {
   };
 
  public:
-  explicit ConverterIn(const CutsContainer& cuts) : cuts_(cuts)
+  explicit ConverterIn(const DecayContainer& decay, const CutsContainer& cuts) : decay_(decay), cuts_(cuts)
   {  // Use default names for the input branches
     in_branches_.resize(kNumberOfInputBranches);
     in_branches_[kRecEventHeader] = "RecEventHeader";
@@ -36,11 +37,13 @@ class ConverterIn : public AnalysisTree::FillTask {
 
   void Finish() override {};
 
+  const DecayContainer& GetDecay() const { return decay_; }
   const CutsContainer& GetCuts() const { return cuts_; }
 //  const InputContainer& GetInputContainer() const { return input_container_; }
 
   void SetIsShine(bool is=true) { is_shine_ = is; }
 
+  void SetDecay(const DecayContainer& decay) { decay_ = decay; };
   void SetCuts(const CutsContainer& cuts) { cuts_ = cuts; };
   void SetTrackCuts(AnalysisTree::Cuts* const cuts) { track_cuts_ = cuts; };
 
@@ -59,6 +62,7 @@ class ConverterIn : public AnalysisTree::FillTask {
   AnalysisTree::EventHeader* sim_event_header_{nullptr};
   AnalysisTree::Cuts* track_cuts_{nullptr};
 
+  DecayContainer decay_;
   CutsContainer cuts_;
 //  InputContainer input_container_;
 
@@ -72,7 +76,7 @@ class ConverterIn : public AnalysisTree::FillTask {
   int sim_pdg_field_id_{AnalysisTree::UndefValueInt};
   int passcuts_field_id_{AnalysisTree::UndefValueInt};
   int nhits_field_id_{AnalysisTree::UndefValueInt};
-
+  
   bool is_shine_{false};
 
 };

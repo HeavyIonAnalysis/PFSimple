@@ -3,6 +3,7 @@
 #include "KFParticleSIMD.h"
 #include "KFParticle.h"
 
+
 void SimpleFinder::Init(const KFPTrackVector& tracks, const KFVertex& pv)
 {
   tracks_ = tracks;
@@ -30,13 +31,14 @@ void SimpleFinder::Init(const InputContainer& input)
   }
 
   Init(track_tmp, input.GetVertex());
+  SetDecay(input.GetDecay());
   SetCuts(input.GetCuts());
 }
 
 void SimpleFinder::SortTracks()
 {
   /**
-   * Sorts tracks' indices into 4 groups:\n
+   *   * Sorts tracks' indices into 4 groups:\n
    * 1) secondary positive\n
    * 2) secondary negative\n
    * 3) primary positive\n
@@ -72,6 +74,11 @@ void SimpleFinder::SortTracks()
   
   return tmpPart.GetDeviationFromVertex(prim_vx_);
 }*/
+
+
+
+
+/** Functions for the reconstruction of the mother from two daughters **/
 
 float SimpleFinder::CalculateChiToPrimaryVertex(const KFPTrack &track, int pid) const
 {
@@ -161,6 +168,7 @@ KFParticleSIMD SimpleFinder::ConstructMother(const KFPTrack &track1, const int p
 float SimpleFinder::CalculateChi2Geo(const KFParticleSIMD& mother) const
 {
  float_v chi2 = mother.Chi2()/simd_cast<float_v>(mother.NDF());
+ 
  return chi2[0];
 }
 
@@ -181,10 +189,6 @@ void SimpleFinder::CalculateMotherProperties(const KFParticleSIMD& mother, float
   l = l_Simd[0];
   ldl = l_Simd[0]/dl_Simd[0];
   isFromPV = isFromPV_Simd[0];
-//  if(isFromPV_Simd[0] == true)
-//    isFromPV = 1;
-//  else
-//    isFromPV = 0;
 }
 
 float SimpleFinder::CalculateCosTopo(const KFParticleSIMD& mother) const
@@ -218,98 +222,346 @@ float SimpleFinder::CalculateChi2Topo(const KFParticleSIMD& mother) const
   return chi2[0];
 }
 
-void SimpleFinder::SaveParticle(const OutputContainer& Lambda)
+void SimpleFinder::SaveParticle(const OutputContainer& Mother)
 {
   vec_mass_.push_back(mass_);
-  vec_lambda_.push_back(Lambda);
+  vec_mother_.push_back(Mother);
 }
- 
+
+
+
+/** Additional functions for adding a third daughter to the mother**/
+
+void SimpleFinder::CalculateCoordinatesSecondaryVertex(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2, std::array<float_v, 3> &sv) const
+{
+
+  //** Calculate coordinates of the secondary vertex of the first two daughters
+  sv.at(0) = (pars1.at(0) + pars2.at(0))/2;
+  sv.at(1) = (pars1.at(1) + pars2.at(1))/2;
+  sv.at(2) = (pars1.at(2) + pars2.at(2))/2;
+  
+}
+
+void SimpleFinder::CalculateParamsInSecondaryVertex(const KFParticleSIMD &particleSIMD1, const std::array<float_v, 3> sec_vx, std::array<float, 8> &pars1) const
+{  
+
+  //** Calculate parameters of a daughter in the PCA to the secondary vertex
+  
+  float_v dS;
+  float_v dsdr[6];
+  float_v params1[8];
+  float_v xyz[3];
+
+  for (int i=0; i<3; i++) xyz[i]=sec_vx.at(i);
+       
+  dS = particleSIMD1.GetDStoPoint(xyz,dsdr);
+
+  particleSIMD1.TransportFast(dS,params1);
+  
+  float_v parbuf;
+  for(int i=0; i<8; i++)
+  {
+    parbuf = params1[i];
+    pars1.at(i) = parbuf[0];  
+  }
+}
+
+float SimpleFinder::CalculateDistanceToSecondaryVertex(const std::array<float, 8> &pars1, std::array<float_v, 3> &sec_vx) const
+{
+
+  //** Calculate the distance of a daughter and the secondary vertex in the PCA
+
+  std::array<float, 3> sv;
+  float_v parbuf;
+
+  for(int i=0; i<3; i++)
+  {
+    parbuf = sec_vx.at(i);
+    sv.at(i) = parbuf[0];  
+  }
+
+  const float dx = pars1.at(0) - sv.at(0);
+  const float dy = pars1.at(1) - sv.at(1);
+  const float dz = pars1.at(2) - sv.at(2);
+  const float dr = sqrt(dx*dx+dy*dy+dz*dz);
+  
+  return dr;
+  
+}
+
+float SimpleFinder::CalculateCosMomentumSumThird(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2, const std::array<float, 8> &pars3) const
+{
+  /**
+   * Find cosine between the momenta of the third daughter and the mother 
+   */
+  const std::array<float, 3> P1 = {pars1.at(3), pars1.at(4), pars1.at(5)};
+  const std::array<float, 3> P2 = {pars2.at(3), pars2.at(4), pars2.at(5)};
+  const std::array<float, 3> P3 = {pars3.at(3), pars3.at(4), pars3.at(5)};
+  const std::array<float, 3> PSum = {P1.at(0)+P2.at(0)+P3.at(0), P1.at(1)+P2.at(1)+P3.at(1), P1.at(2)+P2.at(2)+P3.at(2)};
+  
+  return (P3.at(0)*PSum.at(0) + P3.at(1)*PSum.at(1) + P3.at(2)*PSum.at(2)) /
+         (sqrt(P3.at(0)*P3.at(0) + P3.at(1)*P3.at(1) + P3.at(2)*P3.at(2)) * sqrt(PSum.at(0)*PSum.at(0) + PSum.at(1)*PSum.at(1) + PSum.at(2)*PSum.at(2)));
+}
+
+KFParticleSIMD SimpleFinder::ConstructMotherThree(KFParticleSIMD &particleSIMD1, KFParticleSIMD &particleSIMD2, KFParticleSIMD &particleSIMD3,const std::array<float_v, 3> sec_vx) const
+{
+
+  //** Construct the mother from three daughters
+  
+  float_v ds[3] = {0.f,0.f,0.f};
+  float_v dsdr1[6], dsdr2[6], dsdr3[6];
+  float_v xyz[3];
+
+  for (int i=0; i<3; i++) xyz[i]=sec_vx.at(i);
+
+  ds[0] = particleSIMD1.GetDStoPoint(xyz,dsdr1);
+  ds[1] = particleSIMD2.GetDStoPoint(xyz,dsdr2);
+  ds[2] = particleSIMD3.GetDStoPoint(xyz,dsdr3);
+  
+  particleSIMD1.TransportToDS(ds[0], dsdr1);
+  particleSIMD2.TransportToDS(ds[1], dsdr2);
+  particleSIMD3.TransportToDS(ds[2], dsdr3);
+  
+  const KFParticleSIMD* vDaughtersPointer[3] = {&particleSIMD1, &particleSIMD2, &particleSIMD3};
+  
+  KFParticleSIMD mother;
+  //mother.SetConstructMethod(construct_method);
+  //if(construct_method == 2) mother.SetMassHypo(mass_H3L);
+  mother.Construct(vDaughtersPointer, 3, nullptr);
+  
+  return mother;
+}
+
 void SimpleFinder::FindParticles()
 {
   /*
-   * The main function which performs lambda-candidate selection algorithm.
+   * The main function which performs the mother-candidate selection algorithm for two or three daugthers.
    */
+
+  // Reconstruction of mother candidates with two daugthers / with the first two of three daughters
+  
   int nSecPoses = trIndex_[kSecPos].size();
   int nSecNegs  = trIndex_[kSecNeg].size();
   
-  int N = 0;
-    
+  int Ntwo = 0;
+  int Nthree = 0;
+  
   for(int iSecPos=0; iSecPos<nSecPoses; iSecPos++)
   {
     for(int iSecNeg=0; iSecNeg<nSecNegs; iSecNeg++)
     {
+
       KFPTrack trackPos;
       tracks_.GetTrack(trackPos, trIndex_[kSecPos][iSecPos]);
       int pidPos = tracks_.PDG()[trIndex_[kSecPos][iSecPos]];
-      if(pidPos == -1 || pidPos > 1000000000 || pidPos == 211)
-        pidPos = pdg_proton;
+      std::vector<int> pidCandidates;
+      pidCandidates.clear();
+      pidCandidates = decay_.GetPdgDaughterPosCandidates();
+      
+      if (pidCandidates.size() > 1 && pidCandidates.at(1) == 1 && pidPos > 1000000000)
+      	pidPos = pidCandidates.at(0);
+
+      if (pidCandidates.size() > 2)
+	for (int icandidate=2; icandidate < pidCandidates.size() ;icandidate++)
+	  if (pidPos == pidCandidates.at(icandidate))
+	    pidPos = pidCandidates.at(0);
+      
+      if(pidPos != pidCandidates.at(0)) continue;
       
       KFPTrack trackNeg;
       tracks_.GetTrack(trackNeg, trIndex_[kSecNeg][iSecNeg]);
-      const int pidNeg = tracks_.PDG()[trIndex_[kSecNeg][iSecNeg]];
-            
-      if(!(pidPos==pdg_proton && pidNeg==pdg_pionMinus)) continue;
+      int pidNeg = tracks_.PDG()[trIndex_[kSecNeg][iSecNeg]];
       
-      OutputContainer lambda;
+      pidCandidates.clear();
+      pidCandidates = decay_.GetPdgDaughterNegCandidates();
       
-      lambda.SetNHitsPos(tracks_.NPixelHits()[trIndex_[kSecPos][iSecPos]]);
-      lambda.SetNHitsNeg(tracks_.NPixelHits()[trIndex_[kSecNeg][iSecNeg]]);
+      if (pidCandidates.size() > 1 && pidCandidates.at(1) == 1 && pidNeg < -1000000000)
+      	pidNeg = pidCandidates.at(0);
+
+      if (pidCandidates.size() > 2)
+	for (int icandidate=2; icandidate < pidCandidates.size() ;icandidate++)
+	  if (pidNeg == pidCandidates.at(icandidate))
+	    pidNeg = pidCandidates.at(0);
+         
+      if(pidNeg != pidCandidates.at(0)) continue;
+      
+      OutputContainer mother;
+
+      mother.SetNHitsPos(tracks_.NPixelHits()[trIndex_[kSecPos][iSecPos]]);
+      mother.SetNHitsNeg(tracks_.NPixelHits()[trIndex_[kSecNeg][iSecNeg]]);
             
-      lambda.SetChi2PrimPos(CalculateChiToPrimaryVertex(trackPos, pidPos));
-      if(((cuts_.GetIsApplyCutChi2PrimPos())&&(lambda.GetChi2PrimPos() <= cuts_.GetCutChi2PrimPos())) || lambda.GetChi2PrimPos()!=lambda.GetChi2PrimPos()) continue;
-      lambda.SetChi2PrimNeg(CalculateChiToPrimaryVertex(trackNeg, pidNeg));
-      if(((cuts_.GetIsApplyCutChi2PrimNeg())&&(lambda.GetChi2PrimNeg() <= cuts_.GetCutChi2PrimNeg())) || lambda.GetChi2PrimNeg()!=lambda.GetChi2PrimNeg()) continue;
+      mother.SetChi2PrimPos(CalculateChiToPrimaryVertex(trackPos, pidPos));
+      if(((cuts_.GetIsApplyCutChi2PrimPos())&&(mother.GetChi2PrimPos() <= cuts_.GetCutChi2PrimPos())) || mother.GetChi2PrimPos()!=mother.GetChi2PrimPos()) continue;
+      
+      mother.SetChi2PrimNeg(CalculateChiToPrimaryVertex(trackNeg, pidNeg));
+      if(((cuts_.GetIsApplyCutChi2PrimNeg())&&(mother.GetChi2PrimNeg() <= cuts_.GetCutChi2PrimNeg())) || mother.GetChi2PrimNeg()!=mother.GetChi2PrimNeg()) continue;
                   
       std::array<float, 8> pars1{};
       std::array<float, 8> pars2{};
       CalculateParamsInPCA(trackNeg, pidNeg, trackPos, pidPos, pars1, pars2);
       
-      lambda.SetDistance(CalculateDistanceBetweenParticles(pars1, pars2));
-      if(((cuts_.GetIsApplyCutDistance())&&(lambda.GetDistance() >= cuts_.GetCutDistance())) || lambda.GetDistance()!=lambda.GetDistance()) continue;
+      mother.SetDistance(CalculateDistanceBetweenParticles(pars1, pars2));
+      if(((cuts_.GetIsApplyCutDistance())&&(mother.GetDistance() >= cuts_.GetCutDistance())) || mother.GetDistance()!=mother.GetDistance()) continue;
+
+      mother.SetCosineDaughterPos(CalculateCosMomentumSum(pars2, pars1));
+      mother.SetCosineDaughterNeg(CalculateCosMomentumSum(pars1, pars2));
       
-      lambda.SetCosineDaughterPos(CalculateCosMomentumSum(pars2, pars1));
-      lambda.SetCosineDaughterNeg(CalculateCosMomentumSum(pars1, pars2));
-      if(((cuts_.GetIsApplyCutCosineDaughterPos())&&(lambda.GetCosineDaughterPos() < cuts_.GetCutCosineDaughterPos())) || ((cuts_.GetIsApplyCutCosineDaughterNeg())&&(lambda.GetCosineDaughterNeg() < cuts_.GetCutCosineDaughterNeg()))
-         || lambda.GetCosineDaughterPos()!=lambda.GetCosineDaughterPos() || lambda.GetCosineDaughterNeg()!=lambda.GetCosineDaughterNeg()) continue;
+      if(((cuts_.GetIsApplyCutCosineDaughterPos())&&(mother.GetCosineDaughterPos() < cuts_.GetCutCosineDaughterPos())) || ((cuts_.GetIsApplyCutCosineDaughterNeg())&&(mother.GetCosineDaughterNeg() < cuts_.GetCutCosineDaughterNeg()))
+	 || mother.GetCosineDaughterPos()!=mother.GetCosineDaughterPos() || mother.GetCosineDaughterNeg()!=mother.GetCosineDaughterNeg()) continue;
             
-      KFParticleSIMD mother = ConstructMother(trackNeg, pidNeg, trackPos, pidPos);
+      KFParticleSIMD motherTwoKF = ConstructMother(trackNeg, pidNeg, trackPos, pidPos);
       
-      lambda.SetChi2Geo(CalculateChi2Geo(mother));
-      if(!finite(lambda.GetChi2Geo()) || lambda.GetChi2Geo() < 0.) continue;
-      if((cuts_.GetIsApplyCutChi2Geo())&&(lambda.GetChi2Geo() >= cuts_.GetCutChi2Geo())) continue;
+      mother.SetChi2Geo(CalculateChi2Geo(motherTwoKF));
+      
+      if(!finite(mother.GetChi2Geo()) || mother.GetChi2Geo() < 0.) continue;
+      if((cuts_.GetIsApplyCutChi2Geo())&&(mother.GetChi2Geo() >= cuts_.GetCutChi2Geo())) continue;
       
       float l, ldl;
       int isfrompv = -1;
-      CalculateMotherProperties(mother, l, ldl, isfrompv);
-      lambda.SetL(l);
-      lambda.SetLdL(ldl);
-      lambda.SetIsFromPV(isfrompv);
+      CalculateMotherProperties(motherTwoKF, l, ldl, isfrompv);
+      mother.SetL(l);
+      mother.SetLdL(ldl);
+      mother.SetIsFromPV(isfrompv);
+
+      if(((cuts_.GetIsApplyCutLUp())&&(mother.GetL() >= cuts_.GetCutLUp())) || mother.GetL()!=mother.GetL()) continue;
+      if(((cuts_.GetIsApplyCutLdL())&&(mother.GetLdL() <= cuts_.GetCutLdL())) || mother.GetLdL()!=mother.GetLdL()) continue;
+      if((cuts_.GetIsApplyCutLDown())&&(mother.GetL() <= cuts_.GetCutLDown())) continue;
+      //if((cuts_.GetIsApplyCutIsFromPV())&&(mother.GetIsFromPV() == cuts_.GetCutIsFromPV())) continue;
       
-      lambda.SetCosineTopo(CalculateCosTopo(mother));
+      mother.SetCosineTopo(CalculateCosTopo(motherTwoKF));
+
+      if(((cuts_.GetIsApplyCutCosineTopoDown())&&(mother.GetCosineTopo() <= cuts_.GetCutCosineTopoDown()))|| mother.GetCosineTopo()!=mother.GetCosineTopo()) continue;
+      if((cuts_.GetIsApplyCutCosineTopoUp())&&(mother.GetCosineTopo() >= cuts_.GetCutCosineTopoUp())) continue;
       
-      if(((cuts_.GetIsApplyCutLUp())&&(lambda.GetL() >= cuts_.GetCutLUp())) || lambda.GetL()!=lambda.GetL()) continue;
-      if(((cuts_.GetIsApplyCutLdL())&&(lambda.GetLdL() <= cuts_.GetCutLdL())) || lambda.GetLdL()!=lambda.GetLdL()) continue;
-//       if((cuts_.GetIsApplyCutIsFromPV())&&(lambda.GetIsFromPV() == cuts_.GetCutIsFromPV())) continue;
-//       if((cuts_.GetIsApplyCutCosineTopo())&&(lambda.GetCosineTopo() <= cuts_.GetCutCosineTopo())) continue;
-      if((cuts_.GetIsApplyCutLDown())&&(lambda.GetL() <= cuts_.GetCutLDown())) continue;
+      mother.SetChi2Topo(CalculateChi2Topo(motherTwoKF));
       
-      lambda.SetChi2Topo(CalculateChi2Topo(mother));
-      if((cuts_.GetIsApplyCutChi2Topo() && lambda.GetChi2Topo() > cuts_.GetCutChi2Topo()) || lambda.GetChi2Topo()!=lambda.GetChi2Topo()) continue;
-      
+      if (decay_.GetNdaughters() == 2)
+	if((cuts_.GetIsApplyCutChi2Topo() && mother.GetChi2Topo() > cuts_.GetCutChi2Topo()) || mother.GetChi2Topo()!=mother.GetChi2Topo()) continue;
+
+      if (decay_.GetNdaughters() == 3)
+	 if((cuts_.GetIsApplyCutChi2Topo() && mother.GetChi2Topo() < cuts_.GetCutChi2Topo()) || mother.GetChi2Topo()!=mother.GetChi2Topo()) continue;
+
       KFParticle particle;
-      mother.GetKFParticle(particle, 0);
-      
       float mass_err; // unused
-      particle.GetMass(mass_, mass_err);
       
-      particle.SetPDG(pdg_lambda);
+      if (decay_.GetNdaughters() == 2)
+	{
+	
+	  motherTwoKF.GetKFParticle(particle, 0);     
+	  particle.GetMass(mass_, mass_err);     
+	  particle.SetPDG(decay_.GetPdgMother());	
+	  mother.SetParticle(particle);
+	  SaveParticle(mother);
+	  Ntwo++;
+	}
       
-      N++;
-      lambda.SetParticle(particle);
-      SaveParticle(lambda);
+      if (decay_.GetNdaughters() == 3)
+	
+	//** Add the third daughter to the mother candidates
+
+	{
+	  
+	  KFParticle particlePos(trackPos,pidPos);
+	  KFParticle particleNeg (trackNeg, pidNeg);
+	  particlePos.SetId(trackPos.Id());
+	  particleNeg.SetId(trackNeg.Id());
+	  KFParticleSIMD particleSIMDPos(particlePos);
+	  KFParticleSIMD particleSIMDNeg(particleNeg);
+
+	  for(int iThird=0; iThird<nSecPoses; iThird++)
+	    {
+	      KFPTrack trackThird;
+	      int pidThird;
+	      if (decay_.GetPdgDaughterThird() > 0) {
+		tracks_.GetTrack(trackThird, trIndex_[kSecPos][iThird]);
+		pidThird = tracks_.PDG()[trIndex_[kSecPos][iThird]];
+		mother.SetNHitsThird(tracks_.NPixelHits()[trIndex_[kSecPos][iThird]]);
+	      }
+	      if (decay_.GetPdgDaughterThird() < 0) {
+		tracks_.GetTrack(trackThird, trIndex_[kSecNeg][iThird]);
+		pidThird = tracks_.PDG()[trIndex_[kSecNeg][iThird]];
+		mother.SetNHitsThird(tracks_.NPixelHits()[trIndex_[kSecNeg][iThird]]);
+	      }
+
+	      pidCandidates.clear();
+	      pidCandidates = decay_.GetPdgDaughterThirdCandidates();
+	      
+	      if (pidCandidates.size() > 1 && pidCandidates.at(1) == 1 && ((pidCandidates.at(0) > 0 && pidThird > 1000000000) || (pidCandidates.at(0) < 0 && pidThird < -1000000000)))
+		pidThird = pidCandidates.at(0);
+
+	      if (pidCandidates.size() > 2)
+		for (int icandidate=2; icandidate < pidCandidates.size() ;icandidate++)
+		  if (pidThird == pidCandidates.at(icandidate))
+		    pidThird = pidCandidates.at(0);
+
+		 
+	      if(pidThird != pidCandidates.at(0)) continue;
+			      
+	      mother.SetChi2PrimThird(CalculateChiToPrimaryVertex(trackThird, pidThird));
+
+	      if(((cuts_.GetIsApplyCutChi2PrimThird()) && (mother.GetChi2PrimThird() <= cuts_.GetCutChi2PrimThird())) || mother.GetChi2PrimThird()!=mother.GetChi2PrimThird()) continue;
+	    
+	      KFParticle particleThird(trackThird,pidThird);
+	      particleThird.SetId(trackThird.Id());
+	      KFParticleSIMD particleSIMDThird(particleThird);
+
+	      std::array<float_v, 3> sec_vx;
+	      CalculateCoordinatesSecondaryVertex(pars1,pars2,sec_vx);
+
+	      std::array<float, 8> pars3{};
+	      CalculateParamsInSecondaryVertex(particleSIMDThird, sec_vx, pars3);
+
+	      mother.SetDistanceThird(CalculateDistanceToSecondaryVertex(pars3, sec_vx));
+	       
+	      if(((cuts_.GetIsApplyCutDistanceThird()) && (mother.GetDistanceThird() >= cuts_.GetCutDistanceThird())) || mother.GetDistanceThird()!=mother.GetDistanceThird()) continue;
+
+	      mother.SetCosineDaughterThird(CalculateCosMomentumSumThird(pars1, pars2, pars3));
+
+	      if(((cuts_.GetIsApplyCutCosineDaughterThird()) &&(mother.GetCosineDaughterThird() < cuts_.GetCutCosineDaughterThird())) || mother.GetCosineDaughterThird()!=mother.GetCosineDaughterThird()) continue;
+
+	      KFParticleSIMD motherThreeKF = ConstructMotherThree(particleSIMDPos, particleSIMDNeg, particleSIMDThird,sec_vx);
+
+	      mother.SetChi2GeoThree(CalculateChi2Geo(motherThreeKF));
+	      
+	      if(!finite(mother.GetChi2GeoThree()) || mother.GetChi2GeoThree() < 0.) continue;
+	      if((cuts_.GetIsApplyCutChi2GeoThree())&&(mother.GetChi2GeoThree() >= cuts_.GetCutChi2GeoThree())) continue;
+      
+	      l=-1;
+	      ldl=-1;
+	      isfrompv = -1;
+	      CalculateMotherProperties(motherThreeKF, l, ldl, isfrompv);
+	      mother.SetL(l);
+	      mother.SetLdL(ldl);
+	      mother.SetIsFromPV(isfrompv);
+
+	      if(((cuts_.GetIsApplyCutLThreeDown()) && (mother.GetL() <= cuts_.GetCutLThreeDown())) || mother.GetL()!=mother.GetL()) continue;
+	      if((cuts_.GetIsApplyCutLThreeUp())&&(mother.GetL() >= cuts_.GetCutLThreeUp())) continue;
+	      if((cuts_.GetIsApplyCutIsFromPVThree())&&(mother.GetIsFromPV() == cuts_.GetCutIsFromPVThree())) continue;
+	      
+	      mother.SetCosineTopoThree(CalculateCosTopo(motherThreeKF));
+	      
+	      if(((cuts_.GetIsApplyCutCosineTopoThreeDown())&&(mother.GetCosineTopoThree() <= cuts_.GetCutCosineTopoThreeDown())) || mother.GetCosineTopoThree() != mother.GetCosineTopoThree()) continue;
+	      if((cuts_.GetIsApplyCutCosineTopoThreeUp())&&(mother.GetCosineTopoThree() >= cuts_.GetCutCosineTopoThreeUp())) continue;
+ 
+	      mother.SetChi2TopoThree(CalculateChi2Topo(motherThreeKF));
+	      
+	      if((cuts_.GetIsApplyCutChi2TopoThree() && mother.GetChi2TopoThree() > cuts_.GetCutChi2TopoThree()) || mother.GetChi2TopoThree()!=mother.GetChi2TopoThree()) continue;
+	      
+	      motherThreeKF.GetKFParticle(particle, 0);
+      
+	      particle.GetMass(mass_, mass_err);
+	      
+	      particle.SetPDG(decay_.GetPdgMother());
+	      
+	      Nthree++;
+	      mother.SetParticle(particle);
+	      SaveParticle(mother);
+	}  
+      
+      }
     }
   }
   
-//   std::cout << N << std::endl;
+  //std::cout <<"N="<< N << ", H="<< H << std::endl;
   
 }

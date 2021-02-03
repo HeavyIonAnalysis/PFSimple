@@ -31,6 +31,7 @@
 #include "KFParticle.h"
 #include "KFVertex.h"
 // #include "KFParticleTopoReconstructor.h"
+#include "DecayContainer.h"
 #include "CutsContainer.h"
 
 class InputContainer{
@@ -46,11 +47,13 @@ class InputContainer{
 //   KFParticleTopoReconstructor* CreateTopoReconstructor();                                                                                                   //^ not good
 
   void SetCuts(const CutsContainer& cuts) { cuts_ = cuts; };
+  void SetDecay(const DecayContainer& decay) { decay_ = decay; };
   
   const KFVertex& GetVertex() const {return vtx_;};
   const std::vector<KFParticle>& GetTracks() const {return tracks_;};
   const CutsContainer& GetCuts() const {return cuts_;};
-
+  const DecayContainer& GetDecay() const {return decay_;};
+ 
   void Clear() {
     if(!tracks_.empty()){
       tracks_.clear();
@@ -65,7 +68,7 @@ class InputContainer{
   KFVertex vtx_;
   std::vector<KFParticle> tracks_{};
   CutsContainer cuts_;
-
+  DecayContainer decay_;
 };
 
 #endif//InputContainer_H

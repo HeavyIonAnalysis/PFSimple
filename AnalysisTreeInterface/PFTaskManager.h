@@ -25,12 +25,14 @@ class PFTaskManager : public AnalysisTree::TaskManager {
     tasks_.emplace_back(out_task);
   }
 
+  void SetDecay(const DecayContainer& decay) { decay_ = decay; };
   void SetCuts(const CutsContainer& cuts) { cuts_ = cuts; };
 
 
   void AddTask(AnalysisTree::FillTask *task) = delete; //TODO make it virtual in AT
 
  protected:
+  DecayContainer decay_;
   CutsContainer cuts_;
 
 
