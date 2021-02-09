@@ -57,6 +57,7 @@ InputContainer ConverterIn::CreateInputContainer() const {
   InputContainer input_container;
   const int n_tracks = kf_tracks_->GetNumberOfChannels();
 //  std::cout << " Ntracks = " << n_tracks << std::endl;
+  input_container.SetDecay(decay_);
   input_container.SetCuts(cuts_);
   input_container.SetPV(rec_event_header_->GetVertexX(), rec_event_header_->GetVertexY(), rec_event_header_->GetVertexZ());
 
@@ -157,7 +158,7 @@ bool ConverterIn::IsGoodTrack(const AnalysisTree::Track& rec_track) const
       const int mother_pdg = mother_track.GetField<int>(sim_pdg_field_id_);
       std::cout << "mother pdg " << mother_pdg << std::endl;
 
-      if(mother_pdg == 3122)
+      if(mother_pdg == decay_.GetPdgMother())
         is_good = true;
     }
   }

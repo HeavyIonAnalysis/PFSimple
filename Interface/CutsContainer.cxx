@@ -12,7 +12,20 @@ void CutsContainer::CancelCuts()
   CancelCutLDown();
   CancelCutLdL();
   CancelCutIsFromPV();
-  CancelCutCosineTopo();
+  CancelCutCosineTopoDown();
+  CancelCutCosineTopoUp();
   CancelCutSigmaMassRatio();
-  CancelCutChi2Topo();  
+  CancelCutChi2Topo();
+
+  CancelCutChi2PrimThird();
+  CancelCutDistanceThird();
+  CancelCutCosineDaughterThird();
+  CancelCutChi2GeoThree();
+  CancelCutLThreeUp();
+  CancelCutLThreeDown();
+  CancelCutLdLThree();
+  CancelCutIsFromPVThree();
+  CancelCutCosineTopoThreeDown();
+  CancelCutCosineTopoThreeUp();
+  CancelCutChi2TopoThree();
 }

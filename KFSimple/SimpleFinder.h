@@ -1,14 +1,13 @@
 /**
  * @class SimpleFinder
  * @brief V0 particle (Lambda) reconstruction algorithm
- * @authors Oleksii Lubynets, Viktor Klochkov, Ilya Selyuzhenkov
+ * @authors Oleksii Lubynets, Viktor Klochkov, Ilya Selyuzhenkov, Susanne Glaessel
  * 
- * Simplified version of KFParticleFinder class. At the current moment it is developed to reconstruct the only decay channel: \f$\Lambda\f$ \f$\rightarrow\f$ \f$\pi^{-}\f$ \f$p^{+}\f$ \n
+ * Simplified version of KFParticleFinder class. At the current moment it is developed to reconstruct 2- and 3-body-decays. \n
  * SimpleFinder is based on KFParticle package, it uses mathematical apparatus implemented in KFParticle.
  * The basic idea and reconstruction algorithm also reproduce the KFParticle, but SimpleFinder is free of overloading of too complicated procedure as in KFParticleFinder. \n
  * Also the advantage of SimpleFinder is that reconstruction procedure is clear and under full control of user, almost in the "hand mode".
  * It gives a possibility of detailed analysis of V0 reconstruction, in particular of decay parameters distributions in order to optomize selection criterias (cuts).\n
- * In future SimpleFinder can be developed for another decay channels.
  */
 
 #ifndef SimpleFinder_H
@@ -20,6 +19,7 @@
 #include "KFParticleSIMD.h"
 #include "Constants.h"
 #include "InputContainer.h"
+#include "DecayContainer.h"
 #include "CutsContainer.h"
 #include "OutputContainer.h"
 
@@ -41,10 +41,11 @@ class SimpleFinder
   
   const std::vector<float>& GetMass() const {return vec_mass_;};            // TODO remove after debug procedure
   
-  const std::vector<OutputContainer>& GetLambdas() const {return vec_lambda_;};
+  const std::vector<OutputContainer>& GetMotherCandidates() const {return vec_mother_;};
   
   void  SetCuts(const CutsContainer& cuts) { cuts_ = cuts; }
-
+  void  SetDecay(const DecayContainer& decay) { decay_ = decay; }
+  
  protected:
    
   float CalculateChiToPrimaryVertex(const KFPTrack &track, int pid) const;  ///< Calculates \f$\chi^2\f$ of the track to the primary vertex (PV)
@@ -61,6 +62,12 @@ class SimpleFinder
   float CalculateCosTopo(const KFParticleSIMD& mother) const;  ///< Calculates cosine of the angle between reconstructed mother's momentum and mother's radius vector beginning in the PV
   float CalculateChi2Topo(const KFParticleSIMD& mother) const; ///< Calculates \f$\chi^2\f$ of the mother's track to the PV
   void  SaveParticle(const OutputContainer& Lambda);                 ///< Saves selected particle with set of geometrical decay parameters
+
+  void CalculateCoordinatesSecondaryVertex(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2, std::array<float_v, 3> &sv) const; //Calculates the coordinates of the secondary vertex for the first two daugthers
+  void CalculateParamsInSecondaryVertex(const KFParticleSIMD &particleSIMD1, const std::array<float_v, 3> xyz, std::array<float, 8> &pars1) const; //Recalculates 3rd daugthers track parameters in secondary vertex
+  float CalculateDistanceToSecondaryVertex(const std::array<float, 8> &pars1, std::array<float_v, 3> &sec_vx) const; //Calculates Distance of third daughter from secondary vertex
+  float CalculateCosMomentumSumThird(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2, const std::array<float, 8> &pars3) const;
+  KFParticleSIMD ConstructMotherThree(KFParticleSIMD &particleSIMD1, KFParticleSIMD &particleSIMD2, KFParticleSIMD &particleSIMD3, const std::array<float_v, 3> sec_vx) const; ///< Creates mother particle as KFParticleSIMD object for three daughters
   
   KFPTrackVector tracks_;
   KFVertex prim_vx_;
@@ -68,11 +75,12 @@ class SimpleFinder
   std::array<std::vector<int>, kNumberOfTrackTypes> trIndex_;
              
   CutsContainer cuts_;
+  DecayContainer decay_;
   
   float mass_{0.};                             // TODO remove after debug procedure
   std::vector<float> vec_mass_{};            // TODO remove after debug procedure
 
-  std::vector<OutputContainer> vec_lambda_{};
+  std::vector<OutputContainer> vec_mother_{};
 };
 
 #endif//SimpleFinder_H

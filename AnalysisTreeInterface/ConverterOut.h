@@ -2,13 +2,16 @@
 #define KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_
 
 #include <Interface/OutputContainer.h>
+#include <Interface/DecayContainer.h>
 
 #include "AnalysisTree/FillTask.hpp"
 #include "AnalysisTree/Detector.hpp"
-
+#include "AnalysisTree/EventHeader.hpp"
+  
 class ConverterOut : public AnalysisTree::FillTask {
  public:
-  ConverterOut() = default;
+  explicit ConverterOut(const DecayContainer& decay) : decay_(decay) {}
+    //ConverterOut() = default;
   ~ConverterOut() override = default;
 
   void Init(std::map<std::string, void*>& branches) override;
@@ -16,13 +19,15 @@ class ConverterOut : public AnalysisTree::FillTask {
   void Finish() override {}
 
   void SetCandidates(const std::vector<OutputContainer>& canditates) { canditates_ = canditates; }
-
+  void SetDecay(const DecayContainer& decay) { decay_ = decay; };
+  
  protected:
 
   void InitIndexes();
   void MatchWithMc();
 
   // output branches
+  AnalysisTree::EventHeader* events_{nullptr};
   AnalysisTree::Particles* lambda_reco_{nullptr};
   AnalysisTree::Particles* lambda_sim_{nullptr};
   AnalysisTree::Matching* lambda_reco2sim_{nullptr};
@@ -31,26 +36,31 @@ class ConverterOut : public AnalysisTree::FillTask {
   AnalysisTree::Particles* mc_particles_{nullptr};
   AnalysisTree::TrackDetector* rec_tracks_{nullptr};
   AnalysisTree::Matching* rec_to_mc_{nullptr};
-  
+  AnalysisTree::EventHeader* sim_events_{nullptr};
   
   std::vector<OutputContainer> canditates_;
+  DecayContainer decay_;
 
-  // field ids of input simulated lambdas
+  // field ids of simulated events
+  int b_field_id_{-1};
+  
+  // field ids of input simulated mother
   int mother_id_field_id_{-1};
   
-  // field ids for selected lambda candidates kinematic parameters
+  // field ids for selected mother candidates kinematic parameters
   int x_field_id_{-1};
   int y_field_id_{-1};
   int z_field_id_{-1};
   int daughter1_id_field_id_{-1};
   int daughter2_id_field_id_{-1};
+  int daughter3_id_field_id_{-1};
   int is_signal_field_id_{-1};
   int px_err_field_id_{-1};
   int py_err_field_id_{-1};
   int pz_err_field_id_{-1};
   int mass_err_field_id_{-1};
 
-  // field ids for lambda candidate cutting parameters
+  // field ids for mother candidate cutting parameters for two daughters
   int chi2primpos_field_id_{-1};
   int chi2primneg_field_id_{-1};
   int distance_field_id_{-1};
@@ -64,8 +74,16 @@ class ConverterOut : public AnalysisTree::FillTask {
   int chi2topo_field_id_{-1};
   int nhits_pos_field_id_{-1};
   int nhits_neg_field_id_{-1};
+
+   // field ids for mother candidate cutting parameters for third daughter
+  int chi2primthird_field_id_{-1};
+  int distancethird_field_id_{-1};
+  int cosinethird_field_id_{-1};
+  int chi2geothree_field_id_{-1}; 
+  int cosinetopothree_field_id_{-1};   
+  int chi2topothree_field_id_{-1};
+  int nhits_third_field_id_{-1};
   
-  const int pdg_lambda = 3122;
 };
 
 #endif //KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_
