@@ -58,27 +58,27 @@ class DecayContainer :public TObject
  public:
   DecayContainer()
   {
-    DecayList decaylist_[] = 
-      {
-	//         name     pdg mother   ndaughters   pdg daughter pos,  pdg daughter neg,   pdg daughter third  mass mother   mass sigma mother   use all pos
-	DecayList("Lambda", 3122,        2,           2212,              -211,               0,                  1.115683,      2.7e-3,            true),    // Lambda -> p + pi-
-	DecayList("H3L",    3004,        3,           2212,              -211,               1000010020,         2.993876,      3.057e-3,          false)   // H3L -> p + pi- + d
-      };
+    DecayList decaylist[] = 
+    {
+      //         name     pdg mother   ndaughters   pdg daughter pos,  pdg daughter neg,   pdg daughter third  mass mother   mass sigma mother   use all pos
+      DecayList("Lambda", 3122,        2,           2212,              -211,               0,                  1.115683,      2.7e-3,            true),    // Lambda -> p + pi-
+      DecayList("H3L",    3004,        3,           2212,              -211,               1000010020,         2.993876,      3.057e-3,          false)   // H3L -> p + pi- + d
+    };
 
     for (int idecay = 0; idecay < ndecays_; idecay++)  
-      {
-	list_pdg_mother_[idecay] = decaylist_[idecay].PdgMother() ;
-	list_name_mother_[idecay] = decaylist_[idecay].NameMother();
-	list_ndaughters_[idecay] = decaylist_[idecay].NDaughters();
-	list_pdg_daughter_[0][idecay] = decaylist_[idecay].PdgDaughterPos() ;
-	list_pdg_daughter_[1][idecay] = decaylist_[idecay].PdgDaughterNeg() ;
-	if (list_ndaughters_[idecay] == 3) 
-	  list_pdg_daughter_[2][idecay] = decaylist_[idecay].PdgDaughterThird() ;
-	list_mass_[idecay] = decaylist_[idecay].Mass();
-	list_mass_sigma_[idecay] = decaylist_[idecay].MassSigma();
-	list_use_alt_pos_[idecay] = decaylist_[idecay].UseAltPos();
-	list_pdg2index_[decaylist_[idecay].PdgMother()] = idecay;
-      }
+    {
+      list_pdg_mother_[idecay] = decaylist[idecay].PdgMother() ;
+      list_name_mother_[idecay] = decaylist[idecay].NameMother();
+      list_ndaughters_[idecay] = decaylist[idecay].NDaughters();
+      list_pdg_daughter_[0][idecay] = decaylist[idecay].PdgDaughterPos() ;
+      list_pdg_daughter_[1][idecay] = decaylist[idecay].PdgDaughterNeg() ;
+      if (list_ndaughters_[idecay] == 3) 
+        list_pdg_daughter_[2][idecay] = decaylist[idecay].PdgDaughterThird() ;
+      list_mass_[idecay] = decaylist[idecay].Mass();
+      list_mass_sigma_[idecay] = decaylist[idecay].MassSigma();
+      list_use_alt_pos_[idecay] = decaylist[idecay].UseAltPos();
+      list_pdg2index_[decaylist[idecay].PdgMother()] = idecay;
+    }
   }
   
   virtual ~DecayContainer() = default;
@@ -90,30 +90,30 @@ class DecayContainer :public TObject
     pdg2index=list_pdg2index_.find(pdg_mother);
     int idecay;
     if (pdg2index != list_pdg2index_.end())
-      {
-	idecay = pdg2index->second;
-        pdg_mother_ = pdg_mother;
-	name_mother_ = list_name_mother_[idecay];
-	ndaughters_ = list_ndaughters_[idecay];
-	pdg_daughter_pos_.at(0) = list_pdg_daughter_[0][idecay];
-	pdg_daughter_neg_.at(0) = list_pdg_daughter_[1][idecay];
-	if (ndaughters_ == 3) 
-	  pdg_daughter_third_.at(0) = list_pdg_daughter_[2][idecay];
-	mass_ = list_mass_[idecay];
-	mass_sigma_ = list_mass_sigma_[idecay];
-	if (list_use_alt_pos_[idecay] == true) {
-	  pdg_daughter_pos_.resize(4);
-	  pdg_daughter_pos_.at(1) = 1;
-	  pdg_daughter_pos_.at(2) = 211;
-	  pdg_daughter_pos_.at(3) = -1;
-	 }
-	return true;
+    {
+      idecay = pdg2index->second;
+      pdg_mother_ = pdg_mother;
+      name_mother_ = list_name_mother_[idecay];
+      ndaughters_ = list_ndaughters_[idecay];
+      pdg_daughter_pos_.at(0) = list_pdg_daughter_[0][idecay];
+      pdg_daughter_neg_.at(0) = list_pdg_daughter_[1][idecay];
+      if (ndaughters_ == 3) 
+        pdg_daughter_third_.at(0) = list_pdg_daughter_[2][idecay];
+      mass_ = list_mass_[idecay];
+      mass_sigma_ = list_mass_sigma_[idecay];
+      if (list_use_alt_pos_[idecay] == true) {
+        pdg_daughter_pos_.resize(4);
+        pdg_daughter_pos_.at(1) = 1;
+        pdg_daughter_pos_.at(2) = 211;
+        pdg_daughter_pos_.at(3) = -1;
       }
+      return true;
+    }
     else
-      {
-	std::cout<<"Decay of particle "<<pdg_mother<<" is not listed!\n  --> Please set decay manually."<<std::endl;
-	return false;
-      }
+    {
+      std::cout<<"Decay of particle "<<pdg_mother<<" is not listed!\n  --> Please set decay manually."<<std::endl;
+      return false;
+    }
   };
 
   //  decay parameters setters
@@ -134,9 +134,9 @@ class DecayContainer :public TObject
   int GetPdgDaughterPos() const {return pdg_daughter_pos_.at(0);};
   std::vector<int> GetPdgDaughterPosCandidates() const {return pdg_daughter_pos_;};
   int GetPdgDaughterNeg() const {return pdg_daughter_neg_.at(0);};
-   std::vector<int> GetPdgDaughterNegCandidates() const {return pdg_daughter_neg_;};
+  std::vector<int> GetPdgDaughterNegCandidates() const {return pdg_daughter_neg_;};
   int GetPdgDaughterThird() const {return pdg_daughter_third_.at(0);};
-   std::vector<int> GetPdgDaughterThirdCandidates() const {return pdg_daughter_third_;};
+  std::vector<int> GetPdgDaughterThirdCandidates() const {return pdg_daughter_third_;};
   
  protected:
   // Decay parameters with their default values
