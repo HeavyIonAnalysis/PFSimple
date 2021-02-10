@@ -1,16 +1,16 @@
 #ifndef KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTERIN_H_
 #define KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTERIN_H_
 
-#include <AnalysisTree/EventHeader.hpp>
+#include "AnalysisTree/Task.hpp"
 #include <AnalysisTree/Cuts.hpp>
 #include <AnalysisTree/Detector.hpp>
+#include <AnalysisTree/EventHeader.hpp>
 #include <AnalysisTree/Matching.hpp>
-#include "AnalysisTree/FillTask.hpp"
 
-#include "Interface/InputContainer.h"
 #include "Interface/DecayContainer.h"
+#include "Interface/InputContainer.h"
 
-class ConverterIn : public AnalysisTree::FillTask {
+class ConverterIn : public AnalysisTree::Task {
 
   enum eInputBranches {
     kRecEventHeader = 0,
@@ -21,8 +21,7 @@ class ConverterIn : public AnalysisTree::FillTask {
   };
 
  public:
-  explicit ConverterIn(const DecayContainer& decay, const CutsContainer& cuts) : decay_(decay), cuts_(cuts)
-  {  // Use default names for the input branches
+  explicit ConverterIn(const DecayContainer& decay, const CutsContainer& cuts) : decay_(decay), cuts_(cuts) {// Use default names for the input branches
     in_branches_.resize(kNumberOfInputBranches);
     in_branches_[kRecEventHeader] = "RecEventHeader";
     in_branches_[kSimEventHeader] = "SimEventHeader";
@@ -31,25 +30,23 @@ class ConverterIn : public AnalysisTree::FillTask {
   }
   ~ConverterIn() override = default;
 
-  void Init(std::map<std::string, void*>& branches) override;
-
-  void Exec() override {};
-
-  void Finish() override {};
+  void Init() override;
+  void Exec() override{};
+  void Finish() override{};
 
   const DecayContainer& GetDecay() const { return decay_; }
   const CutsContainer& GetCuts() const { return cuts_; }
-//  const InputContainer& GetInputContainer() const { return input_container_; }
+  //  const InputContainer& GetInputContainer() const { return input_container_; }
 
-  void SetIsShine(bool is=true) { is_shine_ = is; }
+  void SetIsShine(bool is = true) { is_shine_ = is; }
 
   void SetDecay(const DecayContainer& decay) { decay_ = decay; };
   void SetCuts(const CutsContainer& cuts) { cuts_ = cuts; };
   void SetTrackCuts(AnalysisTree::Cuts* const cuts) { track_cuts_ = cuts; };
 
   InputContainer CreateInputContainer() const;
- protected:
 
+ protected:
   std::vector<float> GetCovMatrixCbm(const AnalysisTree::Track&) const;
   std::vector<float> GetCovMatrixShine(const AnalysisTree::Track&) const;
   void FillParticle(const AnalysisTree::Track&, InputContainer&) const;
@@ -64,21 +61,20 @@ class ConverterIn : public AnalysisTree::FillTask {
 
   DecayContainer decay_;
   CutsContainer cuts_;
-//  InputContainer input_container_;
+  //  InputContainer input_container_;
 
   // field ids for input parameters
   int q_field_id_{AnalysisTree::UndefValueInt};
   int pdg_field_id_{AnalysisTree::UndefValueInt};
-  int par_field_id_ {AnalysisTree::UndefValueInt};
-  int mf_field_id_ {AnalysisTree::UndefValueInt};
+  int par_field_id_{AnalysisTree::UndefValueInt};
+  int mf_field_id_{AnalysisTree::UndefValueInt};
   int cov_field_id_{AnalysisTree::UndefValueInt};
   int mother_id_field_id_{AnalysisTree::UndefValueInt};
   int sim_pdg_field_id_{AnalysisTree::UndefValueInt};
   int passcuts_field_id_{AnalysisTree::UndefValueInt};
   int nhits_field_id_{AnalysisTree::UndefValueInt};
-  
-  bool is_shine_{false};
 
+  bool is_shine_{false};
 };
 
-#endif //KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTERIN_H_
+#endif//KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTERIN_H_

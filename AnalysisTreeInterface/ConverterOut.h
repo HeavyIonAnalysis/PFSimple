@@ -1,28 +1,27 @@
 #ifndef KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_
 #define KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_
 
-#include <Interface/OutputContainer.h>
 #include <Interface/DecayContainer.h>
+#include <Interface/OutputContainer.h>
 
-#include "AnalysisTree/FillTask.hpp"
 #include "AnalysisTree/Detector.hpp"
 #include "AnalysisTree/EventHeader.hpp"
-  
-class ConverterOut : public AnalysisTree::FillTask {
+#include "AnalysisTree/Task.hpp"
+
+class ConverterOut : public AnalysisTree::Task {
  public:
   explicit ConverterOut(const DecayContainer& decay) : decay_(decay) {}
-    //ConverterOut() = default;
+  //ConverterOut() = default;
   ~ConverterOut() override = default;
 
-  void Init(std::map<std::string, void*>& branches) override;
+  void Init() override;
   void Exec() override;
   void Finish() override {}
 
   void SetCandidates(const std::vector<OutputContainer>& canditates) { canditates_ = canditates; }
   void SetDecay(const DecayContainer& decay) { decay_ = decay; };
-  
- protected:
 
+ protected:
   void InitIndexes();
   void MatchWithMc();
 
@@ -37,16 +36,16 @@ class ConverterOut : public AnalysisTree::FillTask {
   AnalysisTree::TrackDetector* rec_tracks_{nullptr};
   AnalysisTree::Matching* rec_to_mc_{nullptr};
   AnalysisTree::EventHeader* sim_events_{nullptr};
-  
+
   std::vector<OutputContainer> canditates_;
   DecayContainer decay_;
 
   // field ids of simulated events
   int b_field_id_{-1};
-  
+
   // field ids of input simulated mother
   int mother_id_field_id_{-1};
-  
+
   // field ids for selected mother candidates kinematic parameters
   int x_field_id_{-1};
   int y_field_id_{-1};
@@ -75,15 +74,14 @@ class ConverterOut : public AnalysisTree::FillTask {
   int nhits_pos_field_id_{-1};
   int nhits_neg_field_id_{-1};
 
-   // field ids for mother candidate cutting parameters for third daughter
+  // field ids for mother candidate cutting parameters for third daughter
   int chi2primthird_field_id_{-1};
   int distancethird_field_id_{-1};
   int cosinethird_field_id_{-1};
-  int chi2geothree_field_id_{-1}; 
-  int cosinetopothree_field_id_{-1};   
+  int chi2geothree_field_id_{-1};
+  int cosinetopothree_field_id_{-1};
   int chi2topothree_field_id_{-1};
   int nhits_third_field_id_{-1};
-  
 };
 
-#endif //KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_
+#endif//KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_
