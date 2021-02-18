@@ -1,6 +1,14 @@
 #include "ConverterIn.h"
-#include <Interface/InputContainer.h>
-#include <KFSimple/Constants.h>
+
+#include "Interface/InputContainer.h"
+#include "KFSimple/Constants.h"
+
+#include "AnalysisTree/TaskManager.hpp"
+#include <AnalysisTree/EventHeader.hpp>
+#include <AnalysisTree/Matching.hpp>
+#include <AnalysisTree/Cuts.hpp>
+
+using namespace AnalysisTree;
 
 void ConverterIn::FillParticle(const AnalysisTree::Track& rec_particle, InputContainer& input_info) const {
   std::vector<float> mf(kNumberOfFieldPars, 0.f);
@@ -24,16 +32,15 @@ void ConverterIn::FillParticle(const AnalysisTree::Track& rec_particle, InputCon
 }
 
 void ConverterIn::Init() {
-  rec_event_header_ = (AnalysisTree::EventHeader*) branches.find(in_branches_[kRecEventHeader])->second;
-  sim_event_header_ = (AnalysisTree::EventHeader*) branches.find(in_branches_[kSimEventHeader])->second;
-  kf_tracks_ = (AnalysisTree::TrackDetector*) branches.find(in_branches_[kKfpfTracks])->second;
-  sim_tracks_ = (AnalysisTree::Particles*) branches.find(in_branches_[kSimTracks])->second;
-  kf2sim_tracks_ = (AnalysisTree::Matching*) branches.find(
-                                                         config_->GetMatchName(in_branches_[kKfpfTracks], in_branches_[kSimTracks]))
-                       ->second;
+  auto* chain = AnalysisTree::TaskManager::GetInstance()->GetChain();
 
-  auto branch_conf_kftr = config_->GetBranchConfig(in_branches_[kKfpfTracks]);
+  rec_event_header_ =ANALYSISTREE_UTILS_GET<AnalysisTree::EventHeader*>(chain->GetPointerToBranch(rec_event_header_name_));
+  sim_event_header_ = ANALYSISTREE_UTILS_GET<AnalysisTree::EventHeader*>(chain->GetPointerToBranch(sim_event_header_name_));
+  kf_tracks_ = ANALYSISTREE_UTILS_GET<AnalysisTree::TrackDetector*>(chain->GetPointerToBranch(kf_tracks_name_));
+  sim_tracks_ = ANALYSISTREE_UTILS_GET<AnalysisTree::Particles*>(chain->GetPointerToBranch(sim_tracks_name_));
+  kf2sim_tracks_ = chain->GetMatchPointers().find(config_->GetMatchName(kf_tracks_name_, sim_tracks_name_))->second;
 
+  const auto& branch_conf_kftr = config_->GetBranchConfig(kf_tracks_name_);
   q_field_id_ = branch_conf_kftr.GetFieldId("q");
   par_field_id_ = branch_conf_kftr.GetFieldId("x");   // par0
   mf_field_id_ = branch_conf_kftr.GetFieldId("cx0");  // magnetic field par0
@@ -42,7 +49,7 @@ void ConverterIn::Init() {
   pdg_field_id_ = branch_conf_kftr.GetFieldId("mc_pdg");
   nhits_field_id_ = branch_conf_kftr.GetFieldId("nhits");
 
-  auto branch_conf_simtr = config_->GetBranchConfig(in_branches_[kSimTracks]);
+  const auto& branch_conf_simtr = config_->GetBranchConfig(sim_tracks_name_);
   mother_id_field_id_ = branch_conf_simtr.GetFieldId("mother_id");
   sim_pdg_field_id_ = branch_conf_simtr.GetFieldId("pdg");
 
@@ -103,11 +110,7 @@ std::vector<float> ConverterIn::GetCovMatrixCbm(const AnalysisTree::Track& parti
     for (int j = 0; j < kNumberOfTrackPars; j++) {
       VFT[i][j] = 0;
       for (int k = 0; k < 5; k++) {
-        VFT[i][j] += particle.GetField<float>(cov_field_id_ + std::min(i, k) + std::max(i, k) * (std::max(i, k) + 1) / 2) * F[j][k];//parameters->GetCovariance(i,k) * F[j][k];
-                                                                                                                                    //        if(k <= i)
-                                                                                                                                    //          VFT[i][j] += particle.GetField<float>(cov_field_id_ + k + i * (i + 1) / 2) * F[j][k];   //parameters->GetCovariance(i,k) * F[j][k];
-                                                                                                                                    //        else
-                                                                                                                                    //          VFT[i][j] += particle.GetField<float>(cov_field_id_ + i + k * (k + 1) / 2) * F[j][k];   //parameters->GetCovariance(i,k) * F[j][k];
+        VFT[i][j] += particle.GetField<float>(cov_field_id_ + std::min(i, k) + std::max(i, k) * (std::max(i, k) + 1) / 2) * F[j][k];
       }
     }
   }
@@ -126,37 +129,12 @@ std::vector<float> ConverterIn::GetCovMatrixCbm(const AnalysisTree::Track& parti
 
 std::vector<float> ConverterIn::GetCovMatrixShine(const AnalysisTree::Track& particle) const {
   std::vector<float> cov(21, 0.);
-
-  for (int iCov = 0; iCov < 21; ++iCov)
+  for (int iCov = 0; iCov < 21; ++iCov){
     cov[iCov] = particle.GetField<float>(cov_field_id_ + iCov);
-
+  }
   return cov;
 }
 
 bool ConverterIn::IsGoodTrack(const AnalysisTree::Track& rec_track) const {
-  if (!track_cuts_) {
-    return true;
-  }
-  return track_cuts_->Apply(rec_track);
-
-  //  return true;
-  bool is_good{false};
-
-  const int sim_id = kf2sim_tracks_->GetMatch(rec_track.GetId());
-  //    std::cout<< "sim  "  << sim_id << std::endl;
-  if (sim_id >= 0 && sim_id < sim_tracks_->GetNumberOfChannels()) {
-    const AnalysisTree::Track& sim_track = sim_tracks_->GetChannel(sim_id);
-    const int mother_id = sim_track.GetField<int>(mother_id_field_id_);
-    //      std::cout << "mother " << mother_id << std::endl;
-
-    if (mother_id >= 0 && mother_id < sim_tracks_->GetNumberOfChannels()) {
-      const AnalysisTree::Track& mother_track = sim_tracks_->GetChannel(mother_id);
-      const int mother_pdg = mother_track.GetField<int>(sim_pdg_field_id_);
-      std::cout << "mother pdg " << mother_pdg << std::endl;
-
-      if (mother_pdg == decay_.GetPdgMother())
-        is_good = true;
-    }
-  }
-  return is_good;
+  return track_cuts_ ? track_cuts_->Apply(rec_track) : true;
 }

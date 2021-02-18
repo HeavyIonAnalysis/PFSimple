@@ -1,12 +1,13 @@
 #include "PFTaskManager.h"
-#include <KFSimple/SimpleFinder.h>
+
+#include "SimpleFinder.h"
 
 void PFTaskManager::Run(long long int nEvents) {
   std::cout << "PFTaskManager::Run" << std::endl;
-  nEvents = nEvents < 0 || nEvents > in_tree_->GetEntries() ? in_tree_->GetEntries() : nEvents;
+  nEvents = nEvents < 0 || nEvents > chain_->GetEntries() ? chain_->GetEntries() : nEvents;
 
   for (long long iEvent = 0; iEvent < nEvents; ++iEvent) {
-    in_tree_->GetEntry(iEvent);
+    chain_->GetEntry(iEvent);
 
     if (iEvent % 100 == 0)
       std::cout << "Event # " << iEvent << " out of " << nEvents << "\r" << std::flush;

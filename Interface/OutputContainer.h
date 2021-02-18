@@ -24,58 +24,58 @@ class OutputContainer
   virtual ~OutputContainer() = default;  
   
   //  candidate parameters setters for two daugthers
-  void SetChi2PrimPos(float value) {chi2_prim_pos_ = value;};
-  void SetChi2PrimNeg(float value) {chi2_prim_neg_ = value;};
-  void SetDistance(float value) {distance_ = value;};
-  void SetCosineDaughterPos(float value) {cosine_daughter_pos_ = value;};
-  void SetCosineDaughterNeg(float value) {cosine_daughter_neg_ = value;};
-  void SetChi2Geo(float value) {chi2_geo_ = value;};
-  void SetL(float value) {l_ = value;};
-  void SetLdL(float value) {ldl_ = value;};
-  void SetIsFromPV(int value) {is_from_pv_ = value;};
-  void SetCosineTopo(float value) {cosine_topo_ = value;};
-  void SetSigmaMassRatio(float value) {sigma_mass_ratio_ = value;};
-  void SetChi2Topo(float value) {chi2_topo_ = value;};
-  void SetNHitsPos(int value) {nhits_pos_ = value;};
-  void SetNHitsNeg(int value) {nhits_neg_ = value;};
+  void SetChi2PrimPos(float value) {chi2_prim_pos_ = value;}
+  void SetChi2PrimNeg(float value) {chi2_prim_neg_ = value;}
+  void SetDistance(float value) {distance_ = value;}
+  void SetCosineDaughterPos(float value) {cosine_daughter_pos_ = value;}
+  void SetCosineDaughterNeg(float value) {cosine_daughter_neg_ = value;}
+  void SetChi2Geo(float value) {chi2_geo_ = value;}
+  void SetL(float value) {l_ = value;}
+  void SetLdL(float value) {ldl_ = value;}
+  void SetIsFromPV(int value) {is_from_pv_ = value;}
+  void SetCosineTopo(float value) {cosine_topo_ = value;}
+  void SetSigmaMassRatio(float value) {sigma_mass_ratio_ = value;}
+  void SetChi2Topo(float value) {chi2_topo_ = value;}
+  void SetNHitsPos(int value) {nhits_pos_ = value;}
+  void SetNHitsNeg(int value) {nhits_neg_ = value;}
 
   //  candidate parameters setters for third daugther
-  void SetChi2PrimThird(float value) {chi2_prim_third_ = value;};
-  void SetDistanceThird(float value) {distance_third_ = value;};
-  void SetCosineDaughterThird(float value) {cosine_daughter_third_ = value;};
-  void SetChi2GeoThree(float value) {chi2_geo_three_ = value;};
-  void SetCosineTopoThree(float value) {cosine_topo_three_ = value;};
-  void SetChi2TopoThree(float value) {chi2_topo_three_ = value;};
-  void SetNHitsThird(int value) {nhits_third_ = value;};
+  void SetChi2PrimThird(float value) {chi2_prim_third_ = value;}
+  void SetDistanceThird(float value) {distance_third_ = value;}
+  void SetCosineDaughterThird(float value) {cosine_daughter_third_ = value;}
+  void SetChi2GeoThree(float value) {chi2_geo_three_ = value;}
+  void SetCosineTopoThree(float value) {cosine_topo_three_ = value;}
+  void SetChi2TopoThree(float value) {chi2_topo_three_ = value;}
+  void SetNHitsThird(int value) {nhits_third_ = value;}
   
-  void SetParticle(const KFParticle& particle) {particle_ = particle;};
+  void SetParticle(const KFParticle& particle) {particle_ = particle;}
   
   //  candidate parameters getters for two daugthers
-  float GetChi2PrimPos() const {return chi2_prim_pos_;};
-  float GetChi2PrimNeg() const {return chi2_prim_neg_;};
-  float GetDistance() const {return distance_;};
-  float GetCosineDaughterPos() const {return cosine_daughter_pos_;};
-  float GetCosineDaughterNeg() const {return cosine_daughter_neg_;};
-  float GetChi2Geo() const {return chi2_geo_;};
-  float GetL() const {return l_;};
-  float GetLdL() const {return ldl_;};
-  int   GetIsFromPV() const {return is_from_pv_;};
-  float GetCosineTopo() const {return cosine_topo_;};
-  float GetSigmaMassRatio() const {return sigma_mass_ratio_;};
-  float GetChi2Topo() const {return chi2_topo_;};
-  int   GetNHitsPos() const {return nhits_pos_;};
-  int   GetNHitsNeg() const {return nhits_neg_;};
+  float GetChi2PrimPos() const {return chi2_prim_pos_;}
+  float GetChi2PrimNeg() const {return chi2_prim_neg_;}
+  float GetDistance() const {return distance_;}
+  float GetCosineDaughterPos() const {return cosine_daughter_pos_;}
+  float GetCosineDaughterNeg() const {return cosine_daughter_neg_;}
+  float GetChi2Geo() const {return chi2_geo_;}
+  float GetL() const {return l_;}
+  float GetLdL() const {return ldl_;}
+  int   GetIsFromPV() const {return is_from_pv_;}
+  float GetCosineTopo() const {return cosine_topo_;}
+  float GetSigmaMassRatio() const {return sigma_mass_ratio_;}
+  float GetChi2Topo() const {return chi2_topo_;}
+  int   GetNHitsPos() const {return nhits_pos_;}
+  int   GetNHitsNeg() const {return nhits_neg_;}
 
   //  candidate parameters getters for third daugther
-  float GetChi2PrimThird() const {return chi2_prim_third_;};
-  float GetDistanceThird() const {return distance_third_;};
-  float GetCosineDaughterThird() const {return cosine_daughter_third_;};
-  float GetChi2GeoThree() const {return chi2_geo_three_;};
-  float GetCosineTopoThree() const {return cosine_topo_three_;};
-  float GetChi2TopoThree() const {return chi2_topo_three_;};
-  int   GetNHitsThird() const {return nhits_third_;};
+  float GetChi2PrimThird() const {return chi2_prim_third_;}
+  float GetDistanceThird() const {return distance_third_;}
+  float GetCosineDaughterThird() const {return cosine_daughter_third_;}
+  float GetChi2GeoThree() const {return chi2_geo_three_;}
+  float GetCosineTopoThree() const {return cosine_topo_three_;}
+  float GetChi2TopoThree() const {return chi2_topo_three_;}
+  int   GetNHitsThird() const {return nhits_third_;}
 
-  const KFParticle& GetParticle() const {return particle_;};
+  const KFParticle& GetParticle() const {return particle_;}
 
  protected:
    

@@ -1,8 +1,8 @@
 #ifndef KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_
 #define KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_
 
-#include <Interface/DecayContainer.h>
-#include <Interface/OutputContainer.h>
+#include <DecayContainer.h>
+#include <OutputContainer.h>
 
 #include "AnalysisTree/Detector.hpp"
 #include "AnalysisTree/EventHeader.hpp"
@@ -11,14 +11,13 @@
 class ConverterOut : public AnalysisTree::Task {
  public:
   explicit ConverterOut(const DecayContainer& decay) : decay_(decay) {}
-  //ConverterOut() = default;
   ~ConverterOut() override = default;
 
   void Init() override;
   void Exec() override;
   void Finish() override {}
 
-  void SetCandidates(const std::vector<OutputContainer>& canditates) { canditates_ = canditates; }
+  void SetCandidates(const std::vector<OutputContainer>& candidates) { candidates_ = candidates; }
   void SetDecay(const DecayContainer& decay) { decay_ = decay; };
 
  protected:
@@ -32,12 +31,16 @@ class ConverterOut : public AnalysisTree::Task {
   AnalysisTree::Matching* lambda_reco2sim_{nullptr};
 
   // input branches
+  std::string mc_particles_name_;
+  std::string rec_tracks_name_;
+  std::string sim_events_name_;
+
   AnalysisTree::Particles* mc_particles_{nullptr};
   AnalysisTree::TrackDetector* rec_tracks_{nullptr};
   AnalysisTree::Matching* rec_to_mc_{nullptr};
   AnalysisTree::EventHeader* sim_events_{nullptr};
 
-  std::vector<OutputContainer> canditates_;
+  std::vector<OutputContainer> candidates_;
   DecayContainer decay_;
 
   // field ids of simulated events

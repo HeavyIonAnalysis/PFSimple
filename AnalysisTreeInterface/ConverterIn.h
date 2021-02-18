@@ -2,31 +2,25 @@
 #define KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTERIN_H_
 
 #include "AnalysisTree/Task.hpp"
-#include <AnalysisTree/Cuts.hpp>
 #include <AnalysisTree/Detector.hpp>
-#include <AnalysisTree/EventHeader.hpp>
-#include <AnalysisTree/Matching.hpp>
 
-#include "Interface/DecayContainer.h"
-#include "Interface/InputContainer.h"
+#include "DecayContainer.h"
+#include "InputContainer.h"
+
+namespace AnalysisTree{
+  class EventHeader;
+  class Matching;
+  class Cuts;
+}
 
 class ConverterIn : public AnalysisTree::Task {
 
-  enum eInputBranches {
-    kRecEventHeader = 0,
-    kSimEventHeader,
-    kKfpfTracks,
-    kSimTracks,
-    kNumberOfInputBranches
-  };
-
  public:
-  explicit ConverterIn(const DecayContainer& decay, const CutsContainer& cuts) : decay_(decay), cuts_(cuts) {// Use default names for the input branches
-    in_branches_.resize(kNumberOfInputBranches);
-    in_branches_[kRecEventHeader] = "RecEventHeader";
-    in_branches_[kSimEventHeader] = "SimEventHeader";
-    in_branches_[kKfpfTracks] = "VtxTracks";
-    in_branches_[kSimTracks] = "SimParticles";
+  ConverterIn(const DecayContainer& decay, const CutsContainer& cuts) : decay_(decay), cuts_(cuts) {
+    rec_event_header_name_ = "RecEventHeader";
+    sim_event_header_name_ = "SimEventHeader";
+    kf_tracks_name_ = "VtxTracks";
+    sim_tracks_name_ = "SimParticles";
   }
   ~ConverterIn() override = default;
 
@@ -61,7 +55,11 @@ class ConverterIn : public AnalysisTree::Task {
 
   DecayContainer decay_;
   CutsContainer cuts_;
-  //  InputContainer input_container_;
+
+  std::string rec_event_header_name_;
+  std::string sim_event_header_name_;
+  std::string kf_tracks_name_;
+  std::string sim_tracks_name_;
 
   // field ids for input parameters
   int q_field_id_{AnalysisTree::UndefValueInt};

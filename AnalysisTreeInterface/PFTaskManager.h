@@ -14,7 +14,10 @@ class PFTaskManager : public AnalysisTree::TaskManager {
   };
 
  public:
-  PFTaskManager(const std::string& filelist, const std::string& in_tree) : AnalysisTree::TaskManager({filelist}, {in_tree}) {}
+  PFTaskManager() = default;
+  PFTaskManager(PFTaskManager& other) = delete;
+  void operator=(const PFTaskManager&) = delete;
+  ~PFTaskManager() override = default;
 
   void Run(long long nEvents) final;
 
@@ -27,7 +30,7 @@ class PFTaskManager : public AnalysisTree::TaskManager {
   void SetDecay(const DecayContainer& decay) { decay_ = decay; };
   void SetCuts(const CutsContainer& cuts) { cuts_ = cuts; };
 
-  void AddTask(AnalysisTree::FillTask* task) = delete;//TODO make it virtual in AT
+  void AddTask(AnalysisTree::Task* task) = delete;//TODO make it virtual in AT
 
  protected:
   DecayContainer decay_;
