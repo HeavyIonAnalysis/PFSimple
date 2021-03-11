@@ -19,16 +19,27 @@
 #include "TObject.h"
 #include <iostream>
 #include <map>
+#include <utility>
 
 //DecayInfo: Class to define variables of the decay list
 class DecayList
 {
  public:
  DecayList():name_mother_("nullptr"),pdg_mother_(0),ndaughters_(0),pdg_daughter_pos_(0),pdg_daughter_neg_(0),pdg_daughter_third_(0),mass_(0.0), mass_sigma_(0.001), use_alt_pos_(true) {};
+
   // Constructor with all parameters
- DecayList(std::string name_mother, int pdg_mother, int ndaughters, int pdg_daughter_pos, int pdg_daughter_neg, int pdg_daughter_third, float mass, float mass_sigma, bool use_alt_pos):
-  name_mother_(name_mother),pdg_mother_(pdg_mother),ndaughters_(ndaughters),pdg_daughter_pos_(pdg_daughter_pos),pdg_daughter_neg_(pdg_daughter_neg),pdg_daughter_third_(pdg_daughter_third),mass_(mass), mass_sigma_(mass_sigma), use_alt_pos_(use_alt_pos) {};
-  ~DecayList() {};
+ DecayList(std::string name_mother, int pdg_mother, int ndaughters, int pdg_daughter_pos, int pdg_daughter_neg, int pdg_daughter_third, float mass, float mass_sigma, bool use_alt_pos) :
+  name_mother_(std::move(name_mother)),
+  pdg_mother_(pdg_mother),
+  ndaughters_(ndaughters),
+  pdg_daughter_pos_(pdg_daughter_pos),
+  pdg_daughter_neg_(pdg_daughter_neg),
+  pdg_daughter_third_(pdg_daughter_third),
+  mass_(mass),
+  mass_sigma_(mass_sigma),
+  use_alt_pos_(use_alt_pos) {};
+
+  ~DecayList() = default;
 
   //Getters
   std::string NameMother()       const { return name_mother_; }
@@ -53,7 +64,7 @@ class DecayList
   bool        use_alt_pos_;
 };
 
-class DecayContainer :public TObject
+class DecayContainer : public TObject
 {
  public:
   DecayContainer()

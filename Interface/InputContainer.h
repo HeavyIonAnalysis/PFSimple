@@ -64,7 +64,7 @@ class InputContainer{
  protected:
   
   static double InversedChi2Prob(double p, int ndf) ;
-    
+
   KFVertex vtx_;
   std::vector<KFParticle> tracks_{};
   CutsContainer cuts_;

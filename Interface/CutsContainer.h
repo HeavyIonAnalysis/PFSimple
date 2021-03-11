@@ -6,7 +6,6 @@
  ** The meaning of quantities to be cut is described in the OutputContainer.h
  **/
 
-
 #ifndef CutsContainer_H
 #define CutsContainer_H
 
