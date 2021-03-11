@@ -49,13 +49,13 @@ class SimpleFinder
  protected:
    
   float CalculateChiToPrimaryVertex(const KFPTrack &track, int pid) const;  ///< Calculates \f$\chi^2\f$ of the track to the primary vertex (PV)
-  void  CalculateParamsInPCA(const KFPTrack &track1, int pid1, const KFPTrack &track2, int pid2, std::array<float, 8> &pars1, std::array<float, 8> &pars2) const;
+  static void  CalculateParamsInPCA(const KFPTrack &track1, int pid1, const KFPTrack &track2, int pid2, std::array<float, 8> &pars1, std::array<float, 8> &pars2) ;
   ///< Recalculates daughters tracks' parameters in the point of their closest approach
   
-  float CalculateDistanceBetweenParticles(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2) const;  ///< Calculates the distance between daughter tracks in their closest approach
-  float CalculateCosMomentumSum(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2) const;    ///< Calculates the cosine of the angle between daughter's and mother's momenta
-  KFParticleSIMD ConstructMother(const KFPTrack &track1, int pid1, const KFPTrack &track2, int pid2) const;   ///< Creates mother particle as the KFParticleSIMD object
-  float CalculateChi2Geo(const KFParticleSIMD& mother) const;  ///< Calculates \f$\chi^2\f$ of daughters' tracks in their closest approach
+  static float CalculateDistanceBetweenParticles(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2) ;  ///< Calculates the distance between daughter tracks in their closest approach
+  static float CalculateCosMomentumSum(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2) ;    ///< Calculates the cosine of the angle between daughter's and mother's momenta
+  static KFParticleSIMD ConstructMother(const KFPTrack &track1, int pid1, const KFPTrack &track2, int pid2) ;   ///< Creates mother particle as the KFParticleSIMD object
+  static float CalculateChi2Geo(const KFParticleSIMD& mother) ;  ///< Calculates \f$\chi^2\f$ of daughters' tracks in their closest approach
   void  CalculateMotherProperties(const KFParticleSIMD& mother, float &l, float &ldl, int &isFromPV) const;
   ///< Calculates distance between primary and secondary vertices with error and determines whether mother comes from the PV
   
@@ -63,11 +63,11 @@ class SimpleFinder
   float CalculateChi2Topo(const KFParticleSIMD& mother) const; ///< Calculates \f$\chi^2\f$ of the mother's track to the PV
   void  SaveParticle(const OutputContainer& Lambda);                 ///< Saves selected particle with set of geometrical decay parameters
 
-  void CalculateCoordinatesSecondaryVertex(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2, std::array<float_v, 3> &sv) const; //Calculates the coordinates of the secondary vertex for the first two daugthers
-  void CalculateParamsInSecondaryVertex(const KFParticleSIMD &particleSIMD1, const std::array<float_v, 3> xyz, std::array<float, 8> &pars1) const; //Recalculates 3rd daugthers track parameters in secondary vertex
-  float CalculateDistanceToSecondaryVertex(const std::array<float, 8> &pars1, std::array<float_v, 3> &sec_vx) const; //Calculates Distance of third daughter from secondary vertex
-  float CalculateCosMomentumSumThird(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2, const std::array<float, 8> &pars3) const;
-  KFParticleSIMD ConstructMotherThree(KFParticleSIMD &particleSIMD1, KFParticleSIMD &particleSIMD2, KFParticleSIMD &particleSIMD3, const std::array<float_v, 3> sec_vx) const; ///< Creates mother particle as KFParticleSIMD object for three daughters
+  static void CalculateCoordinatesSecondaryVertex(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2, std::array<float_v, 3> &sv) ; //Calculates the coordinates of the secondary vertex for the first two daugthers
+  static void CalculateParamsInSecondaryVertex(const KFParticleSIMD &particleSIMD1, std::array<float_v, 3> xyz, std::array<float, 8> &pars1) ; //Recalculates 3rd daugthers track parameters in secondary vertex
+  static float CalculateDistanceToSecondaryVertex(const std::array<float, 8> &pars1, std::array<float_v, 3> &sec_vx) ; //Calculates Distance of third daughter from secondary vertex
+  static float CalculateCosMomentumSumThird(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2, const std::array<float, 8> &pars3) ;
+  static KFParticleSIMD ConstructMotherThree(KFParticleSIMD &particleSIMD1, KFParticleSIMD &particleSIMD2, KFParticleSIMD &particleSIMD3, std::array<float_v, 3> sec_vx) ; ///< Creates mother particle as KFParticleSIMD object for three daughters
   
   KFPTrackVector tracks_;
   KFVertex prim_vx_;

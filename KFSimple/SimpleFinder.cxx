@@ -75,9 +75,6 @@ void SimpleFinder::SortTracks()
   return tmpPart.GetDeviationFromVertex(prim_vx_);
 }*/
 
-
-
-
 /** Functions for the reconstruction of the mother from two daughters **/
 
 float SimpleFinder::CalculateChiToPrimaryVertex(const KFPTrack &track, int pid) const
@@ -96,7 +93,7 @@ float SimpleFinder::CalculateChiToPrimaryVertex(const KFPTrack &track, int pid) 
   return chi2vec[0];
 }
 
-void SimpleFinder::CalculateParamsInPCA(const KFPTrack &track1, int pid1, const KFPTrack &track2, int pid2, std::array<float, 8> &pars1, std::array<float, 8> &pars2) const
+void SimpleFinder::CalculateParamsInPCA(const KFPTrack &track1, int pid1, const KFPTrack &track2, int pid2, std::array<float, 8> &pars1, std::array<float, 8> &pars2)
 {
   KFParticle particle1(track1, pid1);
   KFParticle particle2(track2, pid2);
@@ -119,7 +116,7 @@ void SimpleFinder::CalculateParamsInPCA(const KFPTrack &track1, int pid1, const 
   }
 }
 
-float SimpleFinder::CalculateDistanceBetweenParticles(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2) const
+float SimpleFinder::CalculateDistanceBetweenParticles(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2)
 {
   const float dx = pars1.at(0) - pars2.at(0);
   const float dy = pars1.at(1) - pars2.at(1);
@@ -129,7 +126,7 @@ float SimpleFinder::CalculateDistanceBetweenParticles(const std::array<float, 8>
   return dr;
 }
 
-float SimpleFinder::CalculateCosMomentumSum(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2) const
+float SimpleFinder::CalculateCosMomentumSum(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2)
 {
   /**
    * Find cosine bitween daughter1 and mother momenta
@@ -142,7 +139,7 @@ float SimpleFinder::CalculateCosMomentumSum(const std::array<float, 8> &pars1, c
          (sqrt(P1.at(0)*P1.at(0) + P1.at(1)*P1.at(1) + P1.at(2)*P1.at(2)) * std::sqrt(PSum.at(0)*PSum.at(0) + PSum.at(1)*PSum.at(1) + PSum.at(2)*PSum.at(2)));
 }
 
-KFParticleSIMD SimpleFinder::ConstructMother(const KFPTrack &track1, const int pid1, const KFPTrack &track2, const int pid2) const
+KFParticleSIMD SimpleFinder::ConstructMother(const KFPTrack &track1, const int pid1, const KFPTrack &track2, const int pid2)
 {
   KFParticle particle1(track1, pid1);
   KFParticle particle2(track2, pid2);
@@ -165,10 +162,9 @@ KFParticleSIMD SimpleFinder::ConstructMother(const KFPTrack &track1, const int p
   return mother;
 }
 
-float SimpleFinder::CalculateChi2Geo(const KFParticleSIMD& mother) const
+float SimpleFinder::CalculateChi2Geo(const KFParticleSIMD& mother)
 {
  float_v chi2 = mother.Chi2()/simd_cast<float_v>(mother.NDF());
- 
  return chi2[0];
 }
 
@@ -232,7 +228,7 @@ void SimpleFinder::SaveParticle(const OutputContainer& Mother)
 
 /** Additional functions for adding a third daughter to the mother**/
 
-void SimpleFinder::CalculateCoordinatesSecondaryVertex(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2, std::array<float_v, 3> &sv) const
+void SimpleFinder::CalculateCoordinatesSecondaryVertex(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2, std::array<float_v, 3> &sv)
 {
 
   //** Calculate coordinates of the secondary vertex of the first two daughters
@@ -242,7 +238,7 @@ void SimpleFinder::CalculateCoordinatesSecondaryVertex(const std::array<float, 8
   
 }
 
-void SimpleFinder::CalculateParamsInSecondaryVertex(const KFParticleSIMD &particleSIMD1, const std::array<float_v, 3> sec_vx, std::array<float, 8> &pars1) const
+void SimpleFinder::CalculateParamsInSecondaryVertex(const KFParticleSIMD &particleSIMD1, const std::array<float_v, 3> sec_vx, std::array<float, 8> &pars1)
 {  
 
   //** Calculate parameters of a daughter in the PCA to the secondary vertex
@@ -266,12 +262,12 @@ void SimpleFinder::CalculateParamsInSecondaryVertex(const KFParticleSIMD &partic
   }
 }
 
-float SimpleFinder::CalculateDistanceToSecondaryVertex(const std::array<float, 8> &pars1, std::array<float_v, 3> &sec_vx) const
+float SimpleFinder::CalculateDistanceToSecondaryVertex(const std::array<float, 8> &pars1, std::array<float_v, 3> &sec_vx)
 {
 
   //** Calculate the distance of a daughter and the secondary vertex in the PCA
 
-  std::array<float, 3> sv;
+  std::array<float, 3> sv{};
   float_v parbuf;
 
   for(int i=0; i<3; i++)
@@ -283,13 +279,13 @@ float SimpleFinder::CalculateDistanceToSecondaryVertex(const std::array<float, 8
   const float dx = pars1.at(0) - sv.at(0);
   const float dy = pars1.at(1) - sv.at(1);
   const float dz = pars1.at(2) - sv.at(2);
-  const float dr = sqrt(dx*dx+dy*dy+dz*dz);
+  const float dr = std::sqrt(dx*dx+dy*dy+dz*dz);
   
   return dr;
   
 }
 
-float SimpleFinder::CalculateCosMomentumSumThird(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2, const std::array<float, 8> &pars3) const
+float SimpleFinder::CalculateCosMomentumSumThird(const std::array<float, 8> &pars1, const std::array<float, 8> &pars2, const std::array<float, 8> &pars3)
 {
   /**
    * Find cosine between the momenta of the third daughter and the mother 
@@ -303,7 +299,7 @@ float SimpleFinder::CalculateCosMomentumSumThird(const std::array<float, 8> &par
          (sqrt(P3.at(0)*P3.at(0) + P3.at(1)*P3.at(1) + P3.at(2)*P3.at(2)) * sqrt(PSum.at(0)*PSum.at(0) + PSum.at(1)*PSum.at(1) + PSum.at(2)*PSum.at(2)));
 }
 
-KFParticleSIMD SimpleFinder::ConstructMotherThree(KFParticleSIMD &particleSIMD1, KFParticleSIMD &particleSIMD2, KFParticleSIMD &particleSIMD3,const std::array<float_v, 3> sec_vx) const
+KFParticleSIMD SimpleFinder::ConstructMotherThree(KFParticleSIMD &particleSIMD1, KFParticleSIMD &particleSIMD2, KFParticleSIMD &particleSIMD3,const std::array<float_v, 3> sec_vx)
 {
 
   //** Construct the mother from three daughters
