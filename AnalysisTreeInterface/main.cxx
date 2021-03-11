@@ -43,11 +43,11 @@ int main(int argc, char** argv) {
   in_converter->SetIsShine(false);//TODO maybe change name
 
   auto* out_converter = new ConverterOut(decay);
-  out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "SimEventHeader"});
+  out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "SimEventHeader", "RecEventHeader"});
 
   man.AddTasks(in_converter, out_converter);
-  man.Init({filename}, {"aTree"});
-  man.Run(-1);// -1 = all events
+  man.Init({filename}, {"rTree"});
+  man.Run(5);// -1 = all events
   man.Finish();
 
 //  if (make_plain_tree) {

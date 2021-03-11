@@ -1,7 +1,5 @@
 #include "ConverterOut.h"
 
-#include "TTree.h"
-
 #include "AnalysisTree/TaskManager.hpp"
 #include "AnalysisTree/DataHeader.hpp"
 #include "AnalysisTree/Matching.hpp"
@@ -13,7 +11,7 @@ void ConverterOut::Exec() {
 
   auto out_config = AnalysisTree::TaskManager::GetInstance()->GetConfig();
 
-  events_->SetField(float(sim_events_->GetField<float>(b_field_id_)), out_config->GetBranchConfig(events_->GetId()).GetFieldId("b"));
+  events_->SetField(float(sim_events_->GetField<float>(b_field_id_)), 0); //TODO
 
   for (const auto& candidate : candidates_) {
     auto& lambdarec = lambda_reco_->AddChannel(out_config->GetBranchConfig(lambda_reco_->GetId()));
@@ -65,7 +63,6 @@ void ConverterOut::Exec() {
   }
 
   MatchWithMc();
-//  out_tree_->Fill();
 }
 
 void ConverterOut::Init() {
@@ -76,7 +73,7 @@ void ConverterOut::Init() {
   sim_events_ = ANALYSISTREE_UTILS_GET<AnalysisTree::EventHeader*>(chain->GetPointerToBranch(sim_events_name_));
   mc_particles_ = ANALYSISTREE_UTILS_GET<AnalysisTree::Particles*>(chain->GetPointerToBranch(mc_particles_name_));
   rec_tracks_ = ANALYSISTREE_UTILS_GET<AnalysisTree::TrackDetector*>(chain->GetPointerToBranch(rec_tracks_name_));
-  rec_to_mc_ = chain->GetPointerToMatch(rec_tracks_name_, mc_particles_name_);
+  rec_to_mc_ = chain->GetMatchPointers().find(config_->GetMatchName(rec_tracks_name_, mc_particles_name_))->second;
 
   std::string out_branch_event = "Events";
   std::string out_branch = decay_.GetNameMother() + std::string("Candidates");

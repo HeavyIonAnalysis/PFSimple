@@ -31,9 +31,9 @@ class ConverterOut : public AnalysisTree::Task {
   AnalysisTree::Matching* lambda_reco2sim_{nullptr};
 
   // input branches
-  std::string mc_particles_name_;
-  std::string rec_tracks_name_;
-  std::string sim_events_name_;
+  std::string mc_particles_name_{"SimParticles"};
+  std::string rec_tracks_name_{"VtxTracks"};
+  std::string sim_events_name_{"SimEventHeader"};
 
   AnalysisTree::Particles* mc_particles_{nullptr};
   AnalysisTree::TrackDetector* rec_tracks_{nullptr};
