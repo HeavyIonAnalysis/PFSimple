@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "SimpleFinder.h"
 
 #include "KFParticleSIMD.h"
@@ -136,7 +138,7 @@ float SimpleFinder::CalculateCosMomentumSum(const std::array<float, 8> &pars1, c
   const std::array<float, 3> PSum = {P1.at(0)+P2.at(0), P1.at(1)+P2.at(1), P1.at(2)+P2.at(2)};
 
   return (P1.at(0)*PSum.at(0) + P1.at(1)*PSum.at(1) + P1.at(2)*PSum.at(2)) /
-    (sqrt(P1.at(0)*P1.at(0) + P1.at(1)*P1.at(1) + P1.at(2)*P1.at(2)) * std::sqrt(PSum.at(0)*PSum.at(0) + PSum.at(1)*PSum.at(1) + PSum.at(2)*PSum.at(2)));
+    (std::sqrt(P1.at(0)*P1.at(0) + P1.at(1)*P1.at(1) + P1.at(2)*P1.at(2)) * std::sqrt(PSum.at(0)*PSum.at(0) + PSum.at(1)*PSum.at(1) + PSum.at(2)*PSum.at(2)));
 }
 
 KFParticleSIMD SimpleFinder::ConstructMother(const KFPTrack &track1, const int pid1, const KFPTrack &track2, const int pid2)
@@ -296,7 +298,7 @@ float SimpleFinder::CalculateCosMomentumSumThird(const std::array<float, 8> &par
   const std::array<float, 3> PSum = {P1.at(0)+P2.at(0)+P3.at(0), P1.at(1)+P2.at(1)+P3.at(1), P1.at(2)+P2.at(2)+P3.at(2)};
 
   return (P3.at(0)*PSum.at(0) + P3.at(1)*PSum.at(1) + P3.at(2)*PSum.at(2)) /
-    (sqrt(P3.at(0)*P3.at(0) + P3.at(1)*P3.at(1) + P3.at(2)*P3.at(2)) * sqrt(PSum.at(0)*PSum.at(0) + PSum.at(1)*PSum.at(1) + PSum.at(2)*PSum.at(2)));
+    (std::sqrt(P3.at(0)*P3.at(0) + P3.at(1)*P3.at(1) + P3.at(2)*P3.at(2)) * std::sqrt(PSum.at(0)*PSum.at(0) + PSum.at(1)*PSum.at(1) + PSum.at(2)*PSum.at(2)));
 }
 
 KFParticleSIMD SimpleFinder::ConstructMotherThree(KFParticleSIMD &particleSIMD1, KFParticleSIMD &particleSIMD2, KFParticleSIMD &particleSIMD3,const std::array<float_v, 3> sec_vx)
