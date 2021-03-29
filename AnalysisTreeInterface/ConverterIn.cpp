@@ -118,9 +118,9 @@ std::vector<float> ConverterIn::GetCovMatrixCbm(const AnalysisTree::Track& parti
   std::vector<float> cov(21, 0);
   for (int i = 0, l = 0; i < kNumberOfTrackPars; i++) {
     for (int j = 0; j <= i; j++, l++) {
-      cov[l] = 0;
+      cov.at(l) = 0;
       for (int k = 0; k < 5; k++) {
-        cov[l] += F[i][k] * VFT[k][j];
+        cov.at(l) += F[i][k] * VFT[k][j];
       }
     }
   }

@@ -1,11 +1,11 @@
-if (AnalysisTreeQA_BUNDLED_AT)
+if (PFSimple_BUNDLED_AT)
     message("-- Building bundled AnalysisTree")
     include(FetchContent)
 
     FetchContent_Declare(
             AnalysisTree
             GIT_REPOSITORY "https://github.com/HeavyIonAnalysis/AnalysisTree.git"
-            GIT_TAG ${AnalysisTreeQA_BUNDLED_AT_VERSION}
+            GIT_TAG ${PFSimple_BUNDLED_AT_VERSION}
             GIT_SHALLOW ON
     )
     FetchContent_MakeAvailable(AnalysisTree)

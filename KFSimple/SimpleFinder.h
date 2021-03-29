@@ -31,7 +31,7 @@ class SimpleFinder
   SimpleFinder() = default;
   virtual ~SimpleFinder() = default;
   
-  void  Init(const KFPTrackVector& tracks, const KFVertex& pv);             ///< Initialize SimpleFinder object with PV and set of tracks of the current event
+  void  Init(KFPTrackVector&& tracks, const KFVertex& pv);             ///< Initialize SimpleFinder object with PV and set of tracks of the current event
   void  Init(const InputContainer& input);
   
   void  SortTracks();

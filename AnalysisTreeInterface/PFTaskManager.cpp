@@ -32,6 +32,8 @@ void PFTaskManager::Run(long long int nEvents) {
     converter_out->SetDecay(converter_in->GetDecay());
     converter_out->SetCandidates(FCFinder.GetMotherCandidates());
     converter_out->Exec();
-    //     out_tree_->Fill(); b
+
+    man_->FillOutput();
+
   }// Event loop
 }

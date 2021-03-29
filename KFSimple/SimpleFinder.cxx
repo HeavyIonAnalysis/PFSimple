@@ -4,7 +4,7 @@
 #include "KFParticle.h"
 
 
-void SimpleFinder::Init(const KFPTrackVector& tracks, const KFVertex& pv)
+void SimpleFinder::Init(KFPTrackVector&& tracks, const KFVertex& pv)
 {
   tracks_ = tracks;
   prim_vx_ = pv;
@@ -12,8 +12,8 @@ void SimpleFinder::Init(const KFPTrackVector& tracks, const KFVertex& pv)
 
 void SimpleFinder::Init(const InputContainer& input)
 {
-  KFPTrackVector track_tmp;
   const std::vector<KFParticle>& tracks = input.GetTracks();
+  KFPTrackVector track_tmp;
   track_tmp.Resize(tracks.size());
 
   for(int iTr=0; iTr<tracks.size(); iTr++)
@@ -30,7 +30,7 @@ void SimpleFinder::Init(const InputContainer& input)
     track_tmp.SetId(tracks[iTr].Id(), iTr);
   }
 
-  Init(track_tmp, input.GetVertex());
+  Init(std::move(track_tmp), input.GetVertex());
   SetDecay(input.GetDecay());
   SetCuts(input.GetCuts());
 }
