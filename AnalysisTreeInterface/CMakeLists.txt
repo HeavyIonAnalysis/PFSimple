@@ -1,7 +1,6 @@
 set(SOURCES
     ConverterIn.cpp
     ConverterOut.cpp
-    PFTaskManager.cpp
     PfSimpleTask.cpp
   )
 
@@ -24,12 +23,8 @@ add_target_property(KFMan COMPILE_FLAGS "-DDO_TPCCATRACKER_EFF_PERFORMANCE -DNon
 
 add_executable(main main.cxx)
 add_dependencies(main KFMan)
+add_target_property(main COMPILE_FLAGS "-DDO_TPCCATRACKER_EFF_PERFORMANCE -DNonhomogeneousField -DCBM -DUSE_TIMERS")
 target_link_libraries(main KFMan KFParticleSimple KFParticleInterface KFParticle Vc)
-
-add_executable(test_exe test.cpp)
-add_dependencies(test_exe KFMan)
-add_target_property(test_exe COMPILE_FLAGS "-DDO_TPCCATRACKER_EFF_PERFORMANCE -DNonhomogeneousField -DCBM -DUSE_TIMERS")
-target_link_libraries(test_exe KFParticle Vc)
 
 install(TARGETS KFMan EXPORT KFManTargets
         LIBRARY DESTINATION lib

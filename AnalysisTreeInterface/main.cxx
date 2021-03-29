@@ -1,7 +1,8 @@
-#include "PFTaskManager.h"
 
-#include "AnalysisTree/PlainTreeFiller.hpp"
+//#include "AnalysisTree/PlainTreeFiller.hpp"
 #include "PfSimpleTask.h"
+
+#include "AnalysisTree/TaskManager.hpp"
 
 int main(int argc, char** argv) {
   if (argc < 3) {
@@ -33,38 +34,29 @@ int main(int argc, char** argv) {
     //cuts.SetCutLThreeDown(16.);
   }
 
-  KFPTrackVector track_tmp;
-  track_tmp.Resize(5);
+  const std::string& filename = argv[1];
 
+  auto* man = AnalysisTree::TaskManager::GetInstance();
 
-//  const std::string& filename = argv[1];
-//
-////  auto* man = AnalysisTree::TaskManager::GetInstance();
-//  PFTaskManager man;
-//
-//  man.SetOutputName("PFSimpleOutput.root", "sTree");
-//
-//  auto* in_converter = new ConverterIn(decay, cuts);
-//  in_converter->SetTrackCuts(new AnalysisTree::Cuts("Cut to reproduce KFPF", {AnalysisTree::EqualsCut("VtxTracks.pass_cuts", 1)}));
-//  in_converter->SetIsShine(false);//TODO maybe change name
-//
-//  auto* out_converter = new ConverterOut(decay);
-//  out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "SimEventHeader", "RecEventHeader"});
-//
-//  auto* pf_task = new PFSimpleTask();
-//  pf_task->SetInTask(in_converter);
-//  pf_task->SetOutTask(out_converter);
-//
+  auto* in_converter = new ConverterIn(decay, cuts);
+  in_converter->SetTrackCuts(new AnalysisTree::Cuts("Cut to reproduce KFPF", {AnalysisTree::EqualsCut("VtxTracks.pass_cuts", 1)}));
+  in_converter->SetIsShine(false);//TODO maybe change name
+
+  auto* out_converter = new ConverterOut(decay);
+  out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "SimEventHeader", "RecEventHeader"});
+
+  auto* pf_task = new PFSimpleTask();
+  pf_task->SetInTask(in_converter);
+  pf_task->SetOutTask(out_converter);
+
 //  man.AddTasks(in_converter, out_converter);
-//  man->AddTask(in_converter);
-//  man->AddTask(pf_task);
-//  man->AddTask(out_converter);
+  man->AddTask(in_converter);
+  man->AddTask(pf_task);
+  man->AddTask(out_converter);
 
-
-
-//  man.Init({filename}, {"rTree"});
-//  man.Run(1);// -1 = all events
-//  man.Finish();
+  man->Init({filename}, {"rTree"});
+  man->Run(100);// -1 = all events
+  man->Finish();
 
 //  if (make_plain_tree) {
 //    std::ofstream filelist;
