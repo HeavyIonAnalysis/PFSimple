@@ -16,7 +16,7 @@ void SimpleFinder::Init(const InputContainer& input)
   KFPTrackVector track_tmp;
   track_tmp.Resize(tracks.size());
 
-  for(int iTr=0; iTr<tracks.size(); iTr++)
+  for(size_t iTr=0; iTr<tracks.size(); iTr++)
   {
     for(Int_t iP=0; iP<6; iP++)
       track_tmp.SetParameter(tracks[iTr].GetParameter(iP), iP, iTr);
@@ -358,7 +358,7 @@ void SimpleFinder::FindParticles()
         pidPos = pidCandidates.at(0);
 
       if (pidCandidates.size() > 2)
-        for (int icandidate=2; icandidate < pidCandidates.size() ;icandidate++)
+        for (size_t icandidate=2; icandidate < pidCandidates.size() ;icandidate++)
           if (pidPos == pidCandidates.at(icandidate))
             pidPos = pidCandidates.at(0);
 
@@ -375,7 +375,7 @@ void SimpleFinder::FindParticles()
         pidNeg = pidCandidates.at(0);
 
       if (pidCandidates.size() > 2)
-        for (int icandidate=2; icandidate < pidCandidates.size() ;icandidate++)
+        for (size_t icandidate=2; icandidate < pidCandidates.size() ;icandidate++)
           if (pidNeg == pidCandidates.at(icandidate))
             pidNeg = pidCandidates.at(0);
 
