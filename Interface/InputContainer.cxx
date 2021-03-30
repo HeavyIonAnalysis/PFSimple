@@ -1,19 +1,17 @@
-#include <KFSimple/Constants.h>
 #include "InputContainer.h"
+#include <KFSimple/Constants.h>
 
 #include <iostream>
 #include <stdexcept>
 
 #include "TMath.h"
 
-
-void InputContainer::SetPV(float x, float y, float z)
-{
+void InputContainer::SetPV(float x, float y, float z) {
   KFPVertex primVtx_tmp;
   primVtx_tmp.SetXYZ(x, y, z);
-  primVtx_tmp.SetCovarianceMatrix( 0,0,0,0,0,0 ); //NOTE
-  primVtx_tmp.SetNContributors( 0 );
-  primVtx_tmp.SetChi2( -100 );
+  primVtx_tmp.SetCovarianceMatrix(0, 0, 0, 0, 0, 0);//NOTE
+  primVtx_tmp.SetNContributors(0);
+  primVtx_tmp.SetChi2(-100);
 
   vtx_ = KFVertex(primVtx_tmp);
 }
@@ -24,12 +22,11 @@ void InputContainer::AddTrack(const std::vector<float>& par,
                               int charge,
                               int pdg,
                               int id,
-			      int nhits)
-{
-  if (pdg==0 || pdg==-2)
+                              int nhits) {
+  if (pdg == 0 || pdg == -2)
     return;
 
-  if( par.size() != kNumberOfTrackPars || cov.size() != NumberOfCovElements || field.size() !=  kNumberOfFieldPars){
+  if (par.size() != kNumberOfTrackPars || cov.size() != NumberOfCovElements || field.size() != kNumberOfFieldPars) {
     throw std::runtime_error("Wrong size of input vector!");
   }
 
@@ -41,43 +38,41 @@ void InputContainer::AddTrack(const std::vector<float>& par,
   particle.Py() = par[kPy];
   particle.Pz() = par[kPz];
 
-  for(int i=0; i<21; i++)
+  for (int i = 0; i < 21; i++)
     particle.Covariance(i) = cov[i];
 
-  for(int i=0; i<kNumberOfFieldPars; i++)
+  for (int i = 0; i < kNumberOfFieldPars; i++)
     particle.SetFieldCoeff(field[i], i);
 
-  particle.Q() = char(charge);  //NOTE: is not safe
+  particle.Q() = char(charge);//NOTE: is not safe
   particle.SetPDG(pdg);
   particle.SetId(id);
 
   tracks_.push_back(particle);
 }
 
-double InputContainer::InversedChi2Prob(double p, int ndf)
-{
+double InputContainer::InversedChi2Prob(double p, int ndf) {
   const double epsilon = 1.e-14;
   double chi2Left = 0.f;
   double chi2Right = 10000.f;
-  
+
   double probLeft = p - TMath::Prob(chi2Left, ndf);
-  
-  double chi2Centr = (chi2Left+chi2Right)/2.f;
-  double probCentr = p - TMath::Prob( chi2Centr, ndf);
-  
-  while( TMath::Abs(chi2Right-chi2Centr)/chi2Centr > epsilon ) {
-    if(probCentr * probLeft > 0.f) {
+
+  double chi2Centr = (chi2Left + chi2Right) / 2.f;
+  double probCentr = p - TMath::Prob(chi2Centr, ndf);
+
+  while (TMath::Abs(chi2Right - chi2Centr) / chi2Centr > epsilon) {
+    if (probCentr * probLeft > 0.f) {
       chi2Left = chi2Centr;
       probLeft = probCentr;
-    }
-    else {
+    } else {
       chi2Right = chi2Centr;
     }
-    
-    chi2Centr = (chi2Left+chi2Right)/2.f;
-    probCentr = p - TMath::Prob( chi2Centr, ndf);
+
+    chi2Centr = (chi2Left + chi2Right) / 2.f;
+    probCentr = p - TMath::Prob(chi2Centr, ndf);
   }
-  
+
   return chi2Centr;
 }
 

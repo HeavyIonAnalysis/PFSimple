@@ -4,9 +4,9 @@
 #include "KFSimple/Constants.h"
 
 #include "AnalysisTree/TaskManager.hpp"
+#include <AnalysisTree/Cuts.hpp>
 #include <AnalysisTree/EventHeader.hpp>
 #include <AnalysisTree/Matching.hpp>
-#include <AnalysisTree/Cuts.hpp>
 
 using namespace AnalysisTree;
 
@@ -34,7 +34,7 @@ void ConverterIn::FillParticle(const AnalysisTree::Track& rec_particle, InputCon
 void ConverterIn::Init() {
   auto* chain = AnalysisTree::TaskManager::GetInstance()->GetChain();
 
-  rec_event_header_ =ANALYSISTREE_UTILS_GET<AnalysisTree::EventHeader*>(chain->GetPointerToBranch(rec_event_header_name_));
+  rec_event_header_ = ANALYSISTREE_UTILS_GET<AnalysisTree::EventHeader*>(chain->GetPointerToBranch(rec_event_header_name_));
   sim_event_header_ = ANALYSISTREE_UTILS_GET<AnalysisTree::EventHeader*>(chain->GetPointerToBranch(sim_event_header_name_));
   kf_tracks_ = ANALYSISTREE_UTILS_GET<AnalysisTree::TrackDetector*>(chain->GetPointerToBranch(kf_tracks_name_));
   sim_tracks_ = ANALYSISTREE_UTILS_GET<AnalysisTree::Particles*>(chain->GetPointerToBranch(sim_tracks_name_));
@@ -129,7 +129,7 @@ std::vector<float> ConverterIn::GetCovMatrixCbm(const AnalysisTree::Track& parti
 
 std::vector<float> ConverterIn::GetCovMatrixShine(const AnalysisTree::Track& particle) const {
   std::vector<float> cov(21, 0.);
-  for (int iCov = 0; iCov < 21; ++iCov){
+  for (int iCov = 0; iCov < 21; ++iCov) {
     cov[iCov] = particle.GetField<float>(cov_field_id_ + iCov);
   }
   return cov;

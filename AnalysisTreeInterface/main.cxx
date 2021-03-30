@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
   const bool make_plain_tree{true};
 
   DecayContainer decay;
-  if (!decay.SetDecay(atoi(argv[2]))){
+  if (!decay.SetDecay(atoi(argv[2]))) {
     return EXIT_FAILURE;
   }
 
@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
   pf_task->SetInTask(in_converter);
   pf_task->SetOutTask(out_converter);
 
-//  man.AddTasks(in_converter, out_converter);
+  //  man.AddTasks(in_converter, out_converter);
   man->AddTask(in_converter);
   man->AddTask(pf_task);
   man->AddTask(out_converter);
@@ -58,32 +58,32 @@ int main(int argc, char** argv) {
   man->Run(100);// -1 = all events
   man->Finish();
 
-//  if (make_plain_tree) {
-//    std::ofstream filelist;
-//    filelist.open("filelist.txt");
-//    filelist << "PFSimpleOutput.root\n";
-//    filelist.close();
-//
-//    AnalysisTree::TaskManager pl_man({{"filelist.txt"}}, {{"sTree"}});
-//    pl_man.SetOutFileName("PFSimplePlainTree.root");
-//
-//    auto* tree_task_events = new AnalysisTree::PlainTreeFiller();
-//    std::string branchname_events = std::string("Events");
-//    tree_task_events->SetInputBranchNames({branchname_events});
-//    tree_task_events->SetOutputBranchName(branchname_events);
-//
-//    auto* tree_task = new AnalysisTree::PlainTreeFiller();
-//    std::string branchname_rec = decay.GetNameMother() + std::string("Candidates");
-//    tree_task->SetInputBranchNames({branchname_rec});
-//    tree_task->SetOutputBranchName(branchname_rec);
-//
-//    //     pl_man.AddTask(tree_task_events);
-//    pl_man.AddTask(tree_task);
-//
-//    pl_man.Init();
-//    pl_man.Run(-1);// -1 = all events
-//    pl_man.Finish();
-//  }
+  //  if (make_plain_tree) {
+  //    std::ofstream filelist;
+  //    filelist.open("filelist.txt");
+  //    filelist << "PFSimpleOutput.root\n";
+  //    filelist.close();
+  //
+  //    AnalysisTree::TaskManager pl_man({{"filelist.txt"}}, {{"sTree"}});
+  //    pl_man.SetOutFileName("PFSimplePlainTree.root");
+  //
+  //    auto* tree_task_events = new AnalysisTree::PlainTreeFiller();
+  //    std::string branchname_events = std::string("Events");
+  //    tree_task_events->SetInputBranchNames({branchname_events});
+  //    tree_task_events->SetOutputBranchName(branchname_events);
+  //
+  //    auto* tree_task = new AnalysisTree::PlainTreeFiller();
+  //    std::string branchname_rec = decay.GetNameMother() + std::string("Candidates");
+  //    tree_task->SetInputBranchNames({branchname_rec});
+  //    tree_task->SetOutputBranchName(branchname_rec);
+  //
+  //    //     pl_man.AddTask(tree_task_events);
+  //    pl_man.AddTask(tree_task);
+  //
+  //    pl_man.Init();
+  //    pl_man.Run(-1);// -1 = all events
+  //    pl_man.Finish();
+  //  }
 
   return EXIT_SUCCESS;
 }

@@ -1,7 +1,6 @@
 #include "CutsContainer.h"
 
-void CutsContainer::CancelCuts()
-{
+void CutsContainer::CancelCuts() {
   CancelCutChi2PrimPos();
   CancelCutChi2PrimNeg();
   CancelCutDistance();

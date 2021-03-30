@@ -25,8 +25,7 @@ class OutputContainer {
                                                          pt_error_(particle.GetErrPt()),
                                                          phi_error_(particle.GetErrPhi()),
                                                          eta_error_(particle.GetErrEta()),
-                                                         mass_error_(particle.GetErrMass()
-                                                         ) {}
+                                                         mass_error_(particle.GetErrMass()) {}
 
   virtual ~OutputContainer() = default;
 
@@ -38,7 +37,7 @@ class OutputContainer {
   float GetPtError() const { return pt_error_; }
   float GetPhiError() const { return phi_error_; }
   float GetEtaError() const { return eta_error_; }
-  float GetMassError() const { return mass_error_;}
+  float GetMassError() const { return mass_error_; }
 
   float GetChi2Prim() const { return chi_2_prim_; }
   float GetChi2Geo() const { return chi2_geo_; }

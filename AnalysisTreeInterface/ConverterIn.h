@@ -7,11 +7,11 @@
 #include "DecayContainer.h"
 #include "InputContainer.h"
 
-namespace AnalysisTree{
-  class EventHeader;
-  class Matching;
-  class Cuts;
-}
+namespace AnalysisTree {
+class EventHeader;
+class Matching;
+class Cuts;
+}// namespace AnalysisTree
 
 class ConverterIn : public AnalysisTree::Task {
 

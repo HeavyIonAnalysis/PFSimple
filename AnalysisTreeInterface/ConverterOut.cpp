@@ -1,48 +1,47 @@
 #include "ConverterOut.h"
 
-#include "AnalysisTree/TaskManager.hpp"
 #include "AnalysisTree/DataHeader.hpp"
 #include "AnalysisTree/Matching.hpp"
+#include "AnalysisTree/TaskManager.hpp"
 
 void CopyParticle(const OutputContainer& kf_particle, AnalysisTree::Particle& particle) {
 
   particle.SetMomentum(kf_particle.GetPx(), kf_particle.GetPy(), kf_particle.GetPz());
   particle.SetMass(kf_particle.GetMass());
 
-//  float mass, masserr;
-//  particle.GetMass(mass, masserr);
-//  lambdarec.SetField(particle.DaughterIds()[0], daughter1_id_field_id_);
-//  lambdarec.SetField(particle.DaughterIds()[1], daughter2_id_field_id_);
-//  if (decay_.GetNdaughters() == 3)
-//    lambdarec.SetField(particle.DaughterIds()[2], daughter3_id_field_id_);
-//
-//  lambdarec.SetField(particle.X(), x_field_id_);
-//  lambdarec.SetField(particle.Y(), y_field_id_);
-//  lambdarec.SetField(particle.Z(), z_field_id_);
-//  lambdarec.SetMomentum(particle.GetPx(), particle.GetPy(), particle.GetPz());
-//
-//  lambdarec.SetField(particle.GetErrPx(), px_err_field_id_);
-//  lambdarec.SetField(particle.GetErrPy(), py_err_field_id_);
-//  lambdarec.SetField(particle.GetErrPz(), pz_err_field_id_);
-//
-//  lambdarec.SetMass(mass);
-//  lambdarec.SetField(masserr, mass_err_field_id_);
-//  lambdarec.SetPid(particle.GetPDG());
-//
-//  lambdarec.SetField(candidate.GetChi2PrimPos(), chi2primpos_field_id_);
-//  lambdarec.SetField(candidate.GetChi2PrimNeg(), chi2primneg_field_id_);
-//  lambdarec.SetField(candidate.GetDistance(), distance_field_id_);
-//  lambdarec.SetField(candidate.GetCosineDaughterPos(), cosinepos_field_id_);
-//  lambdarec.SetField(candidate.GetCosineDaughterNeg(), cosineneg_field_id_);
-//  lambdarec.SetField(candidate.GetChi2Geo(), chi2geo_field_id_);
-//  lambdarec.SetField(candidate.GetL(), l_field_id_);
-//  lambdarec.SetField(candidate.GetLdL(), ldl_field_id_);
-//  lambdarec.SetField(candidate.GetIsFromPV(), isfrompv_field_id_);
-//  lambdarec.SetField(candidate.GetCosineTopo(), cosinetopo_field_id_);
-//  lambdarec.SetField(candidate.GetChi2Topo(), chi2topo_field_id_);
-//  lambdarec.SetField(candidate.GetNHitsPos(), nhits_pos_field_id_);
-//  lambdarec.SetField(candidate.GetNHitsNeg(), nhits_neg_field_id_);
-
+  //  float mass, masserr;
+  //  particle.GetMass(mass, masserr);
+  //  lambdarec.SetField(particle.DaughterIds()[0], daughter1_id_field_id_);
+  //  lambdarec.SetField(particle.DaughterIds()[1], daughter2_id_field_id_);
+  //  if (decay_.GetNdaughters() == 3)
+  //    lambdarec.SetField(particle.DaughterIds()[2], daughter3_id_field_id_);
+  //
+  //  lambdarec.SetField(particle.X(), x_field_id_);
+  //  lambdarec.SetField(particle.Y(), y_field_id_);
+  //  lambdarec.SetField(particle.Z(), z_field_id_);
+  //  lambdarec.SetMomentum(particle.GetPx(), particle.GetPy(), particle.GetPz());
+  //
+  //  lambdarec.SetField(particle.GetErrPx(), px_err_field_id_);
+  //  lambdarec.SetField(particle.GetErrPy(), py_err_field_id_);
+  //  lambdarec.SetField(particle.GetErrPz(), pz_err_field_id_);
+  //
+  //  lambdarec.SetMass(mass);
+  //  lambdarec.SetField(masserr, mass_err_field_id_);
+  //  lambdarec.SetPid(particle.GetPDG());
+  //
+  //  lambdarec.SetField(candidate.GetChi2PrimPos(), chi2primpos_field_id_);
+  //  lambdarec.SetField(candidate.GetChi2PrimNeg(), chi2primneg_field_id_);
+  //  lambdarec.SetField(candidate.GetDistance(), distance_field_id_);
+  //  lambdarec.SetField(candidate.GetCosineDaughterPos(), cosinepos_field_id_);
+  //  lambdarec.SetField(candidate.GetCosineDaughterNeg(), cosineneg_field_id_);
+  //  lambdarec.SetField(candidate.GetChi2Geo(), chi2geo_field_id_);
+  //  lambdarec.SetField(candidate.GetL(), l_field_id_);
+  //  lambdarec.SetField(candidate.GetLdL(), ldl_field_id_);
+  //  lambdarec.SetField(candidate.GetIsFromPV(), isfrompv_field_id_);
+  //  lambdarec.SetField(candidate.GetCosineTopo(), cosinetopo_field_id_);
+  //  lambdarec.SetField(candidate.GetChi2Topo(), chi2topo_field_id_);
+  //  lambdarec.SetField(candidate.GetNHitsPos(), nhits_pos_field_id_);
+  //  lambdarec.SetField(candidate.GetNHitsNeg(), nhits_neg_field_id_);
 }
 
 void ConverterOut::Exec() {
@@ -52,14 +51,14 @@ void ConverterOut::Exec() {
 
   auto out_config = AnalysisTree::TaskManager::GetInstance()->GetConfig();
 
-  events_->SetField(float(sim_events_->GetField<float>(b_field_id_)), 0); //TODO
+  events_->SetField(float(sim_events_->GetField<float>(b_field_id_)), 0);//TODO
 
   for (const auto& candidate : candidates_) {
     auto& lambdarec = lambda_reco_->AddChannel(out_config->GetBranchConfig(lambda_reco_->GetId()));
     CopyParticle(candidate, lambdarec);
   }
 
-//  MatchWithMc();  //TODO
+  //  MatchWithMc();  //TODO
 }
 
 void ConverterOut::Init() {
@@ -173,25 +172,23 @@ void ConverterOut::InitIndexes() {
   daughter1_id_field_id_ = out_branch.GetFieldId("daughter1_id");
   px_err_field_id_ = out_branch.GetFieldId("pT_err");
 
-//  if (mc_particles_) {
-//    auto branch_conf_sim = config_->GetBranchConfig(mc_particles_name_);
-//    mother_id_field_id_ = branch_conf_sim.GetFieldId("mother_id");
-//    is_signal_field_id_ = out_branch.GetFieldId("is_signal");
-//  }
+  //  if (mc_particles_) {
+  //    auto branch_conf_sim = config_->GetBranchConfig(mc_particles_name_);
+  //    mother_id_field_id_ = branch_conf_sim.GetFieldId("mother_id");
+  //    is_signal_field_id_ = out_branch.GetFieldId("is_signal");
+  //  }
 
-//  chi2primpos_field_id_ = out_branch.GetFieldId("chi2primpos");
-//  chi2primneg_field_id_ = out_branch.GetFieldId("chi2primneg");
-//  distance_field_id_ = out_branch.GetFieldId("distance");
-//  cosinepos_field_id_ = out_branch.GetFieldId("cosinepos");
-//  cosineneg_field_id_ = out_branch.GetFieldId("cosineneg");
-//  chi2geo_field_id_ = out_branch.GetFieldId("chi2geo");
-//  l_field_id_ = out_branch.GetFieldId("l");
-//  ldl_field_id_ = out_branch.GetFieldId("ldl");
-//  isfrompv_field_id_ = out_branch.GetFieldId("isfrompv");
-//  cosinetopo_field_id_ = out_branch.GetFieldId("cosinetopo");
-//  chi2topo_field_id_ = out_branch.GetFieldId("chi2topo");
-//  nhits_pos_field_id_ = out_branch.GetFieldId("nhitspos");
-//  nhits_neg_field_id_ = out_branch.GetFieldId("nhitsneg");
-
-
+  //  chi2primpos_field_id_ = out_branch.GetFieldId("chi2primpos");
+  //  chi2primneg_field_id_ = out_branch.GetFieldId("chi2primneg");
+  //  distance_field_id_ = out_branch.GetFieldId("distance");
+  //  cosinepos_field_id_ = out_branch.GetFieldId("cosinepos");
+  //  cosineneg_field_id_ = out_branch.GetFieldId("cosineneg");
+  //  chi2geo_field_id_ = out_branch.GetFieldId("chi2geo");
+  //  l_field_id_ = out_branch.GetFieldId("l");
+  //  ldl_field_id_ = out_branch.GetFieldId("ldl");
+  //  isfrompv_field_id_ = out_branch.GetFieldId("isfrompv");
+  //  cosinetopo_field_id_ = out_branch.GetFieldId("cosinetopo");
+  //  chi2topo_field_id_ = out_branch.GetFieldId("chi2topo");
+  //  nhits_pos_field_id_ = out_branch.GetFieldId("nhitspos");
+  //  nhits_neg_field_id_ = out_branch.GetFieldId("nhitsneg");
 }
