@@ -1,7 +1,7 @@
 #include "ConverterIn.h"
 
 #include "Interface/InputContainer.h"
-#include "KFSimple/Constants.h"
+#include "KFSimple/Constants.hpp"
 
 #include "AnalysisTree/TaskManager.hpp"
 #include <AnalysisTree/Cuts.hpp>

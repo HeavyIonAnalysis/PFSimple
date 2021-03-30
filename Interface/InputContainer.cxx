@@ -1,5 +1,5 @@
 #include "InputContainer.h"
-#include <KFSimple/Constants.h>
+#include <KFSimple/Constants.hpp>
 
 #include <iostream>
 #include <stdexcept>

@@ -1,9 +1,13 @@
 set(SOURCES
-        SimpleFinder.cxx
+        SimpleFinder.cpp
+        SimpleFinderNew.cpp
+        DaughterCuts.cpp
+        MotherCuts.cpp
+        Decay.cpp
         )
 
-string(REPLACE ".cxx" ".h" HEADERS "${SOURCES}")
-list(APPEND HEADERS "Constants.h")
+string(REPLACE ".cpp" ".hpp" HEADERS "${SOURCES}")
+list(APPEND HEADERS "Constants.hpp")
 
 include_directories(${CMAKE_SOURCE_DIR}/Interface ${CMAKE_SOURCE_DIR}/KFSimple ${PROJECT_INCLUDE_DIRECTORIES} )
 link_directories(${PROJECT_LINK_DIRECTORIES})

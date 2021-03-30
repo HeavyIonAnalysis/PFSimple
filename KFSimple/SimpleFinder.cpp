@@ -1,6 +1,6 @@
 #include <cmath>
 
-#include "SimpleFinder.h"
+#include "SimpleFinder.hpp"
 
 #include "KFParticle.h"
 #include "KFParticleSIMD.h"
@@ -174,20 +174,17 @@ void SimpleFinder::CalculateMotherProperties(const KFParticleSIMD& mother, float
 }
 
 float SimpleFinder::CalculateCosTopo(const KFParticleSIMD& mother) const {
-  const float x_mother = mother.GetX()[0];
-  const float y_mother = mother.GetY()[0];
-  const float z_mother = mother.GetZ()[0];
 
-  const float px_mother = mother.GetPx()[0];
-  const float py_mother = mother.GetPy()[0];
-  const float pz_mother = mother.GetPz()[0];
+  const float px = mother.GetPx()[0];
+  const float py = mother.GetPy()[0];
+  const float pz = mother.GetPz()[0];
 
-  const float delta_x = x_mother - prim_vx_.GetX();
-  const float delta_y = y_mother - prim_vx_.GetY();
-  const float delta_z = z_mother - prim_vx_.GetZ();
+  const float delta_x = mother.GetX()[0] - prim_vx_.GetX();
+  const float delta_y = mother.GetY()[0] - prim_vx_.GetY();
+  const float delta_z = mother.GetZ()[0] - prim_vx_.GetZ();
 
-  const float sp = delta_x * px_mother + delta_y * py_mother + delta_z * pz_mother;
-  const float norm = std::sqrt(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z) * std::sqrt(px_mother * px_mother + py_mother * py_mother + pz_mother * pz_mother);
+  const float sp = delta_x * px + delta_y * py + delta_z * pz;
+  const float norm = std::sqrt(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z) * mother.GetP()[0];
 
   return sp / norm;
 }
@@ -197,7 +194,7 @@ float SimpleFinder::CalculateChi2Topo(const KFParticleSIMD& mother) const {
   KFVertex prim_vx_tmp = prim_vx_;
   const KFParticleSIMD prim_vx_Simd(prim_vx_tmp);
   motherTopo.SetProductionVertex(prim_vx_Simd);
-  const float_v& chi2 = motherTopo.GetChi2() / simd_cast<float_v>(motherTopo.GetNDF());
+  const float_v chi2 = motherTopo.GetChi2() / simd_cast<float_v>(motherTopo.GetNDF());
 
   return chi2[0];
 }
@@ -209,12 +206,14 @@ void SimpleFinder::SaveParticle(const OutputContainer& Mother) {
 
 /** Additional functions for adding a third daughter to the mother**/
 
-void SimpleFinder::CalculateCoordinatesSecondaryVertex(const std::array<float, 8>& pars1, const std::array<float, 8>& pars2, std::array<float_v, 3>& sv) {
+std::array<float_v, 3> SimpleFinder::CalculateCoordinatesSecondaryVertex(const std::array<float, 8>& pars1, const std::array<float, 8>& pars2) {
 
+  std::array<float_v, 3> sv;
   //** Calculate coordinates of the secondary vertex of the first two daughters
   sv.at(0) = (pars1.at(0) + pars2.at(0)) / 2;
   sv.at(1) = (pars1.at(1) + pars2.at(1)) / 2;
   sv.at(2) = (pars1.at(2) + pars2.at(2)) / 2;
+  return sv;
 }
 
 void SimpleFinder::CalculateParamsInSecondaryVertex(const KFParticleSIMD& particleSIMD1, const std::array<float_v, 3> sec_vx, std::array<float, 8>& pars1) {
@@ -299,6 +298,11 @@ KFParticleSIMD SimpleFinder::ConstructMotherThree(KFParticleSIMD& particleSIMD1,
   return mother;
 }
 
+bool SimpleFinder::IsGoodDaughter(const KFPTrack& track, int pid){
+
+}
+
+
 /*
  * The main function which performs the mother-candidate selection algorithm for two or three daugthers.
  */
@@ -315,9 +319,8 @@ void SimpleFinder::FindParticles() {
       KFPTrack trackPos;
       tracks_.GetTrack(trackPos, trIndex_[kSecPos][iSecPos]);
       int pidPos = tracks_.PDG()[trIndex_[kSecPos][iSecPos]];
-      std::vector<int> pidCandidates;
-      pidCandidates.clear();
-      pidCandidates = decay_.GetPdgDaughterPosCandidates();
+
+      const auto& pidCandidates = decay_.GetPdgDaughterPosCandidates();
 
       if (pidCandidates.size() > 1 && pidCandidates.at(1) == 1 && pidPos > 1000000000)
         pidPos = pidCandidates.at(0);
@@ -333,18 +336,17 @@ void SimpleFinder::FindParticles() {
       tracks_.GetTrack(trackNeg, trIndex_[kSecNeg][iSecNeg]);
       int pidNeg = tracks_.PDG()[trIndex_[kSecNeg][iSecNeg]];
 
-      pidCandidates.clear();
-      pidCandidates = decay_.GetPdgDaughterNegCandidates();
+      const auto& pidCandidatesNeg = decay_.GetPdgDaughterNegCandidates();
 
-      if (pidCandidates.size() > 1 && pidCandidates.at(1) == 1 && pidNeg < -1000000000)
-        pidNeg = pidCandidates.at(0);
+      if (pidCandidatesNeg.size() > 1 && pidCandidatesNeg.at(1) == 1 && pidNeg < -1000000000)
+        pidNeg = pidCandidatesNeg.at(0);
 
-      if (pidCandidates.size() > 2)
-        for (size_t icandidate = 2; icandidate < pidCandidates.size(); icandidate++)
-          if (pidNeg == pidCandidates.at(icandidate))
-            pidNeg = pidCandidates.at(0);
+      if (pidCandidatesNeg.size() > 2)
+        for (size_t icandidate = 2; icandidate < pidCandidatesNeg.size(); icandidate++)
+          if (pidNeg == pidCandidatesNeg.at(icandidate))
+            pidNeg = pidCandidatesNeg.at(0);
 
-      if (pidNeg != pidCandidates.at(0)) continue;
+      if (pidNeg != pidCandidatesNeg.at(0)) continue;
 
       const float chi2_prim_pos = CalculateChiToPrimaryVertex(trackPos, pidPos);
       if ((cuts_.GetIsApplyCutChi2PrimPos() && (chi2_prim_pos <= cuts_.GetCutChi2PrimPos())) || std::isnan(chi2_prim_pos)) continue;
@@ -469,8 +471,7 @@ void SimpleFinder::FindParticles() {
       //          particleThird.SetId(trackThird.Id());
       //          KFParticleSIMD particleSIMDThird(particleThird);
       //
-      //          std::array<float_v, 3> sec_vx;
-      //          CalculateCoordinatesSecondaryVertex(pars1,pars2,sec_vx);
+      //          std::array<float_v, 3> sec_vx = CalculateCoordinatesSecondaryVertex(pars1,pars2);
       //
       //          std::array<float, 8> pars3{};
       //          CalculateParamsInSecondaryVertex(particleSIMDThird, sec_vx, pars3);

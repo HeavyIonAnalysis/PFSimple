@@ -1,7 +1,7 @@
 #ifndef KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_PFSIMPLETASK_H_
 #define KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_PFSIMPLETASK_H_
 
-#include "SimpleFinder.h"
+#include "SimpleFinder.hpp"
 
 #include "AnalysisTree/Task.hpp"
 #include "ConverterIn.h"

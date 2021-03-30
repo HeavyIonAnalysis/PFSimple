@@ -1,4 +1,4 @@
-#include "../KFSimple/Constants.h"
+#include "../KFSimple/Constants.hpp"
 
 float signum(float x)
 {

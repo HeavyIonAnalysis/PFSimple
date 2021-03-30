@@ -1,6 +1,8 @@
 #ifndef Constants_H
 #define Constants_H
 
+typedef long long Pdg_t;
+
 enum eTrackTypes {
   kSecPos = 0,
   kSecNeg,
