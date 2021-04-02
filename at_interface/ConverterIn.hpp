@@ -1,11 +1,13 @@
 #ifndef KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTERIN_H_
 #define KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTERIN_H_
 
+#include <utility>
+
 #include "AnalysisTree/Task.hpp"
 #include <AnalysisTree/Detector.hpp>
 
-#include "DecayContainer.h"
-#include "InputContainer.h"
+#include "Decay.hpp"
+#include "InputContainer.hpp"
 
 namespace AnalysisTree {
 class EventHeader;
@@ -16,7 +18,7 @@ class Cuts;
 class ConverterIn : public AnalysisTree::Task {
 
  public:
-  ConverterIn(const DecayContainer& decay, const CutsContainer& cuts) : decay_(decay), cuts_(cuts) {
+  explicit ConverterIn() {
     rec_event_header_name_ = "RecEventHeader";
     sim_event_header_name_ = "SimEventHeader";
     kf_tracks_name_ = "VtxTracks";
@@ -25,25 +27,17 @@ class ConverterIn : public AnalysisTree::Task {
   ~ConverterIn() override = default;
 
   void Init() override;
-  void Exec() override{};
+  void Exec() override;
   void Finish() override{};
 
-  const DecayContainer& GetDecay() const { return decay_; }
-  const CutsContainer& GetCuts() const { return cuts_; }
-  //  const InputContainer& GetInputContainer() const { return input_container_; }
-
+  const InputContainer& GetInputContainer() const { return container_; }
   void SetIsShine(bool is = true) { is_shine_ = is; }
-
-  void SetDecay(const DecayContainer& decay) { decay_ = decay; };
-  void SetCuts(const CutsContainer& cuts) { cuts_ = cuts; };
   void SetTrackCuts(AnalysisTree::Cuts* const cuts) { track_cuts_ = cuts; };
-
-  InputContainer CreateInputContainer() const;
 
  protected:
   std::vector<float> GetCovMatrixCbm(const AnalysisTree::Track&) const;
   std::vector<float> GetCovMatrixShine(const AnalysisTree::Track&) const;
-  void FillParticle(const AnalysisTree::Track&, InputContainer&) const;
+  void FillParticle(const AnalysisTree::Track&);
   bool IsGoodTrack(const AnalysisTree::Track& rec_track) const;
 
   AnalysisTree::TrackDetector* kf_tracks_{nullptr};
@@ -53,8 +47,7 @@ class ConverterIn : public AnalysisTree::Task {
   AnalysisTree::EventHeader* sim_event_header_{nullptr};
   AnalysisTree::Cuts* track_cuts_{nullptr};
 
-  DecayContainer decay_;
-  CutsContainer cuts_;
+  InputContainer container_;
 
   std::string rec_event_header_name_;
   std::string sim_event_header_name_;

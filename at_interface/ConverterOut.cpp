@@ -1,4 +1,4 @@
-#include "ConverterOut.h"
+#include "ConverterOut.hpp"
 
 #include "AnalysisTree/DataHeader.hpp"
 #include "AnalysisTree/Matching.hpp"
@@ -72,8 +72,8 @@ void ConverterOut::Init() {
   rec_to_mc_ = chain->GetMatchPointers().find(config_->GetMatchName(rec_tracks_name_, mc_particles_name_))->second;
 
   std::string out_branch_event = "Events";
-  std::string out_branch = decay_.GetNameMother() + std::string("Candidates");
-  std::string out_branch_sim = decay_.GetNameMother() + std::string("Simulated");
+  std::string out_branch = std::string("Candidates");
+  std::string out_branch_sim = std::string("Simulated");
   std::string out_branch_reco2sim = out_branch + "2" + out_branch_sim;
 
   AnalysisTree::BranchConfig EventBranch(out_branch_event, AnalysisTree::DetType::kEventHeader);
@@ -129,17 +129,17 @@ void ConverterOut::MatchWithMc() {
         if (mother_id < 0) continue;
 
         const AnalysisTree::Particle& simtrackmother = mc_particles_->GetChannel(mother_id);
-
-        if (decay_.GetNdaughters() == 2) is_signal = simtrackmother.GetPid() == decay_.GetPdgMother();
-
-        if (decay_.GetNdaughters() == 3) {
-          const int simtrackid3 = rec_to_mc_->GetMatch(lambdarec.GetField<int>(daughter3_id_field_id_));
-          if (simtrackid3 >= 0) {
-            const AnalysisTree::Particle& simtrack3 = mc_particles_->GetChannel(simtrackid3);
-            if (simtrack1.GetField<int>(mother_id_field_id_) == simtrack3.GetField<int>(mother_id_field_id_))
-              is_signal = simtrackmother.GetPid() == decay_.GetPdgMother();
-          }
-        }
+//TODO
+//        if (decay_.GetNdaughters() == 2) is_signal = simtrackmother.GetPid() == decay_.GetPdgMother();
+//
+//        if (decay_.GetNdaughters() == 3) {
+//          const int simtrackid3 = rec_to_mc_->GetMatch(lambdarec.GetField<int>(daughter3_id_field_id_));
+//          if (simtrackid3 >= 0) {
+//            const AnalysisTree::Particle& simtrack3 = mc_particles_->GetChannel(simtrackid3);
+//            if (simtrack1.GetField<int>(mother_id_field_id_) == simtrack3.GetField<int>(mother_id_field_id_))
+//              is_signal = simtrackmother.GetPid() == decay_.GetPdgMother();
+//          }
+//        }
       }
     }
 

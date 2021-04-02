@@ -14,14 +14,13 @@
 #define SimpleFinder_H
 
 #include "Constants.hpp"
-#include "CutsContainer.h"
-#include "DecayContainer.h"
-#include "InputContainer.h"
+#include "InputContainer.hpp"
+#include "OutputContainer.hpp"
+
 #include "KFPTrack.h"
 #include "KFPTrackVector.h"
 #include "KFParticleSIMD.h"
 #include "KFVertex.h"
-#include "OutputContainer.h"
 
 class SimpleFinder {
 
@@ -41,8 +40,8 @@ class SimpleFinder {
 
   const std::vector<OutputContainer>& GetMotherCandidates() const { return vec_mother_; };
 
-  void SetCuts(const CutsContainer& cuts) { cuts_ = cuts; }
-  void SetDecay(const DecayContainer& decay) { decay_ = decay; }
+//  void SetCuts(const CutsContainer& cuts) { cuts_ = cuts; }
+//  void SetDecay(const DecayContainer& decay) { decay_ = decay; }
 
  protected:
   float CalculateChiToPrimaryVertex(const KFPTrack& track, int pid) const;///< Calculates \f$\chi^2\f$ of the track to the primary vertex (PV)
@@ -72,9 +71,6 @@ class SimpleFinder {
   KFVertex prim_vx_;
 
   std::array<std::vector<int>, kNumberOfTrackTypes> trIndex_;
-
-  CutsContainer cuts_;
-  DecayContainer decay_;
 
   float mass_{0.};               // TODO remove after debug procedure
   std::vector<float> vec_mass_{};// TODO remove after debug procedure

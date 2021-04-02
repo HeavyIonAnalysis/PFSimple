@@ -1,7 +1,7 @@
-#include "ConverterIn.h"
+#include "ConverterIn.hpp"
 
-#include "Interface/InputContainer.h"
-#include "KFSimple/Constants.hpp"
+#include "InputContainer.hpp"
+#include "Constants.hpp"
 
 #include "AnalysisTree/TaskManager.hpp"
 #include <AnalysisTree/Cuts.hpp>
@@ -10,7 +10,7 @@
 
 using namespace AnalysisTree;
 
-void ConverterIn::FillParticle(const AnalysisTree::Track& rec_particle, InputContainer& input_info) const {
+void ConverterIn::FillParticle(const AnalysisTree::Track& rec_particle) {
   std::vector<float> mf(kNumberOfFieldPars, 0.f);
   for (int iF = 0; iF < kNumberOfFieldPars; iF++) {
     mf[iF] = rec_particle.GetField<float>(mf_field_id_ + iF);
@@ -28,7 +28,7 @@ void ConverterIn::FillParticle(const AnalysisTree::Track& rec_particle, InputCon
   const int pdg = rec_particle.GetField<int>(pdg_field_id_);//TODO
                                                             //  const int pdg = rec_particle.GetPid();
 
-  input_info.AddTrack(par, cov_matrix, mf, rec_particle.GetField<int>(q_field_id_), pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
+  container_.AddTrack(par, cov_matrix, mf, rec_particle.GetField<int>(q_field_id_), pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
 }
 
 void ConverterIn::Init() {
@@ -58,25 +58,22 @@ void ConverterIn::Init() {
   }
 }
 
-InputContainer ConverterIn::CreateInputContainer() const {
+void ConverterIn::Exec() {
 
-  InputContainer input_container;
+  container_ = InputContainer();
   const int n_tracks = kf_tracks_->GetNumberOfChannels();
   //  std::cout << " Ntracks = " << n_tracks << std::endl;
-  input_container.SetDecay(decay_);
-  input_container.SetCuts(cuts_);
-  input_container.SetPV(rec_event_header_->GetVertexX(), rec_event_header_->GetVertexY(), rec_event_header_->GetVertexZ());
+
+  container_.SetPV(rec_event_header_->GetVertexX(), rec_event_header_->GetVertexY(), rec_event_header_->GetVertexZ());
 
   int n_good_tracks{0};
-  input_container.Reserve(n_tracks);
+  container_.Reserve(n_tracks);
   for (int i_track = 0; i_track < n_tracks; ++i_track) {
     const auto& rec_track = kf_tracks_->GetChannel(i_track);
     if (!IsGoodTrack(rec_track)) continue;
-    FillParticle(rec_track, input_container);
+    FillParticle(rec_track);
     n_good_tracks++;
   }
-  //  std::cout << "Good tracks = " << n_good_tracks << "\n" << std::endl;
-  return input_container;
 }
 
 std::vector<float> ConverterIn::GetCovMatrixCbm(const AnalysisTree::Track& particle) const {

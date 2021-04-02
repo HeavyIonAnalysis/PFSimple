@@ -1,11 +1,10 @@
 set(SOURCES
-    CutsContainer.cxx
-    InputContainer.cxx
-    OutputContainer.cxx
+    InputContainer.cpp
+    OutputContainer.cpp
     )
 
-string(REPLACE ".cxx" ".h" HEADERS "${SOURCES}")
-include_directories(${CMAKE_SOURCE_DIR}/Interface )
+string(REPLACE ".cpp" ".hpp" HEADERS "${SOURCES}")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
 
 include_directories(${PROJECT_INCLUDE_DIRECTORIES})
 link_directories(${PROJECT_LINK_DIRECTORIES})

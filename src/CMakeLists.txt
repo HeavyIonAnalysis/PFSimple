@@ -1,5 +1,5 @@
 set(SOURCES
-        SimpleFinder.cpp
+#        SimpleFinder.cpp
         SimpleFinderNew.cpp
         DaughterCuts.cpp
         MotherCuts.cpp
@@ -9,7 +9,7 @@ set(SOURCES
 string(REPLACE ".cpp" ".hpp" HEADERS "${SOURCES}")
 list(APPEND HEADERS "Constants.hpp")
 
-include_directories(${CMAKE_SOURCE_DIR}/Interface ${CMAKE_SOURCE_DIR}/KFSimple ${PROJECT_INCLUDE_DIRECTORIES} )
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/interface ${CMAKE_CURRENT_SOURCE_DIR} ${PROJECT_INCLUDE_DIRECTORIES} )
 link_directories(${PROJECT_LINK_DIRECTORIES})
 
 add_library(KFParticleSimple SHARED ${SOURCES} G__KFParticleSimple.cxx)

@@ -1,8 +1,7 @@
 #ifndef KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_
 #define KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_
 
-#include <DecayContainer.h>
-#include <OutputContainer.h>
+#include "OutputContainer.hpp"
 
 #include "AnalysisTree/Detector.hpp"
 #include "AnalysisTree/EventHeader.hpp"
@@ -10,7 +9,7 @@
 
 class ConverterOut : public AnalysisTree::Task {
  public:
-  explicit ConverterOut(const DecayContainer& decay) : decay_(decay) {}
+  explicit ConverterOut() = default;
   ~ConverterOut() override = default;
 
   void Init() override;
@@ -18,7 +17,6 @@ class ConverterOut : public AnalysisTree::Task {
   void Finish() override {}
 
   void SetCandidates(const std::vector<OutputContainer>& candidates) { candidates_ = candidates; }
-  void SetDecay(const DecayContainer& decay) { decay_ = decay; };
 
  protected:
   void InitIndexes();
@@ -41,7 +39,6 @@ class ConverterOut : public AnalysisTree::Task {
   AnalysisTree::EventHeader* sim_events_{nullptr};
 
   std::vector<OutputContainer> candidates_;
-  DecayContainer decay_;
 
   // field ids of simulated events
   int b_field_id_{-1};

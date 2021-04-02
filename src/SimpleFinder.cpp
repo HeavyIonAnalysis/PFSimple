@@ -112,9 +112,7 @@ float SimpleFinder::CalculateDistanceBetweenParticles(const std::array<float, 8>
   const float dx = pars1.at(0) - pars2.at(0);
   const float dy = pars1.at(1) - pars2.at(1);
   const float dz = pars1.at(2) - pars2.at(2);
-  const float dr = std::sqrt(dx * dx + dy * dy + dz * dz);
-
-  return dr;
+  return std::sqrt(dx * dx + dy * dy + dz * dz);
 }
 
 float SimpleFinder::CalculateCosMomentumSum(const std::array<float, 8>& pars1, const std::array<float, 8>& pars2) {
@@ -205,7 +203,6 @@ void SimpleFinder::SaveParticle(const OutputContainer& Mother) {
 }
 
 /** Additional functions for adding a third daughter to the mother**/
-
 std::array<float_v, 3> SimpleFinder::CalculateCoordinatesSecondaryVertex(const std::array<float, 8>& pars1, const std::array<float, 8>& pars2) {
 
   std::array<float_v, 3> sv;
@@ -216,9 +213,8 @@ std::array<float_v, 3> SimpleFinder::CalculateCoordinatesSecondaryVertex(const s
   return sv;
 }
 
+//** Calculate parameters of a daughter in the PCA to the secondary vertex
 void SimpleFinder::CalculateParamsInSecondaryVertex(const KFParticleSIMD& particleSIMD1, const std::array<float_v, 3> sec_vx, std::array<float, 8>& pars1) {
-
-  //** Calculate parameters of a daughter in the PCA to the secondary vertex
 
   float_v dS;
   float_v dsdr[6];

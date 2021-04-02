@@ -1,5 +1,5 @@
-#include "InputContainer.h"
-#include <KFSimple/Constants.hpp>
+#include "InputContainer.hpp"
+#include <Constants.hpp>
 
 #include <iostream>
 #include <stdexcept>
@@ -122,7 +122,7 @@ void InputContainer::Reserve(size_t n) {
 // {
 //   /*
 //    * Creates the SimpleFinder object with all necessary input information in order to
-//    * perform particle selection using KFSimple algorithm.
+//    * perform particle selection using src algorithm.
 //    */
 //
 //   SimpleFinder FCF;

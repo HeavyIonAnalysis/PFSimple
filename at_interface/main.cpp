@@ -1,6 +1,6 @@
 
 //#include "AnalysisTree/PlainTreeFiller.hpp"
-#include "PfSimpleTask.h"
+#include "PfSimpleTask.hpp"
 
 #include "AnalysisTree/TaskManager.hpp"
 
@@ -12,37 +12,31 @@ int main(int argc, char** argv) {
 
   const bool make_plain_tree{true};
 
-  DecayContainer decay;
-  if (!decay.SetDecay(atoi(argv[2]))) {
-    return EXIT_FAILURE;
-  }
+//  cuts.CancelCuts();
+//  cuts.SetCutChi2PrimPos(18.6);
+//  cuts.SetCutChi2PrimNeg(18.6);
+//  cuts.SetCutDistance(1.);
+//  cuts.SetCutChi2Geo(3.);
+//  cuts.SetCutLdL(5.);
 
-  CutsContainer cuts;
-  cuts.CancelCuts();
-  cuts.SetCutChi2PrimPos(18.6);
-  cuts.SetCutChi2PrimNeg(18.6);
-  cuts.SetCutDistance(1.);
-  cuts.SetCutChi2Geo(3.);
-  cuts.SetCutLdL(5.);
-
-  if (decay.GetNdaughters() == 3) {
-    cuts.SetCutChi2PrimThird(18.42);
-    cuts.SetCutDistanceThird(.6);
+//  if (decay.GetNdaughters() == 3) {
+//    cuts.SetCutChi2PrimThird(18.42);
+//    cuts.SetCutDistanceThird(.6);
     //cuts.SetCutChi2GeoThree(3.);
     //cuts.SetCutCosineTopoDown(0.);
     //cuts.SetCutCosineTopoUp(0.99996);
     //cuts.SetCutLThreeDown(16.);
-  }
+//  }
 
   const std::string& filename = argv[1];
 
   auto* man = AnalysisTree::TaskManager::GetInstance();
 
-  auto* in_converter = new ConverterIn(decay, cuts);
+  auto* in_converter = new ConverterIn();
   in_converter->SetTrackCuts(new AnalysisTree::Cuts("Cut to reproduce KFPF", {AnalysisTree::EqualsCut("VtxTracks.pass_cuts", 1)}));
   in_converter->SetIsShine(false);//TODO maybe change name
 
-  auto* out_converter = new ConverterOut(decay);
+  auto* out_converter = new ConverterOut();
   out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "SimEventHeader", "RecEventHeader"});
 
   auto* pf_task = new PFSimpleTask();
