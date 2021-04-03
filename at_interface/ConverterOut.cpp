@@ -16,9 +16,9 @@ void CopyParticle(const OutputContainer& kf_particle, AnalysisTree::Particle& pa
   //  if (decay_.GetNdaughters() == 3)
   //    lambdarec.SetField(particle.DaughterIds()[2], daughter3_id_field_id_);
   //
-  //  lambdarec.SetField(particle.X(), x_field_id_);
-  //  lambdarec.SetField(particle.Y(), y_field_id_);
-  //  lambdarec.SetField(particle.Z(), z_field_id_);
+//  particle.SetField(particle.X(), x_field_id_);
+//  particle.SetField(particle.Y(), y_field_id_);
+//  particle.SetField(particle.Z(), z_field_id_);
   //  lambdarec.SetMomentum(particle.GetPx(), particle.GetPy(), particle.GetPz());
   //
   //  lambdarec.SetField(particle.GetErrPx(), px_err_field_id_);

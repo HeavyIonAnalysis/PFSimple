@@ -19,11 +19,15 @@ class DaughterCuts {
   Pdg_t GetPdgHypo() const { return pdg_hypo_; }
   const std::vector<Pdg_t>& GetPids() const { return pids_; }
   float GetChi2Prim() const { return chi2_prim_; }
+  int GetId() const { return id_; }
+
+  void SetId(int id) { id_ = id; }
 
  protected:
   Pdg_t pdg_hypo_{-1};
   std::vector<Pdg_t> pids_{};
   float chi2_prim_{0};
+  int id_{-1};
 };
 
 #endif //KFPARTICLESIMPLE_KFSIMPLE_DAUGHTERCUTS_HPP_

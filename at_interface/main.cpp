@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
   man->AddTask(out_converter);
 
   man->Init({filename}, {"rTree"});
-  man->Run(100);// -1 = all events
+  man->Run(-1);// -1 = all events
   man->Finish();
 
   //  if (make_plain_tree) {

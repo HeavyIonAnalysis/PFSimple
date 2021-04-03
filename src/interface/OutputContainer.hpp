@@ -15,6 +15,8 @@
 
 #include "KFParticle.h"
 
+#include "Constants.hpp"
+
 class OutputContainer {
  public:
   OutputContainer() = default;
@@ -25,7 +27,14 @@ class OutputContainer {
                                                          pt_error_(particle.GetErrPt()),
                                                          phi_error_(particle.GetErrPhi()),
                                                          eta_error_(particle.GetErrEta()),
-                                                         mass_error_(particle.GetErrMass()) {}
+                                                         mass_error_(particle.GetErrMass()),
+                                                         x_(particle.GetX()),
+                                                         y_(particle.GetY()),
+                                                         z_(particle.GetZ()),
+                                                         x_error_(particle.GetErrX()),
+                                                         y_error_(particle.GetErrY()),
+                                                         z_error_(particle.GetErrZ())
+                                                         {}
 
   virtual ~OutputContainer() = default;
 
@@ -39,29 +48,24 @@ class OutputContainer {
   float GetEtaError() const { return eta_error_; }
   float GetMassError() const { return mass_error_; }
 
-  float GetChi2Prim() const { return chi_2_prim_; }
-  float GetChi2Geo() const { return chi2_geo_; }
-  float GetChi2Topo() const { return chi2_topo_; }
-  float GetDistance() const { return distance_; }
-  float GetL() const { return l_; }
-  float GetLdL() const { return ldl_; }
-  float GetCosineTopo() const { return cosine_topo_; }
-  int GetNHits() const { return n_hits_; }
+  float GetChi2Prim(int i) const { return values_.chi2_prim[i]; }
+  float GetChi2Geo() const { return values_.chi2_geo; }
+  float GetChi2Topo() const { return values_.chi2_topo; }
+  float GetDistance() const { return values_.distance; }
+  float GetL() const { return values_.l; }
+  float GetLdL() const { return values_.l_over_dl; }
+//  float GetCosineTopo() const { return values_.; }
+//  int GetNHits() const { return n_hits_; }
   int GetId() const { return id_; }
-  bool IsFromPV() const { return is_from_pv_; }
+  bool IsFromPV() const { return values_.is_from_PV; }
 
-  void SetChi2Prim(float chi_2_prim) { chi_2_prim_ = chi_2_prim; }
-  void SetChi2Geo(float chi_2_geo) { chi2_geo_ = chi_2_geo; }
-  void SetChi2Topo(float chi_2_topo) { chi2_topo_ = chi_2_topo; }
-  void SetDistance(float distance) { distance_ = distance; }
-  void SetL(float l) { l_ = l; }
-  void SetLdL(float ldl) { ldl_ = ldl; }
-  void SetCosineTopo(float cosine_topo) { cosine_topo_ = cosine_topo; }
-  void SetNHits(int n_hits) { n_hits_ = n_hits; }
+//  void SetNHits(int n_hits) { n_hits_ = n_hits; }
   void SetId(int id) { id_ = id; }
-  void SetIsFromPV(bool is_from_pv) { is_from_pv_ = is_from_pv; }
+
+  void SetSelectionValues(const SelectionValues& v){ values_ = v; }
 
  protected:
+  int id_{-1};
   std::vector<int> daughter_ids_{};
 
   float px_{-1.};
@@ -74,17 +78,17 @@ class OutputContainer {
   float eta_error_{-1.};
   float mass_error_{-1.};
 
-  float chi_2_prim_{-1.}; ///< \f$\chi^2\f$ of the particle to the primary vertex (PV)
-  float chi2_geo_{-1.};   ///< \f$\chi^2\f$ of daughters' tracks in their closest approach
-  float chi2_topo_{-1.};  ///< \f$\chi^2\f$ of the mother's track to the PV
-  float distance_{-1.};   ///< Distance between daughter tracks in their closest approach
-  float l_{0.};           ///< Lenght of interpolated track from secondary to primary vertex
-  float ldl_{0.};         ///< Distance between primary and secondary vertices divided by error
-  float cosine_topo_{-1.};///< Cosine of the angle between reconstructed mother's momentum and mother's radius vector beginning in the PV
-  int n_hits_{-1};
-  int id_{-1};
+  float x_{-1.};
+  float y_{-1.};
+  float z_{-1.};
+  float x_error_{-1.};
+  float y_error_{-1.};
+  float z_error_{-1.};
 
-  bool is_from_pv_{true};
+//  int n_hits_{-1};
+
+  SelectionValues values_{};
+
 };
 
 #endif// OutputContainer_H

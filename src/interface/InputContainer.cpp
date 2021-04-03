@@ -1,7 +1,6 @@
 #include "InputContainer.hpp"
 #include <Constants.hpp>
 
-#include <iostream>
 #include <stdexcept>
 
 #include "TMath.h"
@@ -26,7 +25,7 @@ void InputContainer::AddTrack(const std::vector<float>& par,
   if (pdg == 0 || pdg == -2)
     return;
 
-  if (par.size() != kNumberOfTrackPars || cov.size() != NumberOfCovElements || field.size() != kNumberOfFieldPars) {
+  if (par.size() != kNumberOfTrackPars || cov.size() != NumberOfCovElements || field.size() != NumberOfFieldPars) {
     throw std::runtime_error("Wrong size of input vector!");
   }
 
@@ -41,7 +40,7 @@ void InputContainer::AddTrack(const std::vector<float>& par,
   for (int i = 0; i < 21; i++)
     particle.Covariance(i) = cov[i];
 
-  for (int i = 0; i < kNumberOfFieldPars; i++)
+  for (int i = 0; i < NumberOfFieldPars; i++)
     particle.SetFieldCoeff(field[i], i);
 
   particle.Q() = char(charge);//NOTE: is not safe

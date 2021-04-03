@@ -4,6 +4,7 @@
 #include <utility>
 #include <vector>
 #include <string>
+#include <stdexcept>
 
 #include "DaughterCuts.hpp"
 #include "MotherCuts.hpp"
@@ -24,7 +25,16 @@ class Decay{
   const std::vector<DaughterCuts>& GetDaughters() const { return daughters_; }
   const MotherCuts& GetMother() const { return mother_; }
 
-  void SetDaughters(const std::vector<DaughterCuts>& daughters) { daughters_ = daughters; }
+  void SetDaughters(const std::vector<DaughterCuts>& daughters) {
+    if(!daughters_.empty()){
+      throw std::runtime_error("Daughters are already set!");
+    }
+    daughters_ = daughters;
+    int i{0};
+    for(auto& daughter : daughters_){
+      daughter.SetId(i++);
+    }
+  }
   void SetMother(const MotherCuts& mother) { mother_ = mother; }
 
   int GetNDaughters() const { return daughters_.size(); }

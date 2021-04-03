@@ -121,12 +121,17 @@ void SimpleFinderNew::CalculateMotherProperties(const KFParticleSIMD& mother) {
   values_.is_from_PV = isFromPV_Simd[0];
 }
 
-std::vector<size_t> SimpleFinderNew::GetIndexes(const std::vector<Pdg_t>& pids) {
+std::vector<size_t> SimpleFinderNew::GetIndexes(const DaughterCuts& cuts) {
   std::vector<size_t> result{};
-  for(auto pid : pids){
+  for(auto pid : cuts.GetPids()){
     auto it = indexes_.find(pid);
     if(it != indexes_.end()){
-      result.insert(result.end(), it->second.begin(), it->second.end());
+      for(auto i_track : it->second){
+        auto track = GetTrack(i_track);
+        if(IsGoodDaughter(track, cuts)){
+          result.emplace_back(i_track);
+        }
+      }
     }
   }
   return result;
@@ -148,4 +153,56 @@ void SimpleFinderNew::InitIndexesMap() {
 float SimpleFinderNew::CalculateChi2Geo(const KFParticleSIMD& mother) {
   float_v chi2 = mother.Chi2() / simd_cast<float_v>(mother.NDF());
   return chi2[0];
+}
+
+bool SimpleFinderNew::IsGoodDaughter(const KFPTrack& track, const DaughterCuts& cuts) {
+  int id = cuts.GetId();
+  values_.chi2_prim[id] = CalculateChiToPrimaryVertex(track, cuts.GetPdgHypo());
+  if (values_.chi2_prim[id] < cuts.GetChi2Prim()){ return false; }
+  return true;
+}
+
+bool SimpleFinderNew::IsGoodPair(const KFPTrack& track1,
+                                 Pdg_t pdg1,
+                                 const KFPTrack& track2,
+                                 Pdg_t pdg2,
+                                 const Decay& decay) {
+  Parameters_t parameters = CalculateParamsInPCA(track1, pdg1, track2, pdg2);
+  values_.distance = CalculateDistanceBetweenParticles(parameters);
+
+  if(values_.distance > decay.GetMother().GetDistance()){ return false; }
+
+  return true;
+}
+
+bool SimpleFinderNew::IsGoodMother(const KFParticleSIMD& mother, const MotherCuts& cuts) {
+  values_.chi2_geo = CalculateChi2Geo(mother);
+
+  if(values_.chi2_geo > cuts.GetChi2Geo()){ return false; }
+
+  CalculateMotherProperties(mother);
+  if(values_.l_over_dl < cuts.GetLdL()){ return false; }
+
+  return true;
+}
+
+std::array<float_v, 3> SimpleFinderNew::CalculateCoordinatesSecondaryVertex(const SimpleFinderNew::Parameters_t& pars) {
+  std::array<float_v, 3> sv;
+  //** Calculate coordinates of the secondary vertex of the first two daughters
+  sv.at(0) = (pars.first.at(kX) + pars.second.at(kX)) / 2;
+  sv.at(1) = (pars.first.at(kY) + pars.second.at(kY)) / 2;
+  sv.at(2) = (pars.first.at(kZ) + pars.second.at(kZ)) / 2;
+  return sv;
+}
+
+void SimpleFinderNew::SaveParticle(KFParticleSIMD& particle_simd) {
+  KFParticle particle;
+
+  particle_simd.GetKFParticle(particle, 0);
+  particle.SetPDG(particle.GetPDG()); //TODO: not needed?
+
+  OutputContainer mother(particle);
+  mother.SetSelectionValues(values_);
+
+  output_.emplace_back(mother);
 }

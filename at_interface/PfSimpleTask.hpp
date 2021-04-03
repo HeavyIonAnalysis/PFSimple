@@ -1,8 +1,8 @@
 #ifndef KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_PFSIMPLETASK_H_
 #define KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_PFSIMPLETASK_H_
 
-#include <SimpleFinderNew.hpp>
-#include "SimpleFinder.hpp"
+#include "SimpleFinderNew.hpp"
+//#include "SimpleFinder.hpp"
 
 #include "AnalysisTree/Task.hpp"
 #include "ConverterIn.hpp"
@@ -29,7 +29,7 @@ class PFSimpleTask : public AnalysisTree::Task {
     pf_simple_.FindParticles();
 
 //    out_task_->SetDecay(in_task_->GetDecay());
-//    out_task_->SetCandidates(pf_simple_.GetMotherCandidates());
+    out_task_->SetCandidates(pf_simple_.GetCandidates());
   };
   void Finish() override{};
   void SetInTask(ConverterIn* in_task) { in_task_ = in_task; }

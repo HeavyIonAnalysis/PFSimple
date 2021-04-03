@@ -11,8 +11,8 @@
 using namespace AnalysisTree;
 
 void ConverterIn::FillParticle(const AnalysisTree::Track& rec_particle) {
-  std::vector<float> mf(kNumberOfFieldPars, 0.f);
-  for (int iF = 0; iF < kNumberOfFieldPars; iF++) {
+  std::vector<float> mf(NumberOfFieldPars, 0.f);
+  for (int iF = 0; iF < NumberOfFieldPars; iF++) {
     mf[iF] = rec_particle.GetField<float>(mf_field_id_ + iF);
   }
   auto cov_matrix = is_shine_ ? GetCovMatrixShine(rec_particle) : GetCovMatrixCbm(rec_particle);
