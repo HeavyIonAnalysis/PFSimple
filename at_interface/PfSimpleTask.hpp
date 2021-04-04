@@ -16,7 +16,6 @@ class PFSimpleTask : public AnalysisTree::Task {
 
   void Init() override{};
   void Exec() override {
-
     SimpleFinderNew pf_simple_;
 
     DaughterCuts proton(2212, {2212}, 18.6);
@@ -25,10 +24,7 @@ class PFSimpleTask : public AnalysisTree::Task {
     pf_simple_.AddDecay(lambda);
 
     pf_simple_.Init(in_task_->GetInputContainer());
-
     pf_simple_.FindParticles();
-
-//    out_task_->SetDecay(in_task_->GetDecay());
     out_task_->SetCandidates(pf_simple_.GetCandidates());
   };
   void Finish() override{};

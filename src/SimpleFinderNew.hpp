@@ -91,7 +91,7 @@ class SimpleFinderNew{
         else if (decay.GetNDaughters() == 3){
           for (auto index_3 : indexes.at(2)) {
             auto track_3 = GetTrack(index_3);
-//            KFParticleSIMD kf_mother = ConstructMother(particleSIMDPos, particleSIMDNeg, particleSIMDThird,sec_vx);
+//            KFParticleSIMD kf_mother = ConstructMother({track_1, track_2, track_3}, decay);
 //            SaveParticle(kf_mother);
           }
         }
@@ -112,7 +112,7 @@ class SimpleFinderNew{
   float CalculateChiToPrimaryVertex(const KFPTrack& track, Pdg_t pid) const;
   static float CalculateChi2Geo(const KFParticleSIMD& mother);
   void CalculateMotherProperties(const KFParticleSIMD& mother);
-
+  void SetTrack(const KFParticle& particle, int id, KFPTrackVector& tracks);
   const std::vector<OutputContainer>& GetCandidates() const { return output_; }
  private:
   KFPTrackVector tracks_;
