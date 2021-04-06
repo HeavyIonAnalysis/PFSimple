@@ -24,6 +24,7 @@
 
 #include "Constants.hpp"
 #include "Decay.hpp"
+#include "NonLinearCutBase.hpp"
 
 class SimpleFinderNew{
 
@@ -104,6 +105,7 @@ class SimpleFinderNew{
 
   void AddDecay(const Decay& decay){ decays_.emplace_back(decay); }
 
+ private:
 
   std::vector<size_t> GetIndexes(const DaughterCuts& cuts);
   static float CalculateDistanceBetweenParticles(const Parameters_t& parameters);
@@ -114,7 +116,11 @@ class SimpleFinderNew{
   void CalculateMotherProperties(const KFParticleSIMD& mother);
   void SetTrack(const KFParticle& particle, int id, KFPTrackVector& tracks);
   const std::vector<OutputContainer>& GetCandidates() const { return output_; }
- private:
+
+  bool ApplyNonLinearCut() const {
+    return ml_cuts_ == nullptr || ml_cuts_->ApplyCut(values_);
+  }
+
   KFPTrackVector tracks_;
   KFVertex prim_vx_;
 
@@ -123,6 +129,7 @@ class SimpleFinderNew{
   std::vector <Decay> decays_{};
 
   SelectionValues values_{};
+  NonLinearCutBase* ml_cuts_{nullptr};
 
   std::vector<OutputContainer> output_{};
 

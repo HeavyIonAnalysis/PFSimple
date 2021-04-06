@@ -4,6 +4,7 @@ set(SOURCES
         DaughterCuts.cpp
         MotherCuts.cpp
         Decay.cpp
+        NonLinearCutBase.cpp
         )
 
 string(REPLACE ".cpp" ".hpp" HEADERS "${SOURCES}")
