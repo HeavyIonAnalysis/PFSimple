@@ -40,10 +40,10 @@ class Decay{
   int GetNDaughters() const { return daughters_.size(); }
 
  protected:
-  std::string name_;
+  std::string name_;  ///< decay name, to be used in branch name for example
 
-  MotherCuts mother_;
-  std::vector<DaughterCuts> daughters_{};
+  MotherCuts mother_;  ///< cuts for mother particle
+  std::vector<DaughterCuts> daughters_{}; ///< cuts for daughter particles
 };
 
 

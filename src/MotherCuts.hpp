@@ -27,10 +27,10 @@ class MotherCuts {
   float GetChi2Topo() const { return chi2_topo_; }
 
  protected:
-  float distance_{std::numeric_limits<float>::max()};
-  float chi2_geo_{0.f};
-  float ldl_{0.f};
-  float chi2_topo_{std::numeric_limits<float>::max()};
+  float distance_{std::numeric_limits<float>::max()};  ///< lower value
+  float chi2_geo_{0.f};  ///< upper value
+  float ldl_{0.f};  ///< upper value
+  float chi2_topo_{std::numeric_limits<float>::max()}; ///< lower value
 };
 
 #endif //KFPARTICLESIMPLE_KFSIMPLE_MOTHERCUTS_HPP_

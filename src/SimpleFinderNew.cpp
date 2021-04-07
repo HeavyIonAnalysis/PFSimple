@@ -35,9 +35,9 @@ void SimpleFinderNew::Init(const InputContainer& input) {
 }
 
 float SimpleFinderNew::CalculateDistanceBetweenParticles(const Parameters_t& parameters) {
-  const float dx = parameters.first.at(kX) - parameters.second.at(kX);
-  const float dy = parameters.first.at(kY) - parameters.second.at(kY);
-  const float dz = parameters.first.at(kZ) - parameters.second.at(kZ);
+  const float dx = parameters.at(0).at(kX) - parameters.at(1).at(kX);
+  const float dy = parameters.at(0).at(kY) - parameters.at(1).at(kY);
+  const float dz = parameters.at(0).at(kZ) - parameters.at(1).at(kZ);
   return std::sqrt(dx * dx + dy * dy + dz * dz);
 }
 
@@ -56,39 +56,41 @@ SimpleFinderNew::Parameters_t SimpleFinderNew::CalculateParamsInPCA(const KFPTra
   particleSIMD1.TransportFast(dS[0], params1);
   particleSIMD2.TransportFast(dS[1], params2);
 
-//  float_v parbuf;
   for (int i = 0; i < 8; i++) {
-//    parbuf = params1[i];
-    pars.first.at(i) = params1[i][0];
-//    parbuf = params2[i];
-    pars.second.at(i) = params2[i][0];
+    pars.at(0).at(i) = params1[i][0];
+    pars.at(1).at(i) = params2[i][0];
   }
   return pars;
 }
 
 KFParticleSIMD SimpleFinderNew::ConstructMother(const std::vector<KFPTrack>& tracks, const std::vector<Pdg_t>& pdgs) {
-  KFParticleSIMD mother;
+  const auto n = tracks.size();
 
+  KFParticleSIMD mother;
   std::vector<KFParticle> particles{};
   std::vector<KFParticleSIMD> particles_simd{};
 
-  for(size_t i=0; i<tracks.size(); ++i){
+  for(size_t i=0; i<n; ++i){
     particles.emplace_back( KFParticle(tracks.at(i), pdgs.at(i)) );
     particles.at(i).SetId(tracks.at(i).Id());
     particles_simd.emplace_back(particles.at(i));
   }
 
-  if(tracks.size() == 2){
-    float_v ds[2] = {0.f, 0.f};
-    float_v dsdr[4][6];
-    particles_simd.at(0).GetDStoParticle(particles_simd.at(1), ds, dsdr);
-    particles_simd.at(0).TransportToDS(ds[0], dsdr[0]);
-    particles_simd.at(1).TransportToDS(ds[1], dsdr[3]);
+  auto sv = GetSecondaryVertex();
+  float_v vertex[3] = {sv[0], sv[1], sv[2]};
+  for(size_t i=0; i<n; ++i) {
+    float_v ds, dsdr[6];
+    ds = particles_simd.at(i).GetDStoPoint(vertex, dsdr);
+    particles_simd.at(i).TransportToDS(ds, dsdr);
+  }
+
+  if(n == 2){
     const KFParticleSIMD* vDaughtersPointer[2] = {&particles_simd.at(0), &particles_simd.at(1)};
     mother.Construct(vDaughtersPointer, 2, nullptr);
   }
-  else if(tracks.size() == 3){
-
+  else if(n == 3){
+    const KFParticleSIMD* vDaughtersPointer[3] = {&particles_simd.at(0), &particles_simd.at(1),  &particles_simd.at(2)};
+    mother.Construct(vDaughtersPointer, 3, nullptr);
   }
 
   return mother;
@@ -169,36 +171,24 @@ bool SimpleFinderNew::IsGoodDaughter(const KFPTrack& track, const DaughterCuts& 
 }
 
 bool SimpleFinderNew::IsGoodPair(const KFPTrack& track1,
-                                 Pdg_t pdg1,
                                  const KFPTrack& track2,
-                                 Pdg_t pdg2,
                                  const Decay& decay) {
-  Parameters_t parameters = CalculateParamsInPCA(track1, pdg1, track2, pdg2);
+  const auto& daughters = decay.GetDaughters();
+  Parameters_t parameters = CalculateParamsInPCA(track1, daughters[0].GetPdgHypo(), track2, daughters[1].GetPdgHypo());
   values_.distance = CalculateDistanceBetweenParticles(parameters);
 
   if(values_.distance > decay.GetMother().GetDistance()){ return false; }
-
   return true;
 }
 
 bool SimpleFinderNew::IsGoodMother(const KFParticleSIMD& mother, const MotherCuts& cuts) {
   values_.chi2_geo = CalculateChi2Geo(mother);
-
   if(values_.chi2_geo > cuts.GetChi2Geo()){ return false; }
 
   CalculateMotherProperties(mother);
   if(values_.l_over_dl < cuts.GetLdL()){ return false; }
 
   return true;
-}
-
-std::array<float_v, 3> SimpleFinderNew::CalculateCoordinatesSecondaryVertex(const SimpleFinderNew::Parameters_t& pars) {
-  std::array<float_v, 3> sv;
-  //** Calculate coordinates of the secondary vertex of the first two daughters
-  sv.at(0) = (pars.first.at(kX) + pars.second.at(kX)) / 2;
-  sv.at(1) = (pars.first.at(kY) + pars.second.at(kY)) / 2;
-  sv.at(2) = (pars.first.at(kZ) + pars.second.at(kZ)) / 2;
-  return sv;
 }
 
 void SimpleFinderNew::SaveParticle(KFParticleSIMD& particle_simd) {
