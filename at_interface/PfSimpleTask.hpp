@@ -18,8 +18,8 @@ class PFSimpleTask : public AnalysisTree::Task {
   void Exec() override {
     SimpleFinderNew pf_simple_;
 
-    DaughterCuts proton(2212, {2212}, 18.6);
-    DaughterCuts pion(-211, {-211}, 18.6);
+    DaughterCuts proton(2212, {2212}, 18.6, 0.f);
+    DaughterCuts pion(-211, {-211}, 18.6, 0.f);
     Decay lambda("lambda", MotherCuts(1, 3, 5, 3), {proton, pion});
     pf_simple_.AddDecay(lambda);
 

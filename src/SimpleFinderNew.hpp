@@ -81,14 +81,15 @@ class SimpleFinderNew{
   }
 
   std::array<float, 3> GetSecondaryVertex(){
+    if(params_.size() < 2 || params_.size() > 3){
+      throw std::runtime_error("Daughter parameters size is wrong");
+    }
     std::array<float, 3> sv{};
     for(int i=0; i<3; ++i){
       sv.at(i) = (params_[0].at(kX+i) + params_[1].at(kX+i)) / 2;
     }
     return sv;
   }
-
-  std::array<float_v, 3> CalculateCoordinatesSecondaryVertex(const Parameters_t& pars);
 
   void SaveParticle(KFParticleSIMD& particle_simd);
 
@@ -157,7 +158,7 @@ class SimpleFinderNew{
   std::vector<size_t> GetIndexes(const DaughterCuts& cuts);
 
   static float CalculateDistanceBetweenParticles(const Parameters_t& parameters);
-  static Parameters_t CalculateParamsInPCA(const KFPTrack& track1, int pid1, const KFPTrack& track2, int pid2);
+  void CalculateParamsInPCA(const KFPTrack& track1, int pid1, const KFPTrack& track2, int pid2);
   KFParticleSIMD ConstructMother(const std::vector<KFPTrack>& tracks, const std::vector<Pdg_t>& pdgs);
   float CalculateChiToPrimaryVertex(const KFPTrack& track, Pdg_t pid) const;
   static float CalculateChi2Geo(const KFParticleSIMD& mother);

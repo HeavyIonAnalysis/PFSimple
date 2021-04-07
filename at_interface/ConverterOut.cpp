@@ -4,7 +4,7 @@
 #include "AnalysisTree/Matching.hpp"
 #include "AnalysisTree/TaskManager.hpp"
 
-void CopyParticle(const OutputContainer& kf_particle, AnalysisTree::Particle& particle) {
+void ConverterOut::CopyParticle(const OutputContainer& kf_particle, AnalysisTree::Particle& particle) {
 
   particle.SetMomentum(kf_particle.GetPx(), kf_particle.GetPy(), kf_particle.GetPz());
   particle.SetMass(kf_particle.GetMass());
@@ -53,8 +53,10 @@ void ConverterOut::Exec() {
 
   events_->SetField(float(sim_events_->GetField<float>(b_field_id_)), 0);//TODO
 
+  const auto& br_conf = out_config->GetBranchConfig(lambda_reco_->GetId());
+
   for (const auto& candidate : candidates_) {
-    auto& lambdarec = lambda_reco_->AddChannel(out_config->GetBranchConfig(lambda_reco_->GetId()));
+    auto& lambdarec = lambda_reco_->AddChannel(br_conf);
     CopyParticle(candidate, lambdarec);
   }
 

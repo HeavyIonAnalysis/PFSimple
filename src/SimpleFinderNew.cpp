@@ -41,9 +41,8 @@ float SimpleFinderNew::CalculateDistanceBetweenParticles(const Parameters_t& par
   return std::sqrt(dx * dx + dy * dy + dz * dz);
 }
 
-SimpleFinderNew::Parameters_t SimpleFinderNew::CalculateParamsInPCA(const KFPTrack& track1, int pid1,
-                                                                    const KFPTrack& track2, int pid2) {
-  SimpleFinderNew::Parameters_t pars;
+void SimpleFinderNew::CalculateParamsInPCA(const KFPTrack& track1, int pid1, const KFPTrack& track2, int pid2) {
+  params_ = Parameters_t(2);
 
   KFParticle particle1(track1, pid1);
   KFParticle particle2(track2, pid2);
@@ -57,10 +56,9 @@ SimpleFinderNew::Parameters_t SimpleFinderNew::CalculateParamsInPCA(const KFPTra
   particleSIMD2.TransportFast(dS[1], params2);
 
   for (int i = 0; i < 8; i++) {
-    pars.at(0).at(i) = params1[i][0];
-    pars.at(1).at(i) = params2[i][0];
+    params_.at(0).at(i) = params1[i][0];
+    params_.at(1).at(i) = params2[i][0];
   }
-  return pars;
 }
 
 KFParticleSIMD SimpleFinderNew::ConstructMother(const std::vector<KFPTrack>& tracks, const std::vector<Pdg_t>& pdgs) {
@@ -174,8 +172,8 @@ bool SimpleFinderNew::IsGoodPair(const KFPTrack& track1,
                                  const KFPTrack& track2,
                                  const Decay& decay) {
   const auto& daughters = decay.GetDaughters();
-  Parameters_t parameters = CalculateParamsInPCA(track1, daughters[0].GetPdgHypo(), track2, daughters[1].GetPdgHypo());
-  values_.distance = CalculateDistanceBetweenParticles(parameters);
+  CalculateParamsInPCA(track1, daughters[0].GetPdgHypo(), track2, daughters[1].GetPdgHypo());
+  values_.distance = CalculateDistanceBetweenParticles(params_);
 
   if(values_.distance > decay.GetMother().GetDistance()){ return false; }
   return true;

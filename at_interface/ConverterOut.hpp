@@ -18,7 +18,9 @@ class ConverterOut : public AnalysisTree::Task {
 
   void SetCandidates(const std::vector<OutputContainer>& candidates) { candidates_ = candidates; }
 
- protected:
+  static void CopyParticle(const OutputContainer& kf_particle, AnalysisTree::Particle& particle);
+
+    protected:
   void InitIndexes();
   void MatchWithMc();
 
