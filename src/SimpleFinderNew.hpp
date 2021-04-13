@@ -97,7 +97,7 @@ class SimpleFinderNew{
     const auto& mother_cuts = decay.GetMother();
     const auto& daughters_cuts = decay.GetDaughters();
 
-    std::vector<std::vector<size_t>> indexes{};
+    std::vector<std::vector<int>> indexes{};
     std::vector<Pdg_t> pdgs{};
     for(const auto& daughter : daughters_cuts) {
       indexes.emplace_back(GetIndexes(daughter));
@@ -114,6 +114,7 @@ class SimpleFinderNew{
         if(decay.GetNDaughters() == 2){
           KFParticleSIMD kf_mother = ConstructMother({track_1, track_2}, pdgs);
           if(!IsGoodMother(kf_mother, mother_cuts)) continue;
+          if(!IsGoodCos(kf_mother, params_, decay)) continue;
           SaveParticle(kf_mother);
         }
         else if (decay.GetNDaughters() == 3){
@@ -123,6 +124,7 @@ class SimpleFinderNew{
 
             KFParticleSIMD kf_mother = ConstructMother({track_1, track_2, track_3}, pdgs);
             if(!IsGoodMother(kf_mother, mother_cuts)) continue;
+            if(!IsGoodCos(kf_mother, params_, decay)) continue;
             SaveParticle(kf_mother);
           }
         }
@@ -144,7 +146,7 @@ class SimpleFinderNew{
   std::vector <Decay> decays_{};  ///< input information: list of decays to reconstruct
   NonLinearCutBase* ml_cuts_{nullptr};  ///< input information: non-linear cuts class (optional)
 
-  std::map<Pdg_t, std::vector<size_t>> indexes_{};  ///< map of indexes for a given particle specie
+  std::map<Pdg_t, std::vector<int>> indexes_{};  ///< map of indexes for a given particle specie
   Parameters_t params_{};   ///< vector of daughter parameters at current SV estimation
   SelectionValues values_{};  ///< struct with mother and daughters properties used to apply cuts
 
@@ -155,7 +157,7 @@ class SimpleFinderNew{
   * @param cuts daughter particle cuts container
   * @return vector of indexes
   */
-  std::vector<size_t> GetIndexes(const DaughterCuts& cuts);
+  std::vector<int> GetIndexes(const DaughterCuts& cuts);
 
   static float CalculateDistanceBetweenParticles(const Parameters_t& parameters);
   void CalculateParamsInPCA(const KFPTrack& track1, int pid1, const KFPTrack& track2, int pid2);

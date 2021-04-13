@@ -127,8 +127,8 @@ void SimpleFinderNew::CalculateMotherProperties(const KFParticleSIMD& mother) {
   values_.is_from_PV = isFromPV_Simd[0];
 }
 
-std::vector<size_t> SimpleFinderNew::GetIndexes(const DaughterCuts& cuts) {
-  std::vector<size_t> result{};
+std::vector<int> SimpleFinderNew::GetIndexes(const DaughterCuts& cuts) {
+  std::vector<int> result{};
   for(auto pid : cuts.GetPids()){
     auto it = indexes_.find(pid);
     if(it != indexes_.end()){
@@ -151,7 +151,7 @@ void SimpleFinderNew::InitIndexesMap() {
       it->second.emplace_back(i);
     }
     else{
-      indexes_[pdg] = {static_cast<unsigned long>(i)};
+      indexes_[pdg] = {i};
     }
   }
 }
