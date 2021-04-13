@@ -173,9 +173,9 @@ bool SimpleFinderNew::IsGoodPair(const KFPTrack& track1,
                                  const Decay& decay) {
   const auto& daughters = decay.GetDaughters();
   CalculateParamsInPCA(track1, daughters[0].GetPdgHypo(), track2, daughters[1].GetPdgHypo());
-  values_.distance = CalculateDistanceBetweenParticles(params_);
+  values_.distance[0] = CalculateDistanceBetweenParticles(params_);
 
-  if(values_.distance > decay.GetMother().GetDistance()){ return false; }
+  if(values_.distance[0] > decay.GetMother().GetDistance()){ return false; }
   return true;
 }
 

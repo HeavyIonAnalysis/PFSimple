@@ -24,6 +24,7 @@ class OutputContainer {
                                                          py_(particle.GetPy()),
                                                          pz_(particle.GetPz()),
                                                          mass_(particle.GetMass()),
+                                                         pdg_(particle.GetPDG()),
                                                          pt_error_(particle.GetErrPt()),
                                                          phi_error_(particle.GetErrPhi()),
                                                          eta_error_(particle.GetErrEta()),
@@ -47,19 +48,27 @@ class OutputContainer {
   float GetPhiError() const { return phi_error_; }
   float GetEtaError() const { return eta_error_; }
   float GetMassError() const { return mass_error_; }
+  Pdg_t GetPdg() const { return pdg_; }
 
   float GetChi2Prim(int i) const { return values_.chi2_prim[i]; }
+  float GetCos(int i) const { return values_.cos[i]; }
   float GetChi2Geo() const { return values_.chi2_geo; }
   float GetChi2Topo() const { return values_.chi2_topo; }
-  float GetDistance() const { return values_.distance; }
+  float GetDistance(int i=0) const { return values_.distance[i]; }
   float GetL() const { return values_.l; }
   float GetLdL() const { return values_.l_over_dl; }
-//  float GetCosineTopo() const { return values_.; }
-//  int GetNHits() const { return n_hits_; }
+  float GetCosineTopo() const { return values_.cos_topo; }
+
+  float GetX() const { return x_; }
+  float GetY() const { return y_; }
+  float GetZ() const { return z_; }
+  float GetXError() const { return x_error_; }
+  float GetYError() const { return y_error_; }
+  float GetZError() const { return z_error_; }
+
   int GetId() const { return id_; }
   bool IsFromPV() const { return values_.is_from_PV; }
 
-//  void SetNHits(int n_hits) { n_hits_ = n_hits; }
   void SetId(int id) { id_ = id; }
 
   void SetSelectionValues(const SelectionValues& v){ values_ = v; }
@@ -72,6 +81,7 @@ class OutputContainer {
   float py_{-1.};
   float pz_{-1.};
   float mass_{-1.};
+  Pdg_t pdg_{-1};
 
   float pt_error_{-1.};
   float phi_error_{-1.};
