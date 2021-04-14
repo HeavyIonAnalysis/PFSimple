@@ -32,6 +32,10 @@ int main(int argc, char** argv) {
 
   const std::string& filename = argv[1];
 
+  DaughterCuts proton(2212, {2212}, 18.6, 0.99);
+  DaughterCuts pion(-211, {-211}, 18.6, 0.f);
+  Decay lambda("lambda", 3122, MotherCuts(1, 3, 5, 3), {proton, pion});
+
   auto* man = AnalysisTree::TaskManager::GetInstance();
 
   auto* in_converter = new ConverterIn();
@@ -40,10 +44,12 @@ int main(int argc, char** argv) {
 
   auto* out_converter = new ConverterOut();
   out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "SimEventHeader", "RecEventHeader"});
+  out_converter->SetDecay(lambda);
 
   auto* pf_task = new PFSimpleTask();
   pf_task->SetInTask(in_converter);
   pf_task->SetOutTask(out_converter);
+  pf_task->SetDecay(lambda);
 
   //  man.AddTasks(in_converter, out_converter);
   man->AddTask(in_converter);

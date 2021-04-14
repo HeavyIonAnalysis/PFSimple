@@ -2,6 +2,7 @@
 #define KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_
 
 #include "OutputContainer.hpp"
+#include "Decay.hpp"
 
 #include "AnalysisTree/Detector.hpp"
 #include "AnalysisTree/EventHeader.hpp"
@@ -19,8 +20,9 @@ class ConverterOut : public AnalysisTree::Task {
   void SetCandidates(const std::vector<OutputContainer>& candidates) { candidates_ = candidates; }
 
   void CopyParticle(const OutputContainer& kf_particle, AnalysisTree::Particle& particle) const;
+  void SetDecay(const Decay& decay) { decay_ = decay; }
 
-    protected:
+ protected:
   void InitIndexes();
   void MatchWithMc();
 
@@ -39,6 +41,7 @@ class ConverterOut : public AnalysisTree::Task {
   AnalysisTree::TrackDetector* rec_tracks_{nullptr};
   AnalysisTree::Matching* rec_to_mc_{nullptr};
   AnalysisTree::EventHeader* sim_events_{nullptr};
+  Decay decay_{};
 
   std::vector<OutputContainer> candidates_;
 
