@@ -105,7 +105,6 @@ float SimpleFinderNew::CalculateChiToPrimaryVertex(const KFPTrack& track, Pdg_t 
   tmpPartSIMD.TransportToPoint(point);
 
   float_v chi2vec = tmpPartSIMD.GetDeviationFromVertex(prim_vx_Simd);
-
   return chi2vec[0];
 }
 
@@ -125,6 +124,8 @@ void SimpleFinderNew::CalculateMotherProperties(const KFParticleSIMD& mother) {
   values_.l = l_Simd[0];
   values_.l_over_dl = l_Simd[0] / dl_Simd[0];
   values_.is_from_PV = isFromPV_Simd[0];
+  values_.chi2_topo = motherTopo.GetChi2()[0] / simd_cast<float_v>(motherTopo.GetNDF())[0];
+  values_.cos_topo = CalculateCosTopo(mother);
 }
 
 std::vector<int> SimpleFinderNew::GetIndexes(const DaughterCuts& cuts) {
@@ -185,7 +186,7 @@ bool SimpleFinderNew::IsGoodMother(const KFParticleSIMD& mother, const MotherCut
 
   CalculateMotherProperties(mother);
   if(values_.l_over_dl < cuts.GetLdL()){ return false; }
-
+  if(values_.chi2_topo > cuts.GetChi2Topo()){ return false; }
   return true;
 }
 
@@ -202,4 +203,18 @@ void SimpleFinderNew::SaveParticle(KFParticleSIMD& particle_simd) {
 
   tracks_.Resize(tracks_.Size()+1);
   SetTrack(particle, tracks_.Size(), tracks_);
+}
+
+float SimpleFinderNew::CalculateCosTopo(const KFParticleSIMD& mother) const {
+  const float px = mother.GetPx()[0];
+  const float py = mother.GetPy()[0];
+  const float pz = mother.GetPz()[0];
+
+  const float delta_x = mother.GetX()[0] - prim_vx_.GetX();
+  const float delta_y = mother.GetY()[0] - prim_vx_.GetY();
+  const float delta_z = mother.GetZ()[0] - prim_vx_.GetZ();
+
+  const float sp = delta_x * px + delta_y * py + delta_z * pz;
+  const float norm = std::sqrt(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z) * mother.GetP()[0];
+  return sp / norm;
 }

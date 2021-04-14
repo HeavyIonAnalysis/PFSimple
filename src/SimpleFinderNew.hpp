@@ -115,6 +115,7 @@ class SimpleFinderNew{
           KFParticleSIMD kf_mother = ConstructMother({track_1, track_2}, pdgs);
           if(!IsGoodMother(kf_mother, mother_cuts)) continue;
           if(!IsGoodCos(kf_mother, params_, decay)) continue;
+          FillDaughtersInfo({track_1, track_2}, pdgs);
           SaveParticle(kf_mother);
         }
         else if (decay.GetNDaughters() == 3){
@@ -125,6 +126,7 @@ class SimpleFinderNew{
             KFParticleSIMD kf_mother = ConstructMother({track_1, track_2, track_3}, pdgs);
             if(!IsGoodMother(kf_mother, mother_cuts)) continue;
             if(!IsGoodCos(kf_mother, params_, decay)) continue;
+            FillDaughtersInfo({track_1, track_2, track_3}, pdgs);
             SaveParticle(kf_mother);
           }
         }
@@ -147,6 +149,7 @@ class SimpleFinderNew{
   NonLinearCutBase* ml_cuts_{nullptr};  ///< input information: non-linear cuts class (optional)
 
   std::map<Pdg_t, std::vector<int>> indexes_{};  ///< map of indexes for a given particle specie
+
   Parameters_t params_{};   ///< vector of daughter parameters at current SV estimation
   SelectionValues values_{};  ///< struct with mother and daughters properties used to apply cuts
 
@@ -166,6 +169,14 @@ class SimpleFinderNew{
   static float CalculateChi2Geo(const KFParticleSIMD& mother);
   void CalculateMotherProperties(const KFParticleSIMD& mother);
   static void SetTrack(const KFParticle& particle, int id, KFPTrackVector& tracks);
+
+  void FillDaughtersInfo(const std::vector<KFPTrack>& tracks, const std::vector<Pdg_t>& pdgs){
+    for(int i=0; i<tracks.size(); ++i){
+      values_.chi2_prim[i] = CalculateChiToPrimaryVertex(tracks.at(i), pdgs.at(i));
+    }
+  }
+
+  float CalculateCosTopo(const KFParticleSIMD& mother) const;
 
   bool ApplyNonLinearCut() const {
     return ml_cuts_ == nullptr || ml_cuts_->ApplyCut(values_);
