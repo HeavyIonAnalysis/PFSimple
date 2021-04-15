@@ -1,8 +1,8 @@
 #ifndef KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_
 #define KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_
 
-#include "OutputContainer.hpp"
 #include "Decay.hpp"
+#include "OutputContainer.hpp"
 
 #include "AnalysisTree/Detector.hpp"
 #include "AnalysisTree/EventHeader.hpp"
@@ -60,7 +60,6 @@ class ConverterOut : public AnalysisTree::Task {
   int distance_field_id_{-1};
   int cosine_field_id_{-1};
   int chi2geo_field_id_{-1};
-
 };
 
 #endif//KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_

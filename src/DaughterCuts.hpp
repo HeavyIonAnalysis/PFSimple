@@ -14,12 +14,10 @@ class DaughterCuts {
   DaughterCuts& operator=(const DaughterCuts&) = default;
   ~DaughterCuts() = default;
 
-  DaughterCuts(Pdg_t pdg_hypo, std::vector<Pdg_t> pids, float chi_2_prim, float cos) :
-  pdg_hypo_(pdg_hypo),
-  pids_(std::move(pids)),
-  chi2_prim_(chi_2_prim),
-  cos_(cos)
-  {}
+  DaughterCuts(Pdg_t pdg_hypo, std::vector<Pdg_t> pids, float chi_2_prim, float cos) : pdg_hypo_(pdg_hypo),
+                                                                                       pids_(std::move(pids)),
+                                                                                       chi2_prim_(chi_2_prim),
+                                                                                       cos_(cos) {}
 
   Pdg_t GetPdgHypo() const { return pdg_hypo_; }
   const std::vector<Pdg_t>& GetPids() const { return pids_; }
@@ -30,11 +28,11 @@ class DaughterCuts {
   void SetId(int id) { id_ = id; }
 
  protected:
-  Pdg_t pdg_hypo_{-1};   ///< PDG code hypothesis
-  std::vector<Pdg_t> pids_{};  ///< vector of PDG codes to use
-  float chi2_prim_{0.f};  ///< \f$\chi^2\f$ lower value
-  float cos_{0.f};  ///< cosine lower value
-  int id_{-1};  ///< daughther number (0, 1, 2)
+  Pdg_t pdg_hypo_{-1};       ///< PDG code hypothesis
+  std::vector<Pdg_t> pids_{};///< vector of PDG codes to use
+  float chi2_prim_{0.f};     ///< \f$\chi^2\f$ lower value
+  float cos_{0.f};           ///< cosine lower value
+  int id_{-1};               ///< daughther number (0, 1, 2)
 };
 
-#endif //KFPARTICLESIMPLE_KFSIMPLE_DAUGHTERCUTS_HPP_
+#endif//KFPARTICLESIMPLE_KFSIMPLE_DAUGHTERCUTS_HPP_

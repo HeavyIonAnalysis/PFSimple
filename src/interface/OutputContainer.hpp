@@ -34,8 +34,7 @@ class OutputContainer {
                                                          z_(particle.GetZ()),
                                                          x_error_(particle.GetErrX()),
                                                          y_error_(particle.GetErrY()),
-                                                         z_error_(particle.GetErrZ())
-                                                         {}
+                                                         z_error_(particle.GetErrZ()) {}
 
   virtual ~OutputContainer() = default;
 
@@ -54,7 +53,7 @@ class OutputContainer {
   float GetCos(int i) const { return values_.cos[i]; }
   float GetChi2Geo() const { return values_.chi2_geo; }
   float GetChi2Topo() const { return values_.chi2_topo; }
-  float GetDistance(int i=0) const { return values_.distance[i]; }
+  float GetDistance(int i = 0) const { return values_.distance[i]; }
   float GetL() const { return values_.l; }
   float GetLdL() const { return values_.l_over_dl; }
   float GetCosineTopo() const { return values_.cos_topo; }
@@ -71,7 +70,7 @@ class OutputContainer {
 
   void SetId(int id) { id_ = id; }
 
-  void SetSelectionValues(const SelectionValues& v){ values_ = v; }
+  void SetSelectionValues(const SelectionValues& v) { values_ = v; }
 
  protected:
   int id_{-1};
@@ -95,10 +94,9 @@ class OutputContainer {
   float y_error_{-1.};
   float z_error_{-1.};
 
-//  int n_hits_{-1};
+  //  int n_hits_{-1};
 
   SelectionValues values_{};
-
 };
 
 #endif// OutputContainer_H

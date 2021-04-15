@@ -14,21 +14,21 @@ int main(int argc, char** argv) {
 
   const bool make_plain_tree{true};
 
-//  cuts.CancelCuts();
-//  cuts.SetCutChi2PrimPos(18.6);
-//  cuts.SetCutChi2PrimNeg(18.6);
-//  cuts.SetCutDistance(1.);
-//  cuts.SetCutChi2Geo(3.);
-//  cuts.SetCutLdL(5.);
+  //  cuts.CancelCuts();
+  //  cuts.SetCutChi2PrimPos(18.6);
+  //  cuts.SetCutChi2PrimNeg(18.6);
+  //  cuts.SetCutDistance(1.);
+  //  cuts.SetCutChi2Geo(3.);
+  //  cuts.SetCutLdL(5.);
 
-//  if (decay.GetNdaughters() == 3) {
-//    cuts.SetCutChi2PrimThird(18.42);
-//    cuts.SetCutDistanceThird(.6);
-    //cuts.SetCutChi2GeoThree(3.);
-    //cuts.SetCutCosineTopoDown(0.);
-    //cuts.SetCutCosineTopoUp(0.99996);
-    //cuts.SetCutLThreeDown(16.);
-//  }
+  //  if (decay.GetNdaughters() == 3) {
+  //    cuts.SetCutChi2PrimThird(18.42);
+  //    cuts.SetCutDistanceThird(.6);
+  //cuts.SetCutChi2GeoThree(3.);
+  //cuts.SetCutCosineTopoDown(0.);
+  //cuts.SetCutCosineTopoUp(0.99996);
+  //cuts.SetCutLThreeDown(16.);
+  //  }
 
   const std::string& filename = argv[1];
 

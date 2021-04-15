@@ -294,10 +294,8 @@ KFParticleSIMD SimpleFinder::ConstructMotherThree(KFParticleSIMD& particleSIMD1,
   return mother;
 }
 
-bool SimpleFinder::IsGoodDaughter(const KFPTrack& track, int pid){
-
+bool SimpleFinder::IsGoodDaughter(const KFPTrack& track, int pid) {
 }
-
 
 /*
  * The main function which performs the mother-candidate selection algorithm for two or three daugthers.

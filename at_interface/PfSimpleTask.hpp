@@ -14,9 +14,9 @@ class PFSimpleTask : public AnalysisTree::Task {
   PFSimpleTask() = default;
   ~PFSimpleTask() override = default;
 
-  void Init() override {};
+  void Init() override{};
   void Exec() override;
-  void Finish() override {};
+  void Finish() override{};
   void SetInTask(ConverterIn* in_task) { in_task_ = in_task; }
   void SetOutTask(ConverterOut* out_task) { out_task_ = out_task; }
 

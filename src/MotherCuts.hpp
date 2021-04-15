@@ -14,7 +14,7 @@ class MotherCuts {
   ~MotherCuts() = default;
 
   MotherCuts(float distance, float chi_2_geo, float ldl, float chi_2_topo)
-    : distance_(distance), chi2_geo_(chi_2_geo), ldl_(ldl), chi2_topo_(chi_2_topo) {}
+      : distance_(distance), chi2_geo_(chi_2_geo), ldl_(ldl), chi2_topo_(chi_2_topo) {}
 
   void SetDistance(float distance) { distance_ = distance; }
   void SetChi2Geo(float chi_2_geo) { chi2_geo_ = chi_2_geo; }
@@ -27,10 +27,10 @@ class MotherCuts {
   float GetChi2Topo() const { return chi2_topo_; }
 
  protected:
-  float distance_{std::numeric_limits<float>::max()};  ///< lower value
-  float chi2_geo_{0.f};  ///< upper value
-  float ldl_{0.f};  ///< upper value
-  float chi2_topo_{std::numeric_limits<float>::max()}; ///< lower value
+  float distance_{std::numeric_limits<float>::max()}; ///< lower value
+  float chi2_geo_{0.f};                               ///< upper value
+  float ldl_{0.f};                                    ///< upper value
+  float chi2_topo_{std::numeric_limits<float>::max()};///< lower value
 };
 
-#endif //KFPARTICLESIMPLE_KFSIMPLE_MOTHERCUTS_HPP_
+#endif//KFPARTICLESIMPLE_KFSIMPLE_MOTHERCUTS_HPP_

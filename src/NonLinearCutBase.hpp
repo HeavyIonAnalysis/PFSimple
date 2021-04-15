@@ -3,14 +3,12 @@
 
 #include "Constants.hpp"
 
-class NonLinearCutBase{
+class NonLinearCutBase {
 
  public:
-
   virtual bool ApplyCut(const SelectionValues& values) = 0;
 
  protected:
-
 };
 
-#endif //KFPARTICLESIMPLE_SRC_NONLINEARCUTBASE_HPP_
+#endif//KFPARTICLESIMPLE_SRC_NONLINEARCUTBASE_HPP_

@@ -16,8 +16,8 @@
 #include <vector>
 
 #include <KFPTrackVector.h>
-#include <KFVertex.h>
 #include <KFParticleSIMD.h>
+#include <KFVertex.h>
 #include <TVector3.h>
 
 #include "InputContainer.hpp"
@@ -27,13 +27,12 @@
 #include "Decay.hpp"
 #include "NonLinearCutBase.hpp"
 
-class SimpleFinderNew{
+class SimpleFinderNew {
 
   typedef std::array<float, 8> Param_t;
   typedef std::vector<Param_t> Parameters_t;
 
  public:
-
   SimpleFinderNew() = default;
   SimpleFinderNew(const SimpleFinderNew&) = default;
   SimpleFinderNew(SimpleFinderNew&&) = default;
@@ -41,34 +40,33 @@ class SimpleFinderNew{
   SimpleFinderNew& operator=(const SimpleFinderNew&) = default;
   ~SimpleFinderNew() = default;
 
-  void Init(KFPTrackVector&& tracks, const KFVertex& pv); ///< Initialize SimpleFinder object with PV and set of tracks of the current event
+  void Init(KFPTrackVector&& tracks, const KFVertex& pv);///< Initialize SimpleFinder object with PV and set of tracks of the current event
   void Init(const InputContainer& input);
 
   void InitIndexesMap();
 
   void FindParticles() {
-    for(const auto& decay : decays_){
+    for (const auto& decay : decays_) {
       ReconstructDecay(decay);
     }
   }
 
   void ReconstructDecay(const Decay& decay);
-  void AddDecay(const Decay& decay){ decays_.emplace_back(decay); }
+  void AddDecay(const Decay& decay) { decays_.emplace_back(decay); }
   const std::vector<OutputContainer>& GetCandidates() const { return output_; }
 
  private:
+  KFPTrackVector tracks_;             ///< input information: vector of tracks
+  KFVertex prim_vx_;                  ///< input information: primiry vertex
+  std::vector<Decay> decays_{};       ///< input information: list of decays to reconstruct
+  NonLinearCutBase* ml_cuts_{nullptr};///< input information: non-linear cuts class (optional)
 
-  KFPTrackVector tracks_;  ///< input information: vector of tracks
-  KFVertex prim_vx_;  ///< input information: primiry vertex
-  std::vector <Decay> decays_{};  ///< input information: list of decays to reconstruct
-  NonLinearCutBase* ml_cuts_{nullptr};  ///< input information: non-linear cuts class (optional)
-
-  std::map<Pdg_t, std::vector<int>> indexes_{};  ///< map of indexes for a given particle specie
+  std::map<Pdg_t, std::vector<int>> indexes_{};///< map of indexes for a given particle specie
 
   Parameters_t params_{};   ///< vector of daughter parameters at current SV estimation
-  SelectionValues values_{};  ///< struct with mother and daughters properties used to apply cuts
+  SelectionValues values_{};///< struct with mother and daughters properties used to apply cuts
 
-  std::vector<OutputContainer> output_{};  ///< output information: vector of candidates
+  std::vector<OutputContainer> output_{};///< output information: vector of candidates
 
   /**
   * Find indexes of good daughters
@@ -79,7 +77,7 @@ class SimpleFinderNew{
 
   bool IsGoodDaughter(const KFPTrack& track, const DaughterCuts& cuts);
   bool IsGoodPair(const KFPTrack& track1, const KFPTrack& track2, const Decay& decay);
-  bool IsGoodThree(const KFPTrack& track1, const KFPTrack& track2, const KFPTrack& track3, const Decay& decay){ return true; } //TODO
+  bool IsGoodThree(const KFPTrack& track1, const KFPTrack& track2, const KFPTrack& track3, const Decay& decay) { return true; }//TODO
   bool IsGoodMother(const KFParticleSIMD& mother, const MotherCuts& cuts);
   bool IsGoodCos(const KFParticleSIMD& mother, const Parameters_t& daughter_pars, const Decay& decay);
 
@@ -104,7 +102,6 @@ class SimpleFinderNew{
     tracks_.GetTrack(track, i);
     return track;
   }
-
 };
 
-#endif //KFPARTICLESIMPLE_KFSIMPLE_SIMPLEFINDERNEW_HPP_
+#endif//KFPARTICLESIMPLE_KFSIMPLE_SIMPLEFINDERNEW_HPP_
