@@ -6,8 +6,8 @@
 #include <utility>
 #include <vector>
 
-#include "DaughterCuts.hpp"
-#include "MotherCuts.hpp"
+#include "Daughter.hpp"
+#include "Mother.hpp"
 
 class Decay {
 
@@ -19,15 +19,14 @@ class Decay {
   Decay& operator=(const Decay&) = default;
   ~Decay() = default;
 
-  Decay(std::string name, Pdg_t pdg, const MotherCuts& mother, std::vector<DaughterCuts> daughters) : name_(std::move(name)),
-                                                                                                      pdg_(pdg),
-                                                                                                      mother_(mother),
-                                                                                                      daughters_(std::move(daughters)) {}
+  Decay(std::string name, const Mother& mother, std::vector<Daughter> daughters) : name_(std::move(name)),
+                                                                                   mother_(mother),
+                                                                                   daughters_(std::move(daughters)) {}
 
-  const std::vector<DaughterCuts>& GetDaughters() const { return daughters_; }
-  const MotherCuts& GetMother() const { return mother_; }
+  const std::vector<Daughter>& GetDaughters() const { return daughters_; }
+  const Mother& GetMother() const { return mother_; }
 
-  void SetDaughters(const std::vector<DaughterCuts>& daughters) {
+  void SetDaughters(const std::vector<Daughter>& daughters) {
     if (!daughters_.empty()) {
       throw std::runtime_error("Daughters are already set!");
     }
@@ -37,17 +36,15 @@ class Decay {
       daughter.SetId(i++);
     }
   }
-  void SetMother(const MotherCuts& mother) { mother_ = mother; }
+  void SetMother(const Mother& mother) { mother_ = mother; }
 
   int GetNDaughters() const { return daughters_.size(); }
-  Pdg_t GetPdg() const { return pdg_; }
 
  protected:
   std::string name_;///< decay name, to be used in branch name for example
-  Pdg_t pdg_{-1};
 
-  MotherCuts mother_;                    ///< cuts for mother particle
-  std::vector<DaughterCuts> daughters_{};///< cuts for daughter particles
+  Mother mother_;                    ///< cuts for mother particle
+  std::vector<Daughter> daughters_{};///< cuts for daughter particles
 };
 
 #endif//KFPARTICLESIMPLE_KFSIMPLE_DECAY_HPP_

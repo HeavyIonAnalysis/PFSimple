@@ -1,8 +1,8 @@
 set(SOURCES
 #        SimpleFinder.cpp
         SimpleFinderNew.cpp
-        DaughterCuts.cpp
-        MotherCuts.cpp
+        Daughter.cpp
+        Mother.cpp
         Decay.cpp
         NonLinearCutBase.cpp
         )

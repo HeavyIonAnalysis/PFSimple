@@ -126,13 +126,13 @@ void ConverterOut::MatchWithMc() {
 
         const auto& simtrackmother = mc_particles_->GetChannel(mother_id);
         if (decay_.GetNDaughters() == 2) {
-          is_signal = simtrackmother.GetPid() == decay_.GetPdg();
+          is_signal = simtrackmother.GetPid() == decay_.GetMother().GetPdg();
         } else if (decay_.GetNDaughters() == 3) {
           const int simtrackid3 = rec_to_mc_->GetMatch(lambdarec.GetField<int>(daughter_id_field_id_ + 2));
           if (simtrackid3 >= 0) {
             const auto& simtrack3 = mc_particles_->GetChannel(simtrackid3);
             if (simtrack1.GetField<int>(mother_id_field_id_) == simtrack3.GetField<int>(mother_id_field_id_)) {
-              is_signal = simtrackmother.GetPid() == decay_.GetPdg();
+              is_signal = simtrackmother.GetPid() == decay_.GetMother().GetPdg();
             }
           }
         } else {

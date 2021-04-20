@@ -106,7 +106,7 @@ float SimpleFinderNew::CalculateChiToPrimaryVertex(const KFPTrack& track, Pdg_t 
   return chi2vec[0];
 }
 
-std::vector<int> SimpleFinderNew::GetIndexes(const DaughterCuts& cuts) {
+std::vector<int> SimpleFinderNew::GetIndexes(const Daughter& cuts) {
   std::vector<int> result{};
   for (auto pid : cuts.GetPids()) {
     auto it = indexes_.find(pid);
@@ -134,7 +134,7 @@ void SimpleFinderNew::InitIndexesMap() {
   }
 }
 
-bool SimpleFinderNew::IsGoodDaughter(const KFPTrack& track, const DaughterCuts& cuts) {
+bool SimpleFinderNew::IsGoodDaughter(const KFPTrack& track, const Daughter& cuts) {
   int id = cuts.GetId();
   values_.chi2_prim[id] = CalculateChiToPrimaryVertex(track, cuts.GetPdgHypo());
   if (values_.chi2_prim[id] < cuts.GetChi2Prim()) { return false; }
@@ -152,7 +152,7 @@ bool SimpleFinderNew::IsGoodPair(const KFPTrack& track1,
   return true;
 }
 
-bool SimpleFinderNew::IsGoodMother(const KFParticleSIMD& mother, const MotherCuts& cuts) {
+bool SimpleFinderNew::IsGoodMother(const KFParticleSIMD& mother, const Mother& cuts) {
   values_.chi2_geo = mother.Chi2()[0] / simd_cast<float_v>(mother.NDF())[0];
   if (values_.chi2_geo > cuts.GetChi2Geo()) { return false; }
 
@@ -234,12 +234,10 @@ std::array<float, 3> SimpleFinderNew::GetSecondaryVertex() {
 }
 
 void SimpleFinderNew::ReconstructDecay(const Decay& decay) {
-  const auto& mother_cuts = decay.GetMother();
-  const auto& daughters_cuts = decay.GetDaughters();
 
   std::vector<std::vector<int>> indexes{};
   std::vector<Pdg_t> pdgs{};
-  for (const auto& daughter : daughters_cuts) {
+  for (const auto& daughter : decay.GetDaughters()) {
     indexes.emplace_back(GetIndexes(daughter));
     pdgs.emplace_back(daughter.GetPdgHypo());
   }
@@ -253,7 +251,7 @@ void SimpleFinderNew::ReconstructDecay(const Decay& decay) {
 
       if (decay.GetNDaughters() == 2) {
         KFParticleSIMD kf_mother = ConstructMother({track_1, track_2}, pdgs);
-        if (!IsGoodMother(kf_mother, mother_cuts)) continue;
+        if (!IsGoodMother(kf_mother, decay.GetMother())) continue;
         if (!IsGoodCos(kf_mother, params_, decay)) continue;
         FillDaughtersInfo({track_1, track_2}, pdgs);
         SaveParticle(kf_mother);
@@ -263,7 +261,7 @@ void SimpleFinderNew::ReconstructDecay(const Decay& decay) {
           if (!IsGoodThree(track_1, track_2, track_3, decay)) continue;
 
           KFParticleSIMD kf_mother = ConstructMother({track_1, track_2, track_3}, pdgs);
-          if (!IsGoodMother(kf_mother, mother_cuts)) continue;
+          if (!IsGoodMother(kf_mother, decay.GetMother())) continue;
           if (!IsGoodCos(kf_mother, params_, decay)) continue;
           FillDaughtersInfo({track_1, track_2, track_3}, pdgs);
           SaveParticle(kf_mother);

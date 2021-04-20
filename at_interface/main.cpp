@@ -14,27 +14,18 @@ int main(int argc, char** argv) {
 
   const bool make_plain_tree{true};
 
-  //  cuts.CancelCuts();
-  //  cuts.SetCutChi2PrimPos(18.6);
-  //  cuts.SetCutChi2PrimNeg(18.6);
-  //  cuts.SetCutDistance(1.);
-  //  cuts.SetCutChi2Geo(3.);
-  //  cuts.SetCutLdL(5.);
-
-  //  if (decay.GetNdaughters() == 3) {
-  //    cuts.SetCutChi2PrimThird(18.42);
-  //    cuts.SetCutDistanceThird(.6);
-  //cuts.SetCutChi2GeoThree(3.);
-  //cuts.SetCutCosineTopoDown(0.);
-  //cuts.SetCutCosineTopoUp(0.99996);
-  //cuts.SetCutLThreeDown(16.);
-  //  }
-
   const std::string& filename = argv[1];
 
-  DaughterCuts proton(2212, {2212}, 18.6, 0.99);
-  DaughterCuts pion(-211, {-211}, 18.6, 0.f);
-  Decay lambda("lambda", 3122, MotherCuts(1, 3, 5, 3), {proton, pion});
+  Daughter proton(2212, {2212}, 18.6, 0.99);
+  Daughter pion(-211, {-211}, 18.6, 0.f);
+
+  Mother lambda(3122);
+  lambda.SetChi2Geo(3);
+  lambda.SetChi2Topo(3);
+  lambda.SetDistance(1);
+  lambda.SetLdL(5);
+
+  Decay lambda_pi_p("lambda", lambda, {proton, pion});
 
   auto* man = AnalysisTree::TaskManager::GetInstance();
 
@@ -44,12 +35,12 @@ int main(int argc, char** argv) {
 
   auto* out_converter = new ConverterOut();
   out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "SimEventHeader", "RecEventHeader"});
-  out_converter->SetDecay(lambda);
+  out_converter->SetDecay(lambda_pi_p);
 
   auto* pf_task = new PFSimpleTask();
   pf_task->SetInTask(in_converter);
   pf_task->SetOutTask(out_converter);
-  pf_task->SetDecay(lambda);
+  pf_task->SetDecay(lambda_pi_p);
 
   //  man.AddTasks(in_converter, out_converter);
   man->AddTask(in_converter);

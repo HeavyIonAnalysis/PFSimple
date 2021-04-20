@@ -5,19 +5,19 @@
 
 #include "Constants.hpp"
 
-class DaughterCuts {
+class Daughter {
  public:
-  DaughterCuts() = default;
-  DaughterCuts(const DaughterCuts&) = default;
-  DaughterCuts(DaughterCuts&&) = default;
-  DaughterCuts& operator=(DaughterCuts&&) = default;
-  DaughterCuts& operator=(const DaughterCuts&) = default;
-  ~DaughterCuts() = default;
+  Daughter() = default;
+  Daughter(const Daughter&) = default;
+  Daughter(Daughter&&) = default;
+  Daughter& operator=(Daughter&&) = default;
+  Daughter& operator=(const Daughter&) = default;
+  ~Daughter() = default;
 
-  DaughterCuts(Pdg_t pdg_hypo, std::vector<Pdg_t> pids, float chi_2_prim, float cos) : pdg_hypo_(pdg_hypo),
-                                                                                       pids_(std::move(pids)),
-                                                                                       chi2_prim_(chi_2_prim),
-                                                                                       cos_(cos) {}
+  Daughter(Pdg_t pdg_hypo, std::vector<Pdg_t> pids, float chi_2_prim, float cos) : pdg_hypo_(pdg_hypo),
+                                                                                   pids_(std::move(pids)),
+                                                                                   chi2_prim_(chi_2_prim),
+                                                                                   cos_(cos) {}
 
   Pdg_t GetPdgHypo() const { return pdg_hypo_; }
   const std::vector<Pdg_t>& GetPids() const { return pids_; }

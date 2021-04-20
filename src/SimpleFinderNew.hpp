@@ -73,12 +73,12 @@ class SimpleFinderNew {
   * @param cuts daughter particle cuts container
   * @return vector of indexes
   */
-  std::vector<int> GetIndexes(const DaughterCuts& cuts);
+  std::vector<int> GetIndexes(const Daughter& cuts);
 
-  bool IsGoodDaughter(const KFPTrack& track, const DaughterCuts& cuts);
+  bool IsGoodDaughter(const KFPTrack& track, const Daughter& cuts);
   bool IsGoodPair(const KFPTrack& track1, const KFPTrack& track2, const Decay& decay);
   bool IsGoodThree(const KFPTrack& track1, const KFPTrack& track2, const KFPTrack& track3, const Decay& decay) { return true; }//TODO
-  bool IsGoodMother(const KFParticleSIMD& mother, const MotherCuts& cuts);
+  bool IsGoodMother(const KFParticleSIMD& mother, const Mother& cuts);
   bool IsGoodCos(const KFParticleSIMD& mother, const Parameters_t& daughter_pars, const Decay& decay);
 
   KFParticleSIMD ConstructMother(const std::vector<KFPTrack>& tracks, const std::vector<Pdg_t>& pdgs);
