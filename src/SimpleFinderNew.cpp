@@ -137,7 +137,7 @@ void SimpleFinderNew::InitIndexesMap() {
 bool SimpleFinderNew::IsGoodDaughter(const KFPTrack& track, const Daughter& cuts) {
   int id = cuts.GetId();
   values_.chi2_prim[id] = CalculateChiToPrimaryVertex(track, cuts.GetPdgHypo());
-  if (values_.chi2_prim[id] < cuts.GetChi2Prim()) { return false; }
+  if (values_.chi2_prim[id] < cuts.GetChi2Prim() || std::isnan(values_.chi2_prim[id])) { return false; }
   return true;
 }
 
@@ -148,13 +148,13 @@ bool SimpleFinderNew::IsGoodPair(const KFPTrack& track1,
   CalculateParamsInPCA(track1, daughters[0].GetPdgHypo(), track2, daughters[1].GetPdgHypo());
   values_.distance[0] = CalculateDistanceBetweenParticles(params_);
 
-  if (values_.distance[0] > decay.GetMother().GetDistance()) { return false; }
+  if (values_.distance[0] > decay.GetMother().GetDistance() || std::isnan(values_.distance[0])) { return false; }
   return true;
 }
 
 bool SimpleFinderNew::IsGoodMother(const KFParticleSIMD& mother, const Mother& cuts) {
   values_.chi2_geo = mother.Chi2()[0] / simd_cast<float_v>(mother.NDF())[0];
-  if (values_.chi2_geo > cuts.GetChi2Geo()) { return false; }
+  if (values_.chi2_geo > cuts.GetChi2Geo() || std::isnan(values_.chi2_geo)) { return false; }
 
   float_v l_Simd, dl_Simd;
   float_m isFromPV_Simd;
@@ -168,10 +168,10 @@ bool SimpleFinderNew::IsGoodMother(const KFParticleSIMD& mother, const Mother& c
   motherTopo.KFParticleBaseSIMD::GetDecayLength(l_Simd, dl_Simd);
 
   values_.l_over_dl = l_Simd[0] / dl_Simd[0];
-  if (values_.l_over_dl < cuts.GetLdL()) { return false; }
+  if (values_.l_over_dl < cuts.GetLdL() || std::isnan(values_.l_over_dl)) { return false; }
 
   values_.chi2_topo = motherTopo.GetChi2()[0] / simd_cast<float_v>(motherTopo.GetNDF())[0];
-  if (values_.chi2_topo > cuts.GetChi2Topo()) { return false; }
+  if (values_.chi2_topo > cuts.GetChi2Topo() || std::isnan(values_.chi2_topo)) { return false; }
 
   values_.l = l_Simd[0];
   values_.cos_topo = CalculateCosTopo(mother);
@@ -190,9 +190,9 @@ void SimpleFinderNew::SaveParticle(KFParticleSIMD& particle_simd) {
   mother.SetSelectionValues(values_);
 
   output_.emplace_back(mother);
-
+  
   tracks_.Resize(tracks_.Size() + 1);
-  SetTrack(particle, tracks_.Size(), tracks_);
+  SetTrack(particle, tracks_.Size() - 1, tracks_);
 }
 
 float SimpleFinderNew::CalculateCosTopo(const KFParticleSIMD& mother) const {
@@ -215,7 +215,7 @@ bool SimpleFinderNew::IsGoodCos(const KFParticleSIMD& mother, const SimpleFinder
     const auto& par = daughter_pars.at(i);
     const float norm = mother.GetP()[0] * std::sqrt(par[kPx] * par[kPx] + par[kPy] * par[kPy] + par[kPz] * par[kPz]);
     values_.cos[i] = (mother.GetPx()[0] * par[kPx] + mother.GetPy()[0] * par[kPy] + mother.GetPz()[0] * par[kPz]) / norm;
-    if (values_.cos[i] < cut) {
+    if (values_.cos[i] < cut || std::isnan(values_.cos[i])) {
       return false;
     }
   }
