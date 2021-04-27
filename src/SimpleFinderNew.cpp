@@ -136,8 +136,8 @@ void SimpleFinderNew::InitIndexesMap() {
 
 bool SimpleFinderNew::IsGoodDaughter(const KFPTrack& track, const Daughter& cuts) {
   int id = cuts.GetId();
-  values_.chi2_prim[id] = CalculateChiToPrimaryVertex(track, cuts.GetPdgHypo());
-  if (values_.chi2_prim[id] < cuts.GetChi2Prim() || std::isnan(values_.chi2_prim[id])) { return false; }
+  values_.chi2_prim.at(id) = CalculateChiToPrimaryVertex(track, cuts.GetPdgHypo());
+  if (values_.chi2_prim.at(id) < cuts.GetChi2Prim() || std::isnan(values_.chi2_prim.at(id))) { return false; }
   return true;
 }
 

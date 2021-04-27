@@ -7,8 +7,8 @@
 #include "AnalysisTree/TaskManager.hpp"
 
 int main(int argc, char** argv) {
-  if (argc < 3) {
-    std::cout << "Wrong number of arguments! Please use:\n  ./main filelist.txt mother_pdg\n";
+  if (argc < 2) {
+    std::cout << "Wrong number of arguments! Please use:\n  ./main filelist.txt\n";
     return EXIT_FAILURE;
   }
 

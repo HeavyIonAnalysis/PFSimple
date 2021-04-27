@@ -21,7 +21,12 @@ class Decay {
 
   Decay(std::string name, const Mother& mother, std::vector<Daughter> daughters) : name_(std::move(name)),
                                                                                    mother_(mother),
-                                                                                   daughters_(std::move(daughters)) {}
+                                                                                   daughters_(std::move(daughters)) {
+    int i{0};
+    for(auto& daughter : daughters_){
+      daughter.SetId(i++);
+    }
+  }
 
   const std::vector<Daughter>& GetDaughters() const { return daughters_; }
   const Mother& GetMother() const { return mother_; }
