@@ -25,7 +25,7 @@ void ConverterOut::CopyParticle(const OutputContainer& kf_particle, AnalysisTree
   for (int i = 0; i < decay_.GetNDaughters(); ++i) {
     particle.SetField(kf_particle.GetChi2Prim(i), chi2prim_field_id_ + i);
     particle.SetField(kf_particle.GetCos(i), cosine_field_id_ + i);
-    //    particle.SetField(kf_particle.GetDaughterIds().at(i), daughter_id_field_id_+i);
+    particle.SetField(kf_particle.GetDaughterIds().at(i), daughter_id_field_id_+i);
   }
 
   particle.SetField(kf_particle.GetDistance(), distance_field_id_);
@@ -53,8 +53,9 @@ void ConverterOut::Exec() {
     auto& lambdarec = lambda_reco_->AddChannel(br_conf);
     CopyParticle(candidate, lambdarec);
   }
-
-  //  MatchWithMc();  //TODO
+  
+  if(decay_.GetNDaughters()==2)
+   MatchWithMc();  //TODO for ndaughters > 2
 }
 
 void ConverterOut::Init() {
@@ -94,7 +95,7 @@ void ConverterOut::Init() {
   out_particles.AddFields<float>({"chi2_geo", "l", "l_over_dl", "chi2_topo", "cosine_topo"});
 
   if (mc_particles_) {
-    out_particles.AddField<bool>("is_signal");
+    out_particles.AddField<int>("generation");
   }
   AnalysisTree::BranchConfig LambdaSimBranch(out_branch_sim, AnalysisTree::DetType::kParticle);
 
@@ -113,8 +114,8 @@ void ConverterOut::MatchWithMc() {
 
     const int simtrackid1 = rec_to_mc_->GetMatch(lambdarec.GetField<int>(daughter_id_field_id_));
     const int simtrackid2 = rec_to_mc_->GetMatch(lambdarec.GetField<int>(daughter_id_field_id_ + 1));
-
-    bool is_signal = false;
+    
+    int is_signal = 0;
     int mother_id = -999;
     if (simtrackid1 >= 0 && simtrackid2 >= 0) {
       const auto& simtrack1 = mc_particles_->GetChannel(simtrackid1);
@@ -125,23 +126,17 @@ void ConverterOut::MatchWithMc() {
         if (mother_id < 0) continue;
 
         const auto& simtrackmother = mc_particles_->GetChannel(mother_id);
-        if (decay_.GetNDaughters() == 2) {
-          is_signal = simtrackmother.GetPid() == decay_.GetMother().GetPdg();
-        } else if (decay_.GetNDaughters() == 3) {
-          const int simtrackid3 = rec_to_mc_->GetMatch(lambdarec.GetField<int>(daughter_id_field_id_ + 2));
-          if (simtrackid3 >= 0) {
-            const auto& simtrack3 = mc_particles_->GetChannel(simtrackid3);
-            if (simtrack1.GetField<int>(mother_id_field_id_) == simtrack3.GetField<int>(mother_id_field_id_)) {
-              is_signal = simtrackmother.GetPid() == decay_.GetMother().GetPdg();
-            }
-          }
-        } else {
-          throw std::runtime_error("Wrong number of daughters");
-        }
+
+        if(simtrackmother.GetPid() == decay_.GetMother().GetPdg())
+          is_signal = 1;
+        else
+          continue;
+        if(simtrackmother.GetField<int>(mother_id_field_id_)>=0)    // feed down, cascade lambda
+          is_signal = 2;
       }
     }
 
-    lambdarec.SetField(is_signal, is_signal_field_id_);
+    lambdarec.SetField(is_signal, generation_field_id_);
     auto out_config = AnalysisTree::TaskManager::GetInstance()->GetConfig();
 
     if (is_signal) {
@@ -173,7 +168,7 @@ void ConverterOut::InitIndexes() {
   if (mc_particles_) {
     auto branch_conf_sim = config_->GetBranchConfig(mc_particles_name_);
     mother_id_field_id_ = branch_conf_sim.GetFieldId("mother_id");
-    is_signal_field_id_ = out_branch.GetFieldId("is_signal");
+    generation_field_id_ = out_branch.GetFieldId("generation");
   }
 
   chi2prim_field_id_ = out_branch.GetFieldId("chi2_prim_pos");

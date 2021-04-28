@@ -34,7 +34,8 @@ class OutputContainer {
                                                          z_(particle.GetZ()),
                                                          x_error_(particle.GetErrX()),
                                                          y_error_(particle.GetErrY()),
-                                                         z_error_(particle.GetErrZ()) {}
+                                                         z_error_(particle.GetErrZ()),
+                                                         daughter_ids_(particle.DaughterIds()) {}
 
   virtual ~OutputContainer() = default;
 
