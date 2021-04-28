@@ -16,14 +16,19 @@ int main(int argc, char** argv) {
 
   const std::string& filename = argv[1];
 
-  Daughter proton(2212, {2212}, 18.6, 0.99);
-  Daughter pion(-211, {-211}, 18.6, 0.f);
+  Daughter proton(2212, {2212});
+  Daughter pion(-211, {-211});
+  
+  proton.SetCutChi2Prim(26);
+  proton.SetCutCos(0.99825);
+  
+  pion.SetCutChi2Prim(110);
 
   Mother lambda(3122);
-  lambda.SetChi2Geo(3);
-  lambda.SetChi2Topo(3);
-  lambda.SetDistance(1);
-  lambda.SetLdL(5);
+  lambda.SetCutChi2Geo(11);
+  lambda.SetCutChi2Topo(29);
+  lambda.SetCutDistance(0.15);
+  lambda.SetCutLdL(4);
 
   Decay lambda_pi_p("lambda", lambda, {proton, pion});
 

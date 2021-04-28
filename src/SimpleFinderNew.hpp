@@ -91,7 +91,7 @@ class SimpleFinderNew {
   static void SetTrack(const KFParticle& particle, int id, KFPTrackVector& tracks);
 
   void FillDaughtersInfo(const std::vector<KFPTrack>& tracks, const std::vector<Pdg_t>& pdgs);
-  void SaveParticle(KFParticleSIMD& particle_simd);
+  void SaveParticle(KFParticleSIMD& particle_simd, const Decay& decay);
 
   bool ApplyNonLinearCut() const {
     return ml_cuts_ == nullptr || ml_cuts_->ApplyCut(values_);

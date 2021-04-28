@@ -31,6 +31,8 @@ enum eParams : short {
   kNumberOfTrackPars
 };
 
+constexpr float huge_value = std::numeric_limits<float>::max();
+
 constexpr int NumberOfCovElements = 21;
 constexpr int NumberOfFieldPars = 10;
 

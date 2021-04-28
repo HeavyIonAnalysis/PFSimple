@@ -1,5 +1,4 @@
 set(SOURCES
-#        SimpleFinder.cpp
         SimpleFinderNew.cpp
         Daughter.cpp
         Mother.cpp

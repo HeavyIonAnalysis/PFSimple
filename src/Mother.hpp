@@ -20,24 +20,29 @@ class Mother {
 //  Mother(float distance, float chi_2_geo, float ldl, float chi_2_topo)
 //      : distance_(distance), chi2_geo_(chi_2_geo), ldl_(ldl), chi2_topo_(chi_2_topo) {}
 
-  void SetDistance(float distance) { distance_ = distance; }
-  void SetChi2Geo(float chi_2_geo) { chi2_geo_ = chi_2_geo; }
-  void SetLdL(float ldl) { ldl_ = ldl; }
-  void SetChi2Topo(float chi_2_topo) { chi2_topo_ = chi_2_topo; }
+  void SetCutDistance(float distance) { distance_ = distance; }
+  void SetCutChi2Geo(float chi_2_geo) { chi2_geo_ = chi_2_geo; }
+  void SetCutLdL(float ldl) { ldl_ = ldl; }
+  void SetCutChi2Topo(float chi_2_topo) { chi2_topo_ = chi_2_topo; }
+  void CancelCutDistance() { this->SetCutDistance(huge_value); }
+  void CancelCutChi2Geo() { this->SetCutChi2Geo(huge_value); }
+  void CancelCutLdL() { this->SetCutLdL(-huge_value); }
+  void CancelCutChi2Topo() { this->SetCutChi2Topo(huge_value); }
+  void CancelCuts();
 
   Pdg_t GetPdg() const { return pdg_; }
-  float GetDistance() const { return distance_; }
-  float GetChi2Geo() const { return chi2_geo_; }
-  float GetLdL() const { return ldl_; }
-  float GetChi2Topo() const { return chi2_topo_; }
+  float GetCutDistance() const { return distance_; }
+  float GetCutChi2Geo() const { return chi2_geo_; }
+  float GetCutLdL() const { return ldl_; }
+  float GetCutChi2Topo() const { return chi2_topo_; }
 
  protected:
   Pdg_t pdg_{-1};
 
-  float distance_{std::numeric_limits<float>::max()}; ///< lower value
-  float chi2_geo_{std::numeric_limits<float>::min()}; ///< upper value
-  float ldl_{std::numeric_limits<float>::min()};      ///< upper value
-  float chi2_topo_{std::numeric_limits<float>::max()};///< lower value
+  float distance_{1.f};         ///< lower value
+  float chi2_geo_{3.f};         ///< upper value
+  float ldl_{5.f};              ///< upper value
+  float chi2_topo_{huge_value}; ///< lower value
 };
 
 #endif//KFPARTICLESIMPLE_KFSIMPLE_MOTHERCUTS_HPP_
