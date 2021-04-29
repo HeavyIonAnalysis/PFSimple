@@ -4,6 +4,8 @@
 #include "AnalysisTree/Matching.hpp"
 #include "AnalysisTree/TaskManager.hpp"
 
+#include <algorithm>
+
 void ConverterOut::CopyParticle(const OutputContainer& kf_particle, AnalysisTree::Particle& particle) const {
 
   particle.SetMomentum(kf_particle.GetPx(), kf_particle.GetPy(), kf_particle.GetPz());
@@ -54,8 +56,7 @@ void ConverterOut::Exec() {
     CopyParticle(candidate, lambdarec);
   }
   
-  if(decay_.GetNDaughters()==2)
-   MatchWithMc();  //TODO for ndaughters > 2
+  MatchWithMc();
 }
 
 void ConverterOut::Init() {
@@ -108,47 +109,64 @@ void ConverterOut::Init() {
   InitIndexes();
 }
 
+int ConverterOut::GetMothersSimId(AnalysisTree::Particle& lambdarec)
+{
+  std::vector<int> daughter_sim_id;
+  for(int i=0; i<decay_.GetNDaughters(); i++)
+    daughter_sim_id.push_back(rec_to_mc_->GetMatch(lambdarec.GetField<int>(daughter_id_field_id_+i)));
+  
+  if(*std::min_element(daughter_sim_id.begin(), daughter_sim_id.end())<0) // at least one daughter has no matching with mc
+    return -1; 
+  
+  std::vector<int> mother_sim_id;
+  for(int i=0; i<decay_.GetNDaughters(); i++)
+    mother_sim_id.push_back(mc_particles_->GetChannel(daughter_sim_id.at(i)).GetField<int>(mother_id_field_id_));
+  
+  if(*std::min_element(mother_sim_id.begin(), mother_sim_id.end()) != *std::max_element(mother_sim_id.begin(), mother_sim_id.end())) // daughters belong to not the same mother
+    return -1;
+  
+  if(mother_sim_id.at(0)<0) // mother has negative id
+    return -1;
+  
+  if(mc_particles_->GetChannel(mother_sim_id.at(0)).GetPid() != decay_.GetMother().GetPdg()) // mother has not PDG which was supposed
+    return -1;
+  
+  return mother_sim_id.at(0);  
+}
+
+int ConverterOut::DetermineGeneration(int mother_sim_id)
+{
+  int generation = 0;
+  int older_id = mother_sim_id;
+  while(older_id>0)
+  {
+    const auto& simtrackolder = mc_particles_->GetChannel(older_id);
+    older_id = simtrackolder.GetField<int>(mother_id_field_id_);
+    generation++;
+  }
+  
+  return generation;
+}
+
 void ConverterOut::MatchWithMc() {
-
+  
   for (auto& lambdarec : *lambda_reco_) {
-
-    const int simtrackid1 = rec_to_mc_->GetMatch(lambdarec.GetField<int>(daughter_id_field_id_));
-    const int simtrackid2 = rec_to_mc_->GetMatch(lambdarec.GetField<int>(daughter_id_field_id_ + 1));
-    
-    int is_signal = 0;
-    int mother_id = -999;
-    if (simtrackid1 >= 0 && simtrackid2 >= 0) {
-      const auto& simtrack1 = mc_particles_->GetChannel(simtrackid1);
-      const auto& simtrack2 = mc_particles_->GetChannel(simtrackid2);
-
-      if (simtrack1.GetField<int>(mother_id_field_id_) == simtrack2.GetField<int>(mother_id_field_id_)) {
-        mother_id = simtrack1.GetField<int>(mother_id_field_id_);
-        if (mother_id < 0) continue;
-
-        const auto& simtrackmother = mc_particles_->GetChannel(mother_id);
-
-        if(simtrackmother.GetPid() == decay_.GetMother().GetPdg())
-          is_signal = 1;
-        else
-          continue;
-        if(simtrackmother.GetField<int>(mother_id_field_id_)>=0)    // feed down, cascade lambda
-          is_signal = 2;
-      }
-    }
-
-    lambdarec.SetField(is_signal, generation_field_id_);
     auto out_config = AnalysisTree::TaskManager::GetInstance()->GetConfig();
+    
+    int mother_id = GetMothersSimId(lambdarec);
+    int generation = DetermineGeneration(mother_id);
+    lambdarec.SetField(generation, generation_field_id_);
+    
+    if (generation<1) continue;
+        
+    const AnalysisTree::Particle& simtrackmother = mc_particles_->GetChannel(mother_id);
 
-    if (is_signal) {
-      const AnalysisTree::Particle& simtrackmother = mc_particles_->GetChannel(mother_id);
+    auto& lambdasim = lambda_sim_->AddChannel(out_config->GetBranchConfig(lambda_sim_->GetId()));
 
-      auto& lambdasim = lambda_sim_->AddChannel(out_config->GetBranchConfig(lambda_sim_->GetId()));
-
-      lambdasim.SetMomentum(simtrackmother.GetPx(), simtrackmother.GetPy(), simtrackmother.GetPz());
-      lambdasim.SetMass(simtrackmother.GetMass());
-      lambdasim.SetPid(simtrackmother.GetPid());
-      lambda_reco2sim_->AddMatch(lambdarec.GetId(), lambdasim.GetId());
-    }
+    lambdasim.SetMomentum(simtrackmother.GetPx(), simtrackmother.GetPy(), simtrackmother.GetPz());
+    lambdasim.SetMass(simtrackmother.GetMass());
+    lambdasim.SetPid(simtrackmother.GetPid());
+    lambda_reco2sim_->AddMatch(lambdarec.GetId(), lambdasim.GetId());    
   }
 }
 

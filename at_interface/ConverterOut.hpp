@@ -25,6 +25,8 @@ class ConverterOut : public AnalysisTree::Task {
  protected:
   void InitIndexes();
   void MatchWithMc();
+  int GetMothersSimId(AnalysisTree::Particle& lambdarec);
+  int DetermineGeneration(int mother_sim_id);
 
   // output branches
   AnalysisTree::EventHeader* events_{nullptr};
