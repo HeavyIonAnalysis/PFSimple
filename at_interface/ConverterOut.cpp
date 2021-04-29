@@ -83,14 +83,14 @@ void ConverterOut::Init() {
 
   if (decay_.GetNDaughters() == 3) {
     out_particles.AddFields<int>({"daughter1_id", "daughter2_id", "daughter3_id"});
-    out_particles.AddFields<float>({"chi2_prim_pos", "chi2_prim_neg", "chi2_prim_third"});
+    out_particles.AddFields<float>({"chi2_prim_first", "chi2_prim_second", "chi2_prim_third"});
     out_particles.AddFields<float>({"distance", "distance_third"});
-    out_particles.AddFields<float>({"cosine_neg", "cosine_pos", "cosine_third"});
+    out_particles.AddFields<float>({"cosine_first", "cosine_second", "cosine_third"});
   } else if (decay_.GetNDaughters() == 2) {
     out_particles.AddFields<int>({"daughter1_id", "daughter2_id"});
-    out_particles.AddFields<float>({"chi2_prim_pos", "chi2_prim_neg"});
+    out_particles.AddFields<float>({"chi2_prim_first", "chi2_prim_second"});
     out_particles.AddField<float>("distance");
-    out_particles.AddFields<float>({"cosine_neg", "cosine_pos"});
+    out_particles.AddFields<float>({"cosine_first", "cosine_second"});
   }
   out_particles.AddFields<float>({"chi2_geo", "l", "l_over_dl", "chi2_topo", "cosine_topo"});
 
@@ -171,9 +171,9 @@ void ConverterOut::InitIndexes() {
     generation_field_id_ = out_branch.GetFieldId("generation");
   }
 
-  chi2prim_field_id_ = out_branch.GetFieldId("chi2_prim_pos");
+  chi2prim_field_id_ = out_branch.GetFieldId("chi2_prim_first");
   distance_field_id_ = out_branch.GetFieldId("distance");
-  cosine_field_id_ = out_branch.GetFieldId("cosine_pos");
+  cosine_field_id_ = out_branch.GetFieldId("cosine_first");
 
   chi2geo_field_id_ = out_branch.GetFieldId("chi2_geo");
 }
