@@ -138,7 +138,7 @@ int ConverterOut::DetermineGeneration(int mother_sim_id)
 {
   int generation = 0;
   int older_id = mother_sim_id;
-  while(older_id>0)
+  while(older_id>=0)
   {
     const auto& simtrackolder = mc_particles_->GetChannel(older_id);
     older_id = simtrackolder.GetField<int>(mother_id_field_id_);
