@@ -128,7 +128,8 @@ int ConverterOut::GetMothersSimId(AnalysisTree::Particle& lambdarec)
   if(mother_sim_id.at(0)<0) // mother has negative id
     return -1;
   
-  if(mc_particles_->GetChannel(mother_sim_id.at(0)).GetPid() != decay_.GetMother().GetPdg()) // mother has not PDG which was supposed
+//   if(mc_particles_->GetChannel(mother_sim_id.at(0)).GetPid() != decay_.GetMother().GetPdg()) // mother has not PDG which was supposed
+  if(mc_particles_->GetChannel(mother_sim_id.at(0)).GetPid() != lambdarec.GetPid()) // mother has not PDG which was supposed
     return -1;
   
   return mother_sim_id.at(0);  
