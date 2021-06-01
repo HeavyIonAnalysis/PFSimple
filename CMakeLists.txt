@@ -61,13 +61,13 @@ include(${ROOT_USE_FILE})
 
 if(AnalysisTree_FOUND)
     Message("AnalysisTree found. Corresponding interface will be compiled")
-    add_subdirectory(AnalysisTreeInterface)
+    add_subdirectory(at_interface)
 Else()
     Message("AnalysisTree is not found. Corresponding interface will not be compiled")
 EndIf()
 
-add_subdirectory(KFSimple)
-add_subdirectory(Interface)
+add_subdirectory(src)
+add_subdirectory(src/interface)
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
