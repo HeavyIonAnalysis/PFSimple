@@ -72,13 +72,22 @@ KFParticleSIMD SimpleFinderNew::ConstructMother(const std::vector<KFPTrack>& tra
     particles.at(i).SetId(tracks.at(i).Id());
     particles_simd.emplace_back(particles.at(i));
   }
-
-  auto sv = GetSecondaryVertex();
-  float_v vertex[3] = {sv[0], sv[1], sv[2]};
-  for (size_t i = 0; i < n; ++i) {
-    float_v ds, dsdr[6];
-    ds = particles_simd.at(i).GetDStoPoint(vertex, dsdr);
-    particles_simd.at(i).TransportToDS(ds, dsdr);
+    
+  if(n == 2) {
+    float_v ds[2] = {0.f,0.f};
+    float_v dsdr[4][6];
+    particles_simd.at(0).GetDStoParticle( particles_simd.at(1), ds, dsdr );
+    particles_simd.at(0).TransportToDS(ds[0], dsdr[0]);
+    particles_simd.at(1).TransportToDS(ds[1], dsdr[3]);
+  }
+  else {
+    auto sv = GetSecondaryVertex();
+    float_v vertex[3] = {sv[0], sv[1], sv[2]};
+    for (size_t i = 0; i < n; ++i) {
+      float_v ds, dsdr[6];
+      ds = particles_simd.at(i).GetDStoPoint(vertex, dsdr);
+      particles_simd.at(i).TransportToDS(ds, dsdr);
+    }
   }
 
   if (n == 2) {
