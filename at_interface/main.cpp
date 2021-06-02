@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
   lambda.SetCutDistance(0.15);
   lambda.SetCutLdL(4);
 
-  Decay lambda_pi_p("lambda", lambda, {proton, pion});
+  Decay lambda_pi_p("lambda", lambda, {pion, proton});
 
   auto* man = AnalysisTree::TaskManager::GetInstance();
 
