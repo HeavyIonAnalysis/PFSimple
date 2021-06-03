@@ -20,12 +20,13 @@ class PFSimpleTask : public AnalysisTree::Task {
   void SetInTask(ConverterIn* in_task) { in_task_ = in_task; }
   void SetOutTask(ConverterOut* out_task) { out_task_ = out_task; }
 
-  void SetDecay(const Decay& decay) { decay_ = decay; }
+  void SetDecays(const std::vector<Decay>& decays) { decays_ = decays; }
+  void AddDecay(const Decay& decay) { decays_.emplace_back(decay); }
 
  protected:
   ConverterIn* in_task_{nullptr};
   ConverterOut* out_task_{nullptr};
-  Decay decay_{};
+  std::vector<Decay> decays_{};
 };
 
 #endif//KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_PFSIMPLETASK_H_

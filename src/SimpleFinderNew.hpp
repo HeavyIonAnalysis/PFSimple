@@ -52,6 +52,7 @@ class SimpleFinderNew {
   }
 
   void ReconstructDecay(const Decay& decay);
+  void SetDecays(const std::vector<Decay>& decays) { decays_ = decays; }
   void AddDecay(const Decay& decay) { decays_.emplace_back(decay); }
   const std::vector<OutputContainer>& GetCandidates() const { return output_; }
 

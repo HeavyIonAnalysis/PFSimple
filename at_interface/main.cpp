@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
   auto* pf_task = new PFSimpleTask();
   pf_task->SetInTask(in_converter);
   pf_task->SetOutTask(out_converter);
-  pf_task->SetDecay(lambda_pi_p);
+  pf_task->SetDecays({lambda_pi_p});
 
   //  man.AddTasks(in_converter, out_converter);
   man->AddTask(in_converter);
