@@ -1,7 +1,7 @@
 set(SOURCES
     ConverterIn.cpp
     ConverterOut.cpp
-    PfSimpleTask.cpp
+    PFSimpleTask.cpp
   )
 
 string(REPLACE ".cpp" ".hpp" HEADERS "${SOURCES}")
