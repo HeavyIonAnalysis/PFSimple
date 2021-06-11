@@ -1,7 +1,8 @@
 #include "SimpleFinderNew.hpp"
+
 #include <KFParticleSIMD.h>
 
-void SimpleFinderNew::Init(KFPTrackVector&& tracks, const KFVertex& pv) {
+void SimpleFinderNew::Init(std::vector<KFParticle>&& tracks, const KFVertex& pv) {
   output_.clear();
   current_candidate_id_ = 0;
   
@@ -9,30 +10,25 @@ void SimpleFinderNew::Init(KFPTrackVector&& tracks, const KFVertex& pv) {
   prim_vx_ = pv;
 }
 
-void SimpleFinderNew::SetTrack(const KFParticle& particle, int id, KFPTrackVector& tracks) {
-  for (Int_t iP = 0; iP < 6; iP++) {
-    tracks.SetParameter(particle.GetParameter(iP), iP, id);
-  }
-  for (Int_t iC = 0; iC < 21; iC++) {
-    tracks.SetCovariance(particle.GetCovariance(iC), iC, id);
-  }
-  for (Int_t iF = 0; iF < 10; iF++) {
-    tracks.SetFieldCoefficient(particle.GetFieldCoeff()[iF], iF, id);
-  }
-  tracks.SetPDG(particle.GetPDG(), id);
-  tracks.SetQ(particle.GetQ(), id);
-  tracks.SetPVIndex(-1, id);
-  tracks.SetId(particle.Id(), id);
-}
+// void SimpleFinderNew::SetTrack(const KFParticle& particle, int id, KFPTrackVector& tracks) {  // TODO rm this func - not needed more (?)
+//   for (Int_t iP = 0; iP < 6; iP++) {
+//     tracks.SetParameter(particle.GetParameter(iP), iP, id);
+//   }
+//   for (Int_t iC = 0; iC < 21; iC++) {
+//     tracks.SetCovariance(particle.GetCovariance(iC), iC, id);
+//   }
+//   for (Int_t iF = 0; iF < 10; iF++) {
+//     tracks.SetFieldCoefficient(particle.GetFieldCoeff()[iF], iF, id);
+//   }
+//   tracks.SetPDG(particle.GetPDG(), id);
+//   tracks.SetQ(particle.GetQ(), id);
+//   tracks.SetPVIndex(-1, id);
+//   tracks.SetId(particle.Id(), id);
+// }
 
-void SimpleFinderNew::Init(const InputContainer& input) {
-  const std::vector<KFParticle>& tracks = input.GetTracks();
-  KFPTrackVector track_tmp;
-  track_tmp.Resize(tracks.size());
-  for (size_t iTr = 0; iTr < tracks.size(); iTr++) {
-    SetTrack(tracks[iTr], iTr, track_tmp);
-  }
-  Init(std::move(track_tmp), input.GetVertex());
+void SimpleFinderNew::Init(const InputContainer& input) {                                       // TODO know how to de-const without time lose for copying by value
+  std::vector<KFParticle> tracks = input.GetTracks();
+  Init(std::move(tracks), input.GetVertex());
 }
 
 float SimpleFinderNew::CalculateDistanceBetweenParticles(const Parameters_t& parameters) {
@@ -42,11 +38,13 @@ float SimpleFinderNew::CalculateDistanceBetweenParticles(const Parameters_t& par
   return std::sqrt(dx * dx + dy * dy + dz * dz);
 }
 
-void SimpleFinderNew::CalculateParamsInPCA(const KFPTrack& track1, int pid1, const KFPTrack& track2, int pid2) {
+void SimpleFinderNew::CalculateParamsInPCA(const KFParticle& track1, int pid1, const KFParticle& track2, int pid2) {
   params_ = Parameters_t(2);
-
-  KFParticle particle1(track1, pid1);
-  KFParticle particle2(track2, pid2);
+  
+  KFParticle particle1(track1);
+  KFParticle particle2(track2);
+  particle1.SetPDG(pid1);
+  particle2.SetPDG(pid2);
   KFParticleSIMD particleSIMD1(particle1);// the same particle is copied to each SIMD element
   KFParticleSIMD particleSIMD2(particle2);
 
@@ -62,16 +60,17 @@ void SimpleFinderNew::CalculateParamsInPCA(const KFPTrack& track1, int pid1, con
   }
 }
 
-KFParticleSIMD SimpleFinderNew::ConstructMother(const std::vector<KFPTrack>& tracks, const std::vector<Pdg_t>& pdgs) {
+KFParticleSIMD SimpleFinderNew::ConstructMother(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs) {
   const auto n = tracks.size();
-
+  
   KFParticleSIMD mother;
-  std::vector<KFParticle> particles{};
+  std::vector<KFParticle> particles = tracks;
   std::vector<KFParticleSIMD> particles_simd{};
 
   for (size_t i = 0; i < n; ++i) {
-    particles.emplace_back(KFParticle(tracks.at(i), pdgs.at(i)));
-    particles.at(i).SetId(tracks.at(i).Id());
+    SetKFParticleEnergy(particles.at(i), pdgs.at(i));
+    particles.at(i).SetPDG(pdgs.at(i));
+    particles.at(i).SetId(tracks.at(i).Id());     // TODO rm obsolet ID copying?
     particles_simd.emplace_back(particles.at(i));
   }
   
@@ -106,9 +105,10 @@ KFParticleSIMD SimpleFinderNew::ConstructMother(const std::vector<KFPTrack>& tra
   return mother;
 }
 
-float SimpleFinderNew::CalculateChiToPrimaryVertex(const KFPTrack& track, Pdg_t pid) const {
+float SimpleFinderNew::CalculateChiToPrimaryVertex(const KFParticle& track, Pdg_t pid) const {
   // SIMD'ized version
-  KFParticle tmpPart(track, pid);
+  KFParticle tmpPart = track;
+  tmpPart.SetPDG(pid);
   KFParticleSIMD tmpPartSIMD(tmpPart);
 
   KFVertex prim_vx_tmp = prim_vx_;
@@ -138,8 +138,8 @@ std::vector<int> SimpleFinderNew::GetIndexes(const Daughter& daughter) {
 
 void SimpleFinderNew::InitIndexesMap() {
   indexes_.clear();
-  for (int i = 0; i < tracks_.Size(); i++) {
-    auto pdg = tracks_.PDG()[i];
+  for (int i = 0; i < tracks_.size(); i++) {
+    auto pdg = tracks_.at(i).GetPDG();
     auto it = indexes_.find(pdg);
     if (it != indexes_.end()) {
       it->second.emplace_back(i);
@@ -149,15 +149,42 @@ void SimpleFinderNew::InitIndexesMap() {
   }
 }
 
-bool SimpleFinderNew::IsGoodDaughter(const KFPTrack& track, const Daughter& daughter) {
+KFPTrack SimpleFinderNew::ToKFPTrack(const KFParticle& particle) const {
+  KFPTrack track;
+  
+  track.SetX(particle.GetX());
+  track.SetY(particle.GetY());
+  track.SetZ(particle.GetZ());
+  track.SetPx(particle.GetPx());
+  track.SetPy(particle.GetPy());
+  track.SetPz(particle.GetPz());
+  
+  for (Int_t iC = 0; iC < 21; iC++) {
+    track.SetCovariance(iC, particle.GetCovariance(iC));
+  }
+  for (Int_t iF = 0; iF < 10; iF++) {
+    track.SetFieldCoeff(particle.GetFieldCoeff()[iF], iF);
+  }
+  track.SetCharge(particle.GetQ());
+  track.SetId(particle.Id());
+  
+  return track;
+}
+
+void SimpleFinderNew::SetKFParticleEnergy(KFParticle& particle, int pdg) const {
+  const KFPTrack& track = ToKFPTrack(particle);
+  particle = KFParticle(track, pdg);
+}
+
+bool SimpleFinderNew::IsGoodDaughter(const KFParticle& track, const Daughter& daughter) {
   int id = daughter.GetId();
   values_.chi2_prim.at(id) = CalculateChiToPrimaryVertex(track, daughter.GetPdgHypo());
   if (values_.chi2_prim.at(id) < daughter.GetCutChi2Prim() || std::isnan(values_.chi2_prim.at(id))) { return false; }
   return true;
 }
 
-bool SimpleFinderNew::IsGoodPair(const KFPTrack& track1,
-                                 const KFPTrack& track2,
+bool SimpleFinderNew::IsGoodPair(const KFParticle& track1,
+                                 const KFParticle& track2,
                                  const Decay& decay) {
   const auto& daughters = decay.GetDaughters();
   CalculateParamsInPCA(track1, daughters[0].GetPdgHypo(), track2, daughters[1].GetPdgHypo());
@@ -207,9 +234,8 @@ void SimpleFinderNew::SaveParticle(KFParticleSIMD& particle_simd, const Decay& d
 
   output_.emplace_back(mother);
   
-  tracks_.Resize(tracks_.Size() + 1);
   particle.SetId(current_candidate_id_);
-  SetTrack(particle, tracks_.Size() - 1, tracks_);
+  tracks_.emplace_back(particle);
   current_candidate_id_++;
 }
 
@@ -262,7 +288,7 @@ void SimpleFinderNew::ReconstructDecay(const Decay& decay) {
 
   for (auto index_1 : indexes.at(0)) {
     auto track_1 = GetTrack(index_1);
-
+    
     for (auto index_2 : indexes.at(1)) {
       auto track_2 = GetTrack(index_2);
       if (!IsGoodPair(track_1, track_2, decay)) continue;
@@ -291,7 +317,7 @@ void SimpleFinderNew::ReconstructDecay(const Decay& decay) {
   }
 }
 
-void SimpleFinderNew::FillDaughtersInfo(const std::vector<KFPTrack>& tracks, const std::vector<Pdg_t>& pdgs) {
+void SimpleFinderNew::FillDaughtersInfo(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs) {
   for (int i = 0; i < tracks.size(); ++i) {
     values_.chi2_prim[i] = CalculateChiToPrimaryVertex(tracks.at(i), pdgs.at(i));
   }

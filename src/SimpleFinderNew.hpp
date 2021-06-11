@@ -15,7 +15,8 @@
 
 #include <vector>
 
-#include <KFPTrackVector.h>
+#include <KFParticle.h>
+#include <KFPTrack.h>
 #include <KFParticleSIMD.h>
 #include <KFVertex.h>
 #include <TVector3.h>
@@ -40,7 +41,7 @@ class SimpleFinderNew {
   SimpleFinderNew& operator=(const SimpleFinderNew&) = default;
   ~SimpleFinderNew() = default;
 
-  void Init(KFPTrackVector&& tracks, const KFVertex& pv);///< Initialize SimpleFinder object with PV and set of tracks of the current event
+  void Init(std::vector<KFParticle>&& tracks, const KFVertex& pv);///< Initialize SimpleFinder object with PV and set of tracks of the current event
   void Init(const InputContainer& input);
 
   void InitIndexesMap();
@@ -58,7 +59,7 @@ class SimpleFinderNew {
   const std::vector<OutputContainer>& GetCandidates() const { return output_; }
 
  private:
-  KFPTrackVector tracks_;             ///< input information: vector of tracks
+  std::vector<KFParticle> tracks_;    ///< input information: vector of tracks
   KFVertex prim_vx_;                  ///< input information: primiry vertex
   std::vector<Decay> decays_{};       ///< input information: list of decays to reconstruct
   NonLinearCutBase* ml_cuts_{nullptr};///< input information: non-linear cuts class (optional)
@@ -78,33 +79,34 @@ class SimpleFinderNew {
   */
   std::vector<int> GetIndexes(const Daughter& cuts);
 
-  bool IsGoodDaughter(const KFPTrack& track, const Daughter& cuts);
-  bool IsGoodPair(const KFPTrack& track1, const KFPTrack& track2, const Decay& decay);
-  bool IsGoodThree(const KFPTrack& track1, const KFPTrack& track2, const KFPTrack& track3, const Decay& decay) { return true; }//TODO
+  bool IsGoodDaughter(const KFParticle& track, const Daughter& cuts);
+  bool IsGoodPair(const KFParticle& track1, const KFParticle& track2, const Decay& decay);
+  bool IsGoodThree(const KFParticle& track1, const KFParticle& track2, const KFParticle& track3, const Decay& decay) { return true; }//TODO
   bool IsGoodMother(const KFParticleSIMD& mother, const Mother& cuts);
   bool IsGoodCos(const KFParticleSIMD& mother, const Parameters_t& daughter_pars, const Decay& decay);
 
-  KFParticleSIMD ConstructMother(const std::vector<KFPTrack>& tracks, const std::vector<Pdg_t>& pdgs);
+  KFParticleSIMD ConstructMother(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs);
   std::array<float, 3> GetSecondaryVertex();
 
-  void CalculateParamsInPCA(const KFPTrack& track1, int pid1, const KFPTrack& track2, int pid2);
-  float CalculateChiToPrimaryVertex(const KFPTrack& track, Pdg_t pid) const;
+  void CalculateParamsInPCA(const KFParticle& track1, int pid1, const KFParticle& track2, int pid2);
+  float CalculateChiToPrimaryVertex(const KFParticle& track, Pdg_t pid) const;
   float CalculateCosTopo(const KFParticleSIMD& mother) const;
   static float CalculateDistanceBetweenParticles(const Parameters_t& parameters);
-  static void SetTrack(const KFParticle& particle, int id, KFPTrackVector& tracks);
+//   static void SetTrack(const KFParticle& particle, int id, KFParticleVector& tracks);  // TODO rm this func - not needed more (?)
 
-  void FillDaughtersInfo(const std::vector<KFPTrack>& tracks, const std::vector<Pdg_t>& pdgs);
+  void FillDaughtersInfo(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs);
   void SaveParticle(KFParticleSIMD& particle_simd, const Decay& decay);
 
   bool ApplyNonLinearCut() const {
     return ml_cuts_ == nullptr || ml_cuts_->ApplyCut(values_);
   }
 
-  KFPTrack GetTrack(int i) {
-    KFPTrack track;
-    tracks_.GetTrack(track, i);
-    return track;
+  KFParticle GetTrack(int i) {
+    return tracks_.at(i);
   }
+  
+  KFPTrack ToKFPTrack(const KFParticle& particle) const;
+  void SetKFParticleEnergy(KFParticle& particle, int pdg) const;
 };
 
 #endif//KFPARTICLESIMPLE_KFSIMPLE_SIMPLEFINDERNEW_HPP_
