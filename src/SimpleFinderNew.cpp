@@ -2,9 +2,11 @@
 #include <KFParticleSIMD.h>
 
 void SimpleFinderNew::Init(KFPTrackVector&& tracks, const KFVertex& pv) {
+  output_.clear();
+  current_candidate_id_ = 0;
+  
   tracks_ = tracks;
   prim_vx_ = pv;
-  InitIndexesMap();
 }
 
 void SimpleFinderNew::SetTrack(const KFParticle& particle, int id, KFPTrackVector& tracks) {
@@ -72,6 +74,9 @@ KFParticleSIMD SimpleFinderNew::ConstructMother(const std::vector<KFPTrack>& tra
     particles.at(i).SetId(tracks.at(i).Id());
     particles_simd.emplace_back(particles.at(i));
   }
+  
+//   std::cout << "pdg " << particles.at(0).GetPDG() << "\tP = " << particles.at(0).GetP() << "\tE = " << particles.at(0).GetE() << "\n";
+//   std::cout << "pdg " << particles.at(1).GetPDG() << "\tP = " << particles.at(1).GetP() << "\tE = " << particles.at(1).GetE() << "\n";
     
   if(n == 2) {
     float_v ds[2] = {0.f,0.f};
@@ -132,6 +137,7 @@ std::vector<int> SimpleFinderNew::GetIndexes(const Daughter& daughter) {
 }
 
 void SimpleFinderNew::InitIndexesMap() {
+  indexes_.clear();
   for (int i = 0; i < tracks_.Size(); i++) {
     auto pdg = tracks_.PDG()[i];
     auto it = indexes_.find(pdg);
@@ -190,6 +196,7 @@ bool SimpleFinderNew::IsGoodMother(const KFParticleSIMD& kf_mother, const Mother
 }
 
 void SimpleFinderNew::SaveParticle(KFParticleSIMD& particle_simd, const Decay& decay) {
+  
   KFParticle particle;
 
   particle_simd.GetKFParticle(particle, 0);
@@ -201,7 +208,9 @@ void SimpleFinderNew::SaveParticle(KFParticleSIMD& particle_simd, const Decay& d
   output_.emplace_back(mother);
   
   tracks_.Resize(tracks_.Size() + 1);
+  particle.SetId(current_candidate_id_);
   SetTrack(particle, tracks_.Size() - 1, tracks_);
+  current_candidate_id_++;
 }
 
 float SimpleFinderNew::CalculateCosTopo(const KFParticleSIMD& mother) const {

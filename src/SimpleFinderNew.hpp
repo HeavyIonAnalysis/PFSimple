@@ -47,6 +47,7 @@ class SimpleFinderNew {
 
   void FindParticles() {
     for (const auto& decay : decays_) {
+      InitIndexesMap();
       ReconstructDecay(decay);
     }
   }
@@ -68,6 +69,7 @@ class SimpleFinderNew {
   SelectionValues values_{};///< struct with mother and daughters properties used to apply cuts
 
   std::vector<OutputContainer> output_{};///< output information: vector of candidates
+  int current_candidate_id_{0};
 
   /**
   * Find indexes of good daughters

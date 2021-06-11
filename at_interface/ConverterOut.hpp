@@ -22,7 +22,6 @@ class ConverterOut : public AnalysisTree::Task {
   void SetPFSimpleTask(PFSimpleTask* pfsimple_task) { pfsimple_task_ = pfsimple_task; }
 
   void CopyParticle(const OutputContainer& kf_particle, AnalysisTree::Particle& particle) const;
-  void SetDecay(const Decay& decay) { decay_ = decay; }
 
  protected:
   void InitIndexes();
@@ -45,7 +44,6 @@ class ConverterOut : public AnalysisTree::Task {
   AnalysisTree::TrackDetector* rec_tracks_{nullptr};
   AnalysisTree::Matching* rec_to_mc_{nullptr};
   AnalysisTree::EventHeader* sim_events_{nullptr};
-  Decay decay_{};
 
   std::vector<OutputContainer> candidates_;
   
@@ -61,6 +59,8 @@ class ConverterOut : public AnalysisTree::Task {
   int daughter_id_field_id_{-1};
   int generation_field_id_{-1};
   int pt_err_field_id_{-1};
+  
+  int mother_id_field_id_w_{-1};
 
   int chi2prim_field_id_{-1};
   int distance_field_id_{-1};
