@@ -90,6 +90,7 @@ class SimpleFinderNew {
 
   void CalculateParamsInPCA(const KFParticle& track1, int pid1, const KFParticle& track2, int pid2);
   float CalculateChiToPrimaryVertex(const KFParticle& track, Pdg_t pid) const;
+  float CalculateInvMassDiscrepancy(const KFParticle& track, Pdg_t pid) const;
   float CalculateCosTopo(const KFParticleSIMD& mother) const;
   static float CalculateDistanceBetweenParticles(const Parameters_t& parameters);
 //   static void SetTrack(const KFParticle& particle, int id, KFParticleVector& tracks);  // TODO rm this func - not needed more (?)

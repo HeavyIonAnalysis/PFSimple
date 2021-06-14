@@ -68,7 +68,8 @@ KFParticleSIMD SimpleFinderNew::ConstructMother(const std::vector<KFParticle>& t
   std::vector<KFParticleSIMD> particles_simd{};
 
   for (size_t i = 0; i < n; ++i) {
-    SetKFParticleEnergy(particles.at(i), pdgs.at(i));
+    if(pdgs.at(i) != 3122)
+      SetKFParticleEnergy(particles.at(i), pdgs.at(i));
     particles.at(i).SetPDG(pdgs.at(i));
     particles.at(i).SetId(tracks.at(i).Id());     // TODO rm obsolet ID copying?
     particles_simd.emplace_back(particles.at(i));
@@ -118,6 +119,13 @@ float SimpleFinderNew::CalculateChiToPrimaryVertex(const KFParticle& track, Pdg_
 
   float_v chi2vec = tmpPartSIMD.GetDeviationFromVertex(prim_vx_Simd);
   return chi2vec[0];
+}
+
+float SimpleFinderNew::CalculateInvMassDiscrepancy(const KFParticle& track, Pdg_t pid) const {
+  if(pid != 3122)
+    return 0.;
+  else
+    return (track.GetMass() - lambda_mass) / lambda_mass_sigma;
 }
 
 std::vector<int> SimpleFinderNew::GetIndexes(const Daughter& daughter) {
@@ -179,7 +187,10 @@ void SimpleFinderNew::SetKFParticleEnergy(KFParticle& particle, int pdg) const {
 bool SimpleFinderNew::IsGoodDaughter(const KFParticle& track, const Daughter& daughter) {
   int id = daughter.GetId();
   values_.chi2_prim.at(id) = CalculateChiToPrimaryVertex(track, daughter.GetPdgHypo());
+  values_.invmassdisc.at(id) = CalculateInvMassDiscrepancy(track, daughter.GetPdgHypo());
   if (values_.chi2_prim.at(id) < daughter.GetCutChi2Prim() || std::isnan(values_.chi2_prim.at(id))) { return false; }
+  if (std::fabs(values_.invmassdisc.at(id)) > daughter.GetCutInvMass()) { return false; }
+
   return true;
 }
 
@@ -231,7 +242,7 @@ void SimpleFinderNew::SaveParticle(KFParticleSIMD& particle_simd, const Decay& d
 
   OutputContainer mother(particle);
   mother.SetSelectionValues(values_);
-
+  
   output_.emplace_back(mother);
   
   particle.SetId(current_candidate_id_);
@@ -320,5 +331,6 @@ void SimpleFinderNew::ReconstructDecay(const Decay& decay) {
 void SimpleFinderNew::FillDaughtersInfo(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs) {
   for (int i = 0; i < tracks.size(); ++i) {
     values_.chi2_prim[i] = CalculateChiToPrimaryVertex(tracks.at(i), pdgs.at(i));
+    values_.invmassdisc[i] = CalculateInvMassDiscrepancy(tracks.at(i), pdgs.at(i));
   }
 }

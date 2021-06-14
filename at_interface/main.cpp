@@ -43,8 +43,10 @@ int main(int argc, char** argv) {
   Daughter lambda_from_xi(3122, {3122});
   Mother xi(3312);
   
-  xi.SetCutLdL(10.);
-  lambda_from_xi.SetCutChi2Prim(5.);
+  lambda_from_xi.SetCutInvMass(3.);
+  
+//   xi.SetCutLdL(10.);
+//   lambda_from_xi.SetCutChi2Prim(5.);
 
 //   pion_from_xi.CancelCuts();
 //   lambda_from_xi.CancelCuts();
@@ -54,15 +56,16 @@ int main(int argc, char** argv) {
   //**************************************************
 
   auto* man = AnalysisTree::TaskManager::GetInstance();
-
+  man->SetOutputName("PFSimpleOutput.root");
+  
   auto* in_converter = new ConverterIn();
   in_converter->SetTrackCuts(new AnalysisTree::Cuts("Cut to reproduce KFPF", {AnalysisTree::EqualsCut("VtxTracks.pass_cuts", 1)}));
   in_converter->SetIsShine(false);//TODO maybe change name
 
   auto* pf_task = new PFSimpleTask();
   pf_task->SetInTask(in_converter);
-  pf_task->SetDecays({lambda_pi_p});  
-//   pf_task->SetDecays({lambda_pi_p, xi_pi_lambda});  
+//   pf_task->SetDecays({lambda_pi_p});  
+  pf_task->SetDecays({lambda_pi_p, xi_pi_lambda});  
   
   auto* out_converter = new ConverterOut();
   out_converter->SetPFSimpleTask(pf_task);
