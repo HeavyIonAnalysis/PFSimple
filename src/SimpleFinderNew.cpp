@@ -200,7 +200,9 @@ bool SimpleFinderNew::IsGoodPair(const KFParticle& track1,
   const auto& daughters = decay.GetDaughters();
   CalculateParamsInPCA(track1, daughters[0].GetPdgHypo(), track2, daughters[1].GetPdgHypo());
   values_.distance[0] = CalculateDistanceBetweenParticles(params_);
-
+  
+  if(track2.GetPDG() == 3122 && track2.DaughterIds().at(0) == track1.Id()) { return false; }        //TODO generalize, rm hardcodes
+  
   if (values_.distance[0] > decay.GetMother().GetCutDistance() || std::isnan(values_.distance[0])) { return false; }
   return true;
 }
