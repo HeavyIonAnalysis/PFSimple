@@ -5,4 +5,5 @@ void Mother::CancelCuts(){
   this->CancelCutChi2Geo();
   this->CancelCutLdL();
   this->CancelCutChi2Topo();
+  this->CancelCutChi2TopoLower();
 }

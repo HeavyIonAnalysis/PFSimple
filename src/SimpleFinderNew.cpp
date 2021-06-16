@@ -228,7 +228,7 @@ bool SimpleFinderNew::IsGoodMother(const KFParticleSIMD& kf_mother, const Mother
   if (values_.l_over_dl < mother.GetCutLdL() || std::isnan(values_.l_over_dl)) { return false; }
 
   values_.chi2_topo = motherTopo.GetChi2()[0] / simd_cast<float_v>(motherTopo.GetNDF())[0];
-  if (values_.chi2_topo > mother.GetCutChi2Topo() || std::isnan(values_.chi2_topo)) { return false; }
+  if (values_.chi2_topo > mother.GetCutChi2Topo() || values_.chi2_topo < mother.GetCutChi2TopoLower() || std::isnan(values_.chi2_topo)) { return false; }
 
   values_.l = l_Simd[0];
   values_.cos_topo = CalculateCosTopo(kf_mother);
