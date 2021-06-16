@@ -73,6 +73,8 @@ KFParticleSIMD SimpleFinderNew::ConstructMother(const std::vector<KFParticle>& t
     particles.at(i).SetPDG(pdgs.at(i));
     particles.at(i).SetId(tracks.at(i).Id());     // TODO rm obsolet ID copying?
     particles_simd.emplace_back(particles.at(i));
+    if(pdgs.at(i) == 3122)
+      particles_simd.at(i).SetNonlinearMassConstraint(float_v(lambda_mass));
   }
   
 //   std::cout << "pdg " << particles.at(0).GetPDG() << "\tP = " << particles.at(0).GetP() << "\tE = " << particles.at(0).GetE() << "\n";
