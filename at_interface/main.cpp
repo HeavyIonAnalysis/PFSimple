@@ -16,8 +16,8 @@ int main(int argc, char** argv) {
 
   const std::string& filename = argv[1];
 
-  Daughter proton(2212, {2212});
-  Daughter pion(-211, {-211});
+  Daughter proton(2212);
+  Daughter pion(-211);
   
   proton.SetCutChi2Prim(26);
   proton.SetCutCos(0.99825);

@@ -14,8 +14,11 @@ class Daughter {
   Daughter& operator=(const Daughter&) = default;
   ~Daughter() = default;
 
-  Daughter(Pdg_t pdg_hypo, std::vector<Pdg_t> pids) : pdg_hypo_(pdg_hypo),
-                                                                                   pids_(std::move(pids)) {}
+  Daughter(Pdg_t pdg_hypo, std::vector<Pdg_t> pids={}) : pdg_hypo_(pdg_hypo),
+                                                         pids_(std::move(pids)) {
+  if(pids.empty())
+    pids_ = {pdg_hypo};                                                           
+  }
 
   Pdg_t GetPdgHypo() const { return pdg_hypo_; }
   const std::vector<Pdg_t>& GetPids() const { return pids_; }
