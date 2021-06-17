@@ -19,6 +19,7 @@ struct SelectionValues {
   float cos_topo{-1.f};                                 ///< Cosine of the angle between reconstructed mother's momentum and mother's radius vector beginning in the PV
   std::array<float, 3> invmassdisc{{-1.f, -1.f, -1.f}}; ///< Discrepancy of the V0 candidate invariant mass from the PDG value in terms of characteristic sigma (hardcoded)
 
+
   bool is_from_PV{false};
 };
 

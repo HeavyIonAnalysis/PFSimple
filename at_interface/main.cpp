@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
   Daughter proton(2212, {2212});
   Daughter pion(-211, {-211});
   Mother lambda(3122);
-  
+
 //   proton.SetCutChi2Prim(26);
 //   proton.SetCutCos(0.99825);
 //   
