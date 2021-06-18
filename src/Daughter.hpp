@@ -15,7 +15,7 @@ class Daughter {
   ~Daughter() = default;
 
   Daughter(Pdg_t pdg_hypo, std::vector<Pdg_t> pids={}) : pdg_hypo_(pdg_hypo),
-                                                         pids_(std::move(pids)) {
+                                                         pids_(pids) {
   if(pids.empty())
     pids_ = {pdg_hypo};                                                           
   }
