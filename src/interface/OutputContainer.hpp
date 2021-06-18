@@ -59,6 +59,7 @@ class OutputContainer {
   float GetL() const { return values_.l; }
   float GetLdL() const { return values_.l_over_dl; }
   float GetCosineTopo() const { return values_.cos_topo; }
+  float GetChi2PrimMother() const { return values_.chi2_prim_mother; }
 
   float GetX() const { return x_; }
   float GetY() const { return y_; }

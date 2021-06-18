@@ -192,7 +192,8 @@ bool SimpleFinderNew::IsGoodDaughter(const KFParticle& track, const Daughter& da
   values_.invmassdisc.at(id) = CalculateInvMassDiscrepancy(track, daughter.GetPdgHypo());
   if (values_.chi2_prim.at(id) < daughter.GetCutChi2Prim() || std::isnan(values_.chi2_prim.at(id))) { return false; }
   if (std::fabs(values_.invmassdisc.at(id)) > daughter.GetCutInvMass()) { return false; }
-
+  if((daughter.GetPdgHypo() == 2212 && track.Q() != +1) || (daughter.GetPdgHypo() == -211 && track.Q() != -1)) { return false; };
+  
   return true;
 }
 
@@ -233,6 +234,10 @@ bool SimpleFinderNew::IsGoodMother(const KFParticleSIMD& kf_mother, const Mother
   values_.l = l_Simd[0];
   values_.cos_topo = CalculateCosTopo(kf_mother);
   values_.is_from_PV = isFromPV_Simd[0];
+  
+  KFParticle particle;
+  KFParticleSIMD(kf_mother).GetKFParticle(particle, 0);  
+  values_.chi2_prim_mother = CalculateChiToPrimaryVertex(particle, mother.GetPdg());
 
   return true;
 }

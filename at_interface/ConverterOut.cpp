@@ -50,6 +50,7 @@ void ConverterOut::CopyParticle(const OutputContainer& kf_particle, AnalysisTree
   particle.SetField(kf_particle.GetLdL(), chi2geo_field_id_ + 2);
   particle.SetField(kf_particle.GetChi2Topo(), chi2geo_field_id_ + 3);
   particle.SetField(kf_particle.GetCosineTopo(), chi2geo_field_id_ + 4);
+  particle.SetField(kf_particle.GetChi2PrimMother(), chi2geo_field_id_ + 5);
 }
 
 void ConverterOut::Exec() {
@@ -103,7 +104,7 @@ void ConverterOut::Init() {
   out_particles.AddFields<float>({"distance", "distance_third"});
   out_particles.AddFields<float>({"cosine_first", "cosine_second", "cosine_third"});
 
-  out_particles.AddFields<float>({"chi2_geo", "l", "l_over_dl", "chi2_topo", "cosine_topo"});
+  out_particles.AddFields<float>({"chi2_geo", "l", "l_over_dl", "chi2_topo", "cosine_topo", "chi2prim_mother"});
   out_particles.AddFields<float>({"invmass_discr_first", "invmass_discr_second", "invmass_discr_third"});
 
   if (mc_particles_) {
