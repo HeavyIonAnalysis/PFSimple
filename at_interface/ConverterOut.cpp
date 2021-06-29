@@ -32,14 +32,12 @@ void ConverterOut::CopyParticle(const OutputContainer& kf_particle, AnalysisTree
     particle.SetField(kf_particle.GetChi2Prim(i), chi2prim_field_id_ + i);
     particle.SetField(kf_particle.GetCos(i), cosine_field_id_ + i);
     particle.SetField(kf_particle.GetDaughterIds().at(i), daughter_id_field_id_+i);
-    particle.SetField(kf_particle.GetInvMassDiscr(i), invmass_discr_field_id_+i);
   }
   
   if(Ndaughters < 3) {
     particle.SetField(-999.f, chi2prim_field_id_ + 2);
     particle.SetField(-9.f, cosine_field_id_ + 2);
     particle.SetField(-999, daughter_id_field_id_ + 2);
-    particle.SetField(-999.f, invmass_discr_field_id_ + 2);
     particle.SetField(-999.f, distance_field_id_ + 1);
   }
 
@@ -51,6 +49,8 @@ void ConverterOut::CopyParticle(const OutputContainer& kf_particle, AnalysisTree
   particle.SetField(kf_particle.GetChi2Topo(), chi2geo_field_id_ + 3);
   particle.SetField(kf_particle.GetCosineTopo(), chi2geo_field_id_ + 4);
   particle.SetField(kf_particle.GetChi2PrimMother(), chi2geo_field_id_ + 5);
+  
+  particle.SetField(kf_particle.GetInvMassDiscr(), invmass_discr_field_id_);
 }
 
 void ConverterOut::Exec() {
@@ -104,8 +104,8 @@ void ConverterOut::Init() {
   out_particles.AddFields<float>({"distance", "distance_third"});
   out_particles.AddFields<float>({"cosine_first", "cosine_second", "cosine_third"});
 
-  out_particles.AddFields<float>({"chi2_geo", "l", "l_over_dl", "chi2_topo", "cosine_topo", "chi2prim_mother"});
-  out_particles.AddFields<float>({"invmass_discr_first", "invmass_discr_second", "invmass_discr_third"});
+  out_particles.AddFields<float>({"chi2_geo", "l", "l_over_dl", "chi2_topo", "cosine_topo", "chi2_prim_mother"});
+  out_particles.AddField<float>("invmass_discr");
 
   if (mc_particles_) {
     out_particles.AddField<int>("generation");
@@ -256,5 +256,5 @@ void ConverterOut::InitIndexes() {
   cosine_field_id_ = out_branch.GetFieldId("cosine_first");
 
   chi2geo_field_id_ = out_branch.GetFieldId("chi2_geo");
-  invmass_discr_field_id_ = out_branch.GetFieldId("invmass_discr_first");
+  invmass_discr_field_id_ = out_branch.GetFieldId("invmass_discr");
 }
