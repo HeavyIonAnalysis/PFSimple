@@ -64,7 +64,7 @@ void SimpleFinderNew::CalculateParamsInPCA(const KFParticle& track1, int pid1, c
   }
 }
 
-KFParticleSIMD SimpleFinderNew::ConstructMother(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs) {
+KFParticleSIMD SimpleFinderNew::ConstructMother(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs, bool print) {
   const auto n = tracks.size();
   
   KFParticleSIMD mother;
@@ -104,6 +104,14 @@ KFParticleSIMD SimpleFinderNew::ConstructMother(const std::vector<KFParticle>& t
   if (n == 2) {
     const KFParticleSIMD* vDaughtersPointer[2] = {&particles_simd.at(0), &particles_simd.at(1)};
     mother.Construct(vDaughtersPointer, 2, nullptr);
+    
+    if(pdgs.at(1)==3122 && print)
+    {
+      std::cout << particles_simd.at(0).GetPx()[0] << "\t" << particles_simd.at(0).GetPy()[0] << "\t" << particles_simd.at(0).GetPz()[0] << "\t" << particles_simd.at(0).GetE()[0] << "\n";
+      std::cout << particles_simd.at(1).GetPx()[0] << "\t" << particles_simd.at(1).GetPy()[0] << "\t" << particles_simd.at(1).GetPz()[0] << "\t" << particles_simd.at(1).GetE()[0] << "\n";
+      std::cout << mother.GetPx()[0] << "\t" << mother.GetPy()[0] << "\t" << mother.GetPz()[0] << "\t" << mother.GetE()[0] << "\n";
+    }    
+    
   } else if (n == 3) {
     const KFParticleSIMD* vDaughtersPointer[3] = {&particles_simd.at(0), &particles_simd.at(1), &particles_simd.at(2)};
     mother.Construct(vDaughtersPointer, 3, nullptr);
@@ -360,7 +368,6 @@ void SimpleFinderNew::ReconstructDecay(const Decay& decay) {
       }
     }
   }
-//   std::cout << N << "\n";
 }
 
 void SimpleFinderNew::FillDaughtersInfo(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs) {

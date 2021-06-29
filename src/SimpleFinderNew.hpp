@@ -85,7 +85,7 @@ class SimpleFinderNew {
   bool IsGoodMother(const KFParticleSIMD& mother, const Mother& cuts);
   bool IsGoodCos(const KFParticleSIMD& mother, const Parameters_t& daughter_pars, const Decay& decay);
 
-  KFParticleSIMD ConstructMother(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs);
+  KFParticleSIMD ConstructMother(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs, bool print=false);
   std::array<float, 3> GetSecondaryVertex();
 
   void CalculateParamsInPCA(const KFParticle& track1, int pid1, const KFParticle& track2, int pid2);
