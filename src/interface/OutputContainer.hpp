@@ -23,19 +23,20 @@ class OutputContainer {
   explicit OutputContainer(const KFParticle& particle) : px_(particle.GetPx()),
                                                          py_(particle.GetPy()),
                                                          pz_(particle.GetPz()),
-                                                         mass_(particle.GetMass()),
                                                          pdg_(particle.GetPDG()),
                                                          pt_error_(particle.GetErrPt()),
                                                          phi_error_(particle.GetErrPhi()),
                                                          eta_error_(particle.GetErrEta()),
-                                                         mass_error_(particle.GetErrMass()),
                                                          x_(particle.GetX()),
                                                          y_(particle.GetY()),
                                                          z_(particle.GetZ()),
                                                          x_error_(particle.GetErrX()),
                                                          y_error_(particle.GetErrY()),
                                                          z_error_(particle.GetErrZ()),
-                                                         daughter_ids_(particle.DaughterIds()) {}
+                                                         daughter_ids_(particle.DaughterIds()) {
+                                                           
+  particle.GetMass(mass_, mass_error_);
+                                                        }
 
   virtual ~OutputContainer() = default;
 
@@ -52,7 +53,7 @@ class OutputContainer {
 
   float GetChi2Prim(int i) const { return values_.chi2_prim[i]; }
   float GetCos(int i) const { return values_.cos[i]; }
-  float GetInvMassDiscr(int i) const { return values_.invmassdisc[i]; }
+  float GetInvMassDiscr() const { return values_.invmassdisc; }
   float GetChi2Geo() const { return values_.chi2_geo; }
   float GetChi2Topo() const { return values_.chi2_topo; }
   float GetDistance(int i = 0) const { return values_.distance[i]; }
