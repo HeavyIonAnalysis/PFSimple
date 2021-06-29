@@ -92,7 +92,8 @@ class SimpleFinderNew {
   float CalculateChiToPrimaryVertex(const KFParticle& track, Pdg_t pid) const;
   float CalculateInvMassDiscrepancy(const KFParticle& track, Pdg_t pid) const;
   float CalculateCosTopo(const KFParticleSIMD& mother) const;
-  static float CalculateDistanceBetweenParticles(const Parameters_t& parameters);
+  float CalculateDistanceBetweenParticles(const Parameters_t& parameters);
+  float CalculateDistanceBetweenParticles(const KFParticleBaseSIMD& particle1, const KFParticleBaseSIMD& particle2);
 //   static void SetTrack(const KFParticle& particle, int id, KFParticleVector& tracks);  // TODO rm this func - not needed more (?)
 
   void FillDaughtersInfo(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs);

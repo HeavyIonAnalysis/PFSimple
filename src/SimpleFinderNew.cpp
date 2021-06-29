@@ -38,6 +38,10 @@ float SimpleFinderNew::CalculateDistanceBetweenParticles(const Parameters_t& par
   return std::sqrt(dx * dx + dy * dy + dz * dz);
 }
 
+float SimpleFinderNew::CalculateDistanceBetweenParticles(const KFParticleBaseSIMD& particle1, const KFParticleBaseSIMD& particle2) {
+  return particle2.GetDistanceFromParticle(particle1)[0];
+}
+
 void SimpleFinderNew::CalculateParamsInPCA(const KFParticle& track1, int pid1, const KFParticle& track2, int pid2) {
   params_ = Parameters_t(2);
   
@@ -73,8 +77,8 @@ KFParticleSIMD SimpleFinderNew::ConstructMother(const std::vector<KFParticle>& t
     particles.at(i).SetPDG(pdgs.at(i));
     particles.at(i).SetId(tracks.at(i).Id());     // TODO rm obsolet ID copying?
     particles_simd.emplace_back(particles.at(i));
-    if(pdgs.at(i) == 3122)
-      particles_simd.at(i).SetNonlinearMassConstraint(float_v(lambda_mass));
+//     if(pdgs.at(i) == 3122)
+//       particles_simd.at(i).SetNonlinearMassConstraint(float_v(lambda_mass));
   }
   
 //   std::cout << "pdg " << particles.at(0).GetPDG() << "\tP = " << particles.at(0).GetP() << "\tE = " << particles.at(0).GetE() << "\n";
@@ -189,9 +193,9 @@ void SimpleFinderNew::SetKFParticleEnergy(KFParticle& particle, int pdg) const {
 bool SimpleFinderNew::IsGoodDaughter(const KFParticle& track, const Daughter& daughter) {
   int id = daughter.GetId();
   values_.chi2_prim.at(id) = CalculateChiToPrimaryVertex(track, daughter.GetPdgHypo());
-  values_.invmassdisc.at(id) = CalculateInvMassDiscrepancy(track, daughter.GetPdgHypo());
+  
   if (values_.chi2_prim.at(id) < daughter.GetCutChi2Prim() || std::isnan(values_.chi2_prim.at(id))) { return false; }
-  if (std::fabs(values_.invmassdisc.at(id)) > daughter.GetCutInvMass()) { return false; }
+  
   if((daughter.GetPdgHypo() == 2212 && track.Q() != +1) || (daughter.GetPdgHypo() == -211 && track.Q() != -1)) { return false; };
   
   return true;
@@ -202,7 +206,18 @@ bool SimpleFinderNew::IsGoodPair(const KFParticle& track1,
                                  const Decay& decay) {
   const auto& daughters = decay.GetDaughters();
   CalculateParamsInPCA(track1, daughters[0].GetPdgHypo(), track2, daughters[1].GetPdgHypo());
-  values_.distance[0] = CalculateDistanceBetweenParticles(params_);
+  if(track2.GetPDG() == 3122)
+  {
+    KFParticle track1_nonconst = track1;
+    KFParticle track2_nonconst = track2;
+    KFParticleSIMD track1_simd = KFParticleSIMD(track1_nonconst);
+    KFParticleSIMD track2_simd = KFParticleSIMD(track2_nonconst);
+    track1_simd.SetPDG(daughters[0].GetPdgHypo());
+    track2_simd.SetPDG(daughters[1].GetPdgHypo());
+    values_.distance[0] = CalculateDistanceBetweenParticles(track1_simd, track2_simd);
+  }
+  else
+    values_.distance[0] = CalculateDistanceBetweenParticles(params_);
   
   if(track2.GetPDG() == 3122 && track2.DaughterIds().at(0) == track1.Id()) { return false; }        //TODO generalize, rm hardcodes
   
@@ -213,6 +228,7 @@ bool SimpleFinderNew::IsGoodPair(const KFParticle& track1,
 bool SimpleFinderNew::IsGoodMother(const KFParticleSIMD& kf_mother, const Mother& mother) {
   values_.chi2_geo = kf_mother.Chi2()[0] / simd_cast<float_v>(kf_mother.NDF())[0];
   if (values_.chi2_geo > mother.GetCutChi2Geo() || std::isnan(values_.chi2_geo)) { return false; }
+  if (values_.chi2_geo < 0. || ! std::isfinite(values_.chi2_geo)) { return false; }
 
   float_v l_Simd, dl_Simd;
   float_m isFromPV_Simd;
@@ -238,6 +254,9 @@ bool SimpleFinderNew::IsGoodMother(const KFParticleSIMD& kf_mother, const Mother
   KFParticle particle;
   KFParticleSIMD(kf_mother).GetKFParticle(particle, 0);  
   values_.chi2_prim_mother = CalculateChiToPrimaryVertex(particle, mother.GetPdg());
+  
+  values_.invmassdisc = CalculateInvMassDiscrepancy(particle, mother.GetPdg());
+  if (std::fabs(values_.invmassdisc) > mother.GetCutInvMass()) { return false; }
 
   return true;
 }
@@ -245,6 +264,9 @@ bool SimpleFinderNew::IsGoodMother(const KFParticleSIMD& kf_mother, const Mother
 void SimpleFinderNew::SaveParticle(KFParticleSIMD& particle_simd, const Decay& decay) {
   
   KFParticle particle;
+  
+  if(decay.GetMother().GetPdg() == 3122)
+    particle_simd.SetNonlinearMassConstraint(float_v(lambda_mass));
 
   particle_simd.GetKFParticle(particle, 0);
   particle.SetPDG(decay.GetMother().GetPdg());
@@ -306,6 +328,8 @@ void SimpleFinderNew::ReconstructDecay(const Decay& decay) {
     pdgs.emplace_back(daughter.GetPdgHypo());
   }
 
+//   int N = 0;
+  
   for (auto index_1 : indexes.at(0)) {
     auto track_1 = GetTrack(index_1);
     
@@ -319,6 +343,7 @@ void SimpleFinderNew::ReconstructDecay(const Decay& decay) {
         if (!IsGoodCos(kf_mother, params_, decay)) continue;
         FillDaughtersInfo({track_1, track_2}, pdgs);
         SaveParticle(kf_mother, decay);
+//         N++;
       } else if (decay.GetNDaughters() == 3) {
         for (auto index_3 : indexes.at(2)) {
           auto track_3 = GetTrack(index_3);
@@ -335,11 +360,12 @@ void SimpleFinderNew::ReconstructDecay(const Decay& decay) {
       }
     }
   }
+//   std::cout << N << "\n";
 }
 
 void SimpleFinderNew::FillDaughtersInfo(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs) {
   for (int i = 0; i < tracks.size(); ++i) {
     values_.chi2_prim[i] = CalculateChiToPrimaryVertex(tracks.at(i), pdgs.at(i));
-    values_.invmassdisc[i] = CalculateInvMassDiscrepancy(tracks.at(i), pdgs.at(i));
+//     values_.invmassdisc[i] = CalculateInvMassDiscrepancy(tracks.at(i), pdgs.at(i));
   }
 }
