@@ -25,11 +25,13 @@ class Mother {
   void SetCutLdL(float ldl) { ldl_ = ldl; }
   void SetCutChi2Topo(float chi_2_topo) { chi2_topo_ = chi_2_topo; }
   void SetCutChi2TopoLower(float chi_2_topo_lower) { chi2_topo_lower_ = chi_2_topo_lower; }
+  void SetCutInvMass(float value) { invmass_discrepancy_ = value; }
   void CancelCutDistance() { this->SetCutDistance(huge_value); }
   void CancelCutChi2Geo() { this->SetCutChi2Geo(huge_value); }
   void CancelCutLdL() { this->SetCutLdL(-huge_value); }
   void CancelCutChi2Topo() { this->SetCutChi2Topo(huge_value); }
   void CancelCutChi2TopoLower() { this->SetCutChi2TopoLower(-huge_value); }
+  void CancelCutInvMass()  { this->SetCutInvMass(huge_value); }
   void CancelCuts();
 
   Pdg_t GetPdg() const { return pdg_; }
@@ -38,6 +40,7 @@ class Mother {
   float GetCutLdL() const { return ldl_; }
   float GetCutChi2Topo() const { return chi2_topo_; }
   float GetCutChi2TopoLower() const { return chi2_topo_lower_; }
+  float GetCutInvMass() const { return invmass_discrepancy_; }
 
  protected:
   Pdg_t pdg_{-1};
@@ -47,6 +50,7 @@ class Mother {
   float ldl_{5.f};              ///< upper value
   float chi2_topo_{huge_value}; ///< lower value
   float chi2_topo_lower_{-huge_value}; ///< lower value
+  float invmass_discrepancy_{huge_value};
 };
 
 #endif//KFPARTICLESIMPLE_KFSIMPLE_MOTHERCUTS_HPP_

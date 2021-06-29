@@ -6,4 +6,5 @@ void Mother::CancelCuts(){
   this->CancelCutLdL();
   this->CancelCutChi2Topo();
   this->CancelCutChi2TopoLower();
+  this->CancelCutInvMass();
 }
