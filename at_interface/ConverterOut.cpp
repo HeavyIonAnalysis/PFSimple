@@ -112,6 +112,7 @@ void ConverterOut::Init() {
   }
   AnalysisTree::BranchConfig LambdaSimBranch(out_branch_sim, AnalysisTree::DetType::kParticle);
   LambdaSimBranch.AddField<int>("mother_id", "particle mother's id in SimParticles branch");   // particle mother's id in SimParticles branch
+  LambdaSimBranch.AddFields<float>({"x", "y", "z"}, "cm");
 
   man->AddBranch(out_branch_event, events_, EventBranch);
   man->AddBranch(out_branch, lambda_reco_, out_particles);
@@ -225,6 +226,8 @@ void ConverterOut::MatchWithMc() {
     lambdasim.SetMass(simtrackmother.GetMass());
     lambdasim.SetPid(simtrackmother.GetPid());
     lambdasim.SetField(simtrackmother.GetField<int>(mother_id_field_id_), mother_id_field_id_w_);
+    for(int i=0; i<3; i++)
+      lambdasim.SetField(simtrackmother.GetField<float>(x_sim_field_id_+i), x_sim_field_id_w_+i);
 //     std::cout << "lambdarec.GetId() = " << lambdarec.GetId() << "\tlambdasim.GetId() = " << lambdasim.GetId() << "\n";
     lambda_reco2sim_->AddMatch(lambdarec.GetId(), lambdasim.GetId());    
   }
@@ -247,8 +250,10 @@ void ConverterOut::InitIndexes() {
     auto branch_conf_sim = config_->GetBranchConfig(mc_particles_name_);
     auto out_branch_sim = out_config->GetBranchConfig(lambda_sim_->GetId());
     mother_id_field_id_ = branch_conf_sim.GetFieldId("mother_id");
+    x_sim_field_id_ = branch_conf_sim.GetFieldId("x");
     generation_field_id_ = out_branch.GetFieldId("generation");
     mother_id_field_id_w_ = out_branch_sim.GetFieldId("mother_id");
+    x_sim_field_id_w_ = out_branch_sim.GetFieldId("x");
   }
 
   chi2prim_field_id_ = out_branch.GetFieldId("chi2_prim_first");

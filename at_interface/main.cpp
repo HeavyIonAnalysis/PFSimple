@@ -17,22 +17,23 @@ int main(int argc, char** argv) {
   const std::string& filename = argv[1];
 
   // ******** Lambda *********************************
-  Daughter proton(2212, {2212, 211, -1});
-  Daughter pion(-211, {-211});
+  Daughter proton(2212, {2212, 211, -1, 1000010020, 1000010030, 1000020030, 1000020040});
+  Daughter pion(-211, {-211, -1});
   Mother lambda(3122);
   
-//   proton.CancelCuts();
-//   pion.CancelCuts();
-//   lambda.CancelCuts();
-//   
-//   proton.SetCutChi2Prim(18.42);
-//   pion.SetCutChi2Prim(18.42);
-//   lambda.SetCutDistance(1.);
-//   lambda.SetCutChi2Geo(3.);
-//   lambda.SetCutLdL(10.);
-//   lambda.SetCutChi2TopoLower(5.);
+  proton.CancelCuts();
+  pion.CancelCuts();
+  lambda.CancelCuts();
   
-//***** optimized ******************
+  proton.SetCutChi2Prim(18.42);
+  pion.SetCutChi2Prim(18.42);
+  lambda.SetCutDistance(1.);
+  lambda.SetCutChi2Geo(3.);
+  lambda.SetCutLdL(10.);
+  lambda.SetCutChi2TopoLower(5.);
+  lambda.SetCutInvMass(3.);
+  
+// // ***** optimized ******************
 //   proton.SetCutChi2Prim(26);
 //   proton.SetCutCos(0.99825);
 //   
@@ -42,7 +43,9 @@ int main(int argc, char** argv) {
 // //   lambda.SetCutChi2Topo(29);
 //   lambda.SetCutDistance(0.15);
 //   lambda.SetCutLdL(4);
-//**********************************
+//   
+//   lambda.SetCutInvMass(6.);
+// // **********************************
 
   
   Decay lambda_pi_p("lambda", lambda, {pion, proton});
@@ -58,10 +61,10 @@ int main(int argc, char** argv) {
   xi.CancelCuts();
   
   pion_from_xi.SetCutChi2Prim(18.42);
-  lambda_from_xi.SetCutInvMass(3.);
   xi.SetCutDistance(1.);
   xi.SetCutChi2Geo(6.);
-  xi.SetCutLdL(5.);  
+  xi.SetCutLdL(5.);
+  xi.SetCutChi2Topo(5.);
   
 //   
   Decay xi_pi_lambda("xi", xi, {pion_from_xi, lambda_from_xi});
@@ -76,8 +79,8 @@ int main(int argc, char** argv) {
 
   auto* pf_task = new PFSimpleTask();
   pf_task->SetInTask(in_converter);
-  pf_task->SetDecays({lambda_pi_p});  
-//   pf_task->SetDecays({lambda_pi_p, xi_pi_lambda});  
+//   pf_task->SetDecays({lambda_pi_p});  
+  pf_task->SetDecays({lambda_pi_p, xi_pi_lambda});  
   
   auto* out_converter = new ConverterOut();
   out_converter->SetPFSimpleTask(pf_task);
