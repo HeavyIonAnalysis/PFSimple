@@ -44,12 +44,18 @@ class Decay {
   void SetMother(const Mother& mother) { mother_ = mother; }
 
   int GetNDaughters() const { return daughters_.size(); }
-
+  void SetIsApplyMassConstraint(bool is = true) { is_apply_mass_constraint_ = is; }
+  void SetIsTransportToPV(bool is = true) { is_transport_to_pv_ = is; }
+  bool GetIsApplyMassConstraint() const { return is_apply_mass_constraint_; }
+  bool GetIsTransportToPV() const { return is_transport_to_pv_; }
+  
  protected:
   std::string name_;///< decay name, to be used in branch name for example
 
   Mother mother_;                    ///< cuts for mother particle
   std::vector<Daughter> daughters_{};///< cuts for daughter particles
+  bool is_apply_mass_constraint_{false};
+  bool is_transport_to_pv_{false};
 };
 
 #endif//KFPARTICLESIMPLE_KFSIMPLE_DECAY_HPP_

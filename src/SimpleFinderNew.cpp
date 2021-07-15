@@ -273,10 +273,10 @@ void SimpleFinderNew::SaveParticle(KFParticleSIMD& particle_simd, const Decay& d
   
   KFParticle particle;
   
-  if(decay.GetMother().GetPdg() == 3122)
+  if(decay.GetIsApplyMassConstraint())
     particle_simd.SetNonlinearMassConstraint(float_v(lambda_mass));
   
-  if(decay.GetMother().GetPdg() == 3312)
+  if(decay.GetIsTransportToPV())
   {
     KFVertex prim_vx_tmp = prim_vx_;
     const KFParticleSIMD prim_vx_Simd(prim_vx_tmp);
