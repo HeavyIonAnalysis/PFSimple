@@ -1,4 +1,5 @@
 //#include "AnalysisTree/PlainTreeFiller.hpp"
+#include <PlainTreeFiller.hpp>
 #include "PfSimpleTask.hpp"
 
 #include "ConverterIn.hpp"
@@ -33,6 +34,7 @@ int main(int argc, char** argv) {
   Decay lambda_pi_p("lambda", lambda, {pion, proton});
 
   auto* man = AnalysisTree::TaskManager::GetInstance();
+  man->SetOutputName("PFSimpleOutput.root", "pTree");
 
   auto* in_converter = new ConverterIn();
   in_converter->SetTrackCuts(new AnalysisTree::Cuts("Cut to reproduce KFPF", {AnalysisTree::EqualsCut("VtxTracks.pass_cuts", 1)}));
@@ -55,33 +57,32 @@ int main(int argc, char** argv) {
   man->Init({filename}, {"rTree"});
   man->Run(-1);// -1 = all events
   man->Finish();
+  man->ClearTasks();
 
-  //  if (make_plain_tree) {
-  //    std::ofstream filelist;
-  //    filelist.open("filelist.txt");
-  //    filelist << "PFSimpleOutput.root\n";
-  //    filelist.close();
-  //
-  //    AnalysisTree::TaskManager pl_man({{"filelist.txt"}}, {{"sTree"}});
-  //    pl_man.SetOutFileName("PFSimplePlainTree.root");
-  //
-  //    auto* tree_task_events = new AnalysisTree::PlainTreeFiller();
-  //    std::string branchname_events = std::string("Events");
-  //    tree_task_events->SetInputBranchNames({branchname_events});
-  //    tree_task_events->SetOutputBranchName(branchname_events);
-  //
-  //    auto* tree_task = new AnalysisTree::PlainTreeFiller();
-  //    std::string branchname_rec = decay.GetNameMother() + std::string("Candidates");
-  //    tree_task->SetInputBranchNames({branchname_rec});
-  //    tree_task->SetOutputBranchName(branchname_rec);
-  //
-  //    //     pl_man.AddTask(tree_task_events);
-  //    pl_man.AddTask(tree_task);
-  //
-  //    pl_man.Init();
-  //    pl_man.Run(-1);// -1 = all events
-  //    pl_man.Finish();
-  //  }
+  if (make_plain_tree) {
+    std::ofstream filelist;
+    filelist.open("filelist.txt");
+    filelist << "PFSimpleOutput.root\n";
+    filelist.close();
+
+    man->SetOutputName("PFSimplePlainTree.root", "plain_tree");
+
+//    auto* tree_task_events = new AnalysisTree::PlainTreeFiller();
+//    std::string branchname_events = "Events";
+//    tree_task_events->SetInputBranchNames({branchname_events});
+//    tree_task_events->AddBranch(branchname_events);
+
+    auto* tree_task = new AnalysisTree::PlainTreeFiller();
+    std::string branchname_rec = "Candidates";
+    tree_task->SetInputBranchNames({branchname_rec});
+    tree_task->AddBranch(branchname_rec);
+
+    man->AddTask(tree_task);
+
+    man->Init({"filelist.txt"}, {"pTree"});
+    man->Run(-1);// -1 = all events
+    man->Finish();
+  }
 
   return EXIT_SUCCESS;
 }
