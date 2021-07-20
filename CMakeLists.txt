@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.0)
 project(KFParticleSimple CXX)
-set(CMAKE_CXX_STANDARD 11)
 set(PROJECT_VERSION 1.0)
+
+if(NOT DEFINED CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 11)
+endif()
 
 include(ExternalProject)
 
