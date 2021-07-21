@@ -25,14 +25,12 @@ add_executable(main main.cpp)
 add_dependencies(main KFMan)
 add_target_property(main COMPILE_FLAGS "-DDO_TPCCATRACKER_EFF_PERFORMANCE -DNonhomogeneousField -DCBM -DUSE_TIMERS")
 target_link_libraries(main KFMan KFParticleSimple KFParticleInterface KFParticle Vc)
-
 install(TARGETS KFMan EXPORT KFManTargets
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
         RUNTIME DESTINATION bin
         INCLUDES DESTINATION include
         )
-
 install(
         FILES
         ${HEADERS}
@@ -43,7 +41,6 @@ install(
 )
 
 set(PCM_FILE_NAME libKFMan)
-
 install(
         FILES
         "${CMAKE_CURRENT_BINARY_DIR}/${PCM_FILE_NAME}_rdict.pcm"

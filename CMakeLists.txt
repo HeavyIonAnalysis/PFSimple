@@ -43,6 +43,7 @@ set(FIXTARGET TRUE CACHE BOOL "Compile for fix target geometry.")
 find_package(ROOT REQUIRED RIO)
 find_package(KFParticle QUIET)
 find_package(AnalysisTree QUIET)
+find_package(Vc QUIET)
 
 set(EXTERNAL_DIR ${CMAKE_BINARY_DIR}/external)
 set(EXTERNAL_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/external)
@@ -110,3 +111,4 @@ install(FILES
         COMPONENT
         Devel
         )
+
