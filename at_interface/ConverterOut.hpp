@@ -8,6 +8,8 @@
 #include "AnalysisTree/EventHeader.hpp"
 #include "AnalysisTree/Task.hpp"
 
+class PFSimpleTask;
+
 class ConverterOut : public AnalysisTree::Task {
  public:
   explicit ConverterOut() = default;
@@ -17,7 +19,7 @@ class ConverterOut : public AnalysisTree::Task {
   void Exec() override;
   void Finish() override {}
 
-  void SetCandidates(const std::vector<OutputContainer>& candidates) { candidates_ = candidates; }
+  void SetPFSimpleTask(PFSimpleTask* pfsimple_task) { pfsimple_task_ = pfsimple_task; }
 
   void CopyParticle(const OutputContainer& kf_particle, AnalysisTree::Particle& particle) const;
   void SetDecay(const Decay& decay) { decay_ = decay; }
@@ -46,6 +48,8 @@ class ConverterOut : public AnalysisTree::Task {
   Decay decay_{};
 
   std::vector<OutputContainer> candidates_;
+  
+  PFSimpleTask* pfsimple_task_{nullptr};
 
   // field ids of simulated events
   int b_field_id_{-1};

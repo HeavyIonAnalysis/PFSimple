@@ -1,6 +1,6 @@
 //#include "AnalysisTree/PlainTreeFiller.hpp"
 #include <PlainTreeFiller.hpp>
-#include "PfSimpleTask.hpp"
+#include "PFSimpleTask.hpp"
 
 #include "ConverterIn.hpp"
 #include "ConverterOut.hpp"
@@ -42,14 +42,14 @@ int main(int argc, char** argv) {
   in_converter->SetTrackCuts(new AnalysisTree::Cuts("Cut to reproduce KFPF", {AnalysisTree::EqualsCut("VtxTracks.pass_cuts", 1)}));
   in_converter->SetIsShine(false);//TODO maybe change name
   
-  auto* out_converter = new ConverterOut();
-  out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "SimEventHeader", "RecEventHeader"});
-  out_converter->SetDecay(decay);
-
   auto* pf_task = new PFSimpleTask();
   pf_task->SetInTask(in_converter);
-  pf_task->SetOutTask(out_converter);
   pf_task->SetDecays({decay});
+  
+  auto* out_converter = new ConverterOut();
+  out_converter->SetPFSimpleTask(pf_task);
+  out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "SimEventHeader", "RecEventHeader"});
+  out_converter->SetDecay(decay);
 
   //man.AddTasks(in_converter, out_converter);
   man->AddTask(in_converter);

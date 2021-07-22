@@ -1,5 +1,7 @@
 #include "ConverterOut.hpp"
 
+#include "PFSimpleTask.hpp"
+
 #include "AnalysisTree/DataHeader.hpp"
 #include "AnalysisTree/Matching.hpp"
 #include "AnalysisTree/TaskManager.hpp"
@@ -49,6 +51,9 @@ void ConverterOut::CopyParticle(const OutputContainer& kf_particle, AnalysisTree
 }
 
 void ConverterOut::Exec() {
+  
+  candidates_ = pfsimple_task_->GetSimpleFinder()->GetCandidates();
+
   lambda_reco_->ClearChannels();
   lambda_sim_->ClearChannels();
   lambda_reco2sim_->Clear();
