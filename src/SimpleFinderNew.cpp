@@ -145,17 +145,13 @@ float SimpleFinderNew::CalculateChiToPrimaryVertex(const KFPTrack& track, Pdg_t 
 
 std::vector<int> SimpleFinderNew::GetIndexes(const Daughter& daughter) { 
   std::vector<int> result{};
-  int nindexes = 0;
-  int nindexes_cut = 0;
   for (auto pid : daughter.GetPids()) {
     auto it = indexes_.find(pid);
     if (it != indexes_.end()) {
       for (auto i_track : it->second) {
-	nindexes ++;
         auto track = GetTrack(i_track);
         if (IsGoodDaughter(track, daughter)) {
           result.emplace_back(i_track);
-	  nindexes_cut ++;
         }
       }
     }

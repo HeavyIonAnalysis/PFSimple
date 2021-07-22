@@ -7,7 +7,6 @@
 
 class ConverterIn;
 class ConverterOut;
-class ConverterOutTree;
 
 class PFSimpleTask : public AnalysisTree::Task {
 
