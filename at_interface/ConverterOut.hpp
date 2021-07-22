@@ -62,6 +62,11 @@ class ConverterOut : public AnalysisTree::Task {
   int distance_field_id_{-1};
   int cosine_field_id_{-1};
   int chi2geo_field_id_{-1};
+
+  int chi2geo_sm_field_id_{-1};
+  int chi2topo_sm_field_id_{-1};
+  int cosine_topo_sm_field_id_{-1};
+  
 };
 
 #endif//KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_

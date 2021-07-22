@@ -52,12 +52,12 @@ class OutputContainer {
 
   float GetChi2Prim(int i) const { return values_.chi2_prim[i]; }
   float GetCos(int i) const { return values_.cos[i]; }
-  float GetChi2Geo() const { return values_.chi2_geo; }
-  float GetChi2Topo() const { return values_.chi2_topo; }
+  float GetChi2Geo(int i) const { return values_.chi2_geo[i]; }
+  float GetChi2Topo(int i) const { return values_.chi2_topo[i]; }
   float GetDistance(int i = 0) const { return values_.distance[i]; }
   float GetL() const { return values_.l; }
   float GetLdL() const { return values_.l_over_dl; }
-  float GetCosineTopo() const { return values_.cos_topo; }
+  float GetCosineTopo(int i) const { return values_.cos_topo[i]; }
 
   float GetX() const { return x_; }
   float GetY() const { return y_; }

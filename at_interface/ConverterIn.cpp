@@ -62,7 +62,6 @@ void ConverterIn::Exec() {
 
   container_ = InputContainer();
   const int n_tracks = kf_tracks_->GetNumberOfChannels();
-  //  std::cout << " Ntracks = " << n_tracks << std::endl;
 
   container_.SetPV(rec_event_header_->GetVertexX(), rec_event_header_->GetVertexY(), rec_event_header_->GetVertexZ());
 

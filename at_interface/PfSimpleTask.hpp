@@ -19,7 +19,6 @@ class PFSimpleTask : public AnalysisTree::Task {
   void Finish() override{};
   void SetInTask(ConverterIn* in_task) { in_task_ = in_task; }
   void SetOutTask(ConverterOut* out_task) { out_task_ = out_task; }
-
   void SetDecay(const Decay& decay) { decay_ = decay; }
 
  protected:
