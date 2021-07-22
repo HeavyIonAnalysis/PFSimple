@@ -8,68 +8,60 @@
 #include "AnalysisTree/TaskManager.hpp"
 
 int main(int argc, char** argv) {
-   
   if (argc < 2) {
     std::cout << "Wrong number of arguments! Please use:\n  ./main filelist.txt\n";
     return EXIT_FAILURE;
   }
 
-  const bool make_plain_tree{false};
+  const bool make_plain_tree{true};
 
   const std::string& filename = argv[1];
 
-  /*
+//   Daughter proton(2212);
+//   Daughter pion(-211);
+//   
+//   proton.SetCutChi2Prim(26);
+//   proton.SetCutCos(0.99825);
+//   
+//   pion.SetCutChi2Prim(110);
+// 
+//   Mother lambda(3122);
+//   lambda.SetCutChi2Geo(11);
+//   lambda.SetCutChi2Topo(29);
+//   lambda.SetCutDistance(0.15);
+//   lambda.SetCutLdL(4);
+
   Daughter proton(2212);
   Daughter pion(-211);
   
-  proton.SetCutChi2Prim(26);
-  proton.SetCutCos(0.99825);
+  proton.SetCutChi2Prim(18.42);
   
-  pion.SetCutChi2Prim(110);
+  pion.SetCutChi2Prim(18.42);
 
   Mother lambda(3122);
-  lambda.SetCutChi2Geo(11);
-  lambda.SetCutChi2Topo(29);
-  lambda.SetCutDistance(0.15);
-  lambda.SetCutLdL(4);
+  lambda.SetCutChi2Geo(3);
+  lambda.SetCutDistance(1);
+  lambda.SetCutLdL(5);
 
   Decay lambda_pi_p("lambda", lambda, {pion, proton});
-  */
-  
-  std::vector<Daughter> daughters = {2212,-211,1000010020};
-  for (int idaughter = 0; idaughter < daughters.size() ; idaughter++) {
-    daughters.at(idaughter).CancelCuts();
-    daughters.at(idaughter).SetCutChi2Prim(18.42);
-    //daughters.at(idaughter).SetCutCos(0.99825);
-  }                                                                                                            
-  Mother mother(3004);
-  mother.CancelCuts();
-  mother.SetCutDistance(1.0);
-  mother.SetCutChi2GeoSM({3.0});
-  mother.SetCutChi2TopoSM({29});
-  mother.SetCutDistanceToSV(1.0);
-  mother.SetCutChi2Geo(3.0);
-  //mother.SetCutChi2Topo(29);
-  //mother.SetCutLdL(3);
-  Decay decay("H3L", mother, {daughters});
-  
+
   auto* man = AnalysisTree::TaskManager::GetInstance();
   man->SetOutputName("PFSimpleOutput.root", "pTree");
-  
+
   auto* in_converter = new ConverterIn();
   in_converter->SetTrackCuts(new AnalysisTree::Cuts("Cut to reproduce KFPF", {AnalysisTree::EqualsCut("VtxTracks.pass_cuts", 1)}));
   in_converter->SetIsShine(false);//TODO maybe change name
-  
+
   auto* out_converter = new ConverterOut();
   out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "SimEventHeader", "RecEventHeader"});
-  out_converter->SetDecay(decay);
+  out_converter->SetDecay(lambda_pi_p);
 
   auto* pf_task = new PFSimpleTask();
   pf_task->SetInTask(in_converter);
   pf_task->SetOutTask(out_converter);
-  pf_task->SetDecay(decay);
+  pf_task->SetDecay(lambda_pi_p);
 
-  //man.AddTasks(in_converter, out_converter);
+  //  man.AddTasks(in_converter, out_converter);
   man->AddTask(in_converter);
   man->AddTask(pf_task);
   man->AddTask(out_converter);
@@ -77,7 +69,7 @@ int main(int argc, char** argv) {
   man->Init({filename}, {"rTree"});
   man->Run(-1);// -1 = all events
   man->Finish();
-  //man->ClearTasks();
+  man->ClearTasks();
 
   if (make_plain_tree) {
     std::ofstream filelist;
