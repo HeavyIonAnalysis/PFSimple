@@ -57,11 +57,11 @@ class SimpleFinderNew {
   const std::vector<OutputContainer>& GetCandidates() const { return output_; }
 
  private:
-  std::vector<KFParticle> tracks_;                  ///< input information: vector of tracks
-  KFVertex prim_vx_;                       ///< input information: primiry vertex
-  std::array<float, 3> sec_vx_;            ///< input information: primiry vertex
-  std::vector<Decay> decays_{};            ///< input information: list of decays to reconstruct
-  NonLinearCutBase* ml_cuts_{nullptr};     ///< input information: non-linear cuts class (optional)
+  std::vector<KFParticle> tracks_;    ///< input information: vector of tracks
+  KFVertex prim_vx_;                  ///< input information: primiry vertex
+  std::array<float, 3> sec_vx_;       ///< input information: primiry vertex
+  std::vector<Decay> decays_{};       ///< input information: list of decays to reconstruct
+  NonLinearCutBase* ml_cuts_{nullptr};///< input information: non-linear cuts class (optional)
 
   std::map<Pdg_t, std::vector<int>> indexes_{};///< map of indexes for a given particle specie
 
@@ -105,9 +105,9 @@ class SimpleFinderNew {
   KFParticle GetTrack(int i) {
     return tracks_.at(i);
   }
-  
+
   KFPTrack ToKFPTrack(const KFParticle& particle) const;
-  void SetKFParticleEnergy(KFParticle& particle, int pdg) const;  
+  void SetKFParticleEnergy(KFParticle& particle, int pdg) const;
 };
 
 #endif//KFPARTICLESIMPLE_KFSIMPLE_SIMPLEFINDERNEW_HPP_

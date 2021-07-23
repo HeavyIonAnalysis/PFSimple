@@ -54,9 +54,11 @@ class OutputContainer {
   float GetCos(int i) const { return values_.cos[i]; }
   float GetChi2Geo(int i) const { return values_.chi2_geo[i]; }
   float GetChi2Topo(int i) const { return values_.chi2_topo[i]; }
-  float GetDistance(int i = 0) const { return values_.distance[i]; }
+  float GetDistance() const { return values_.distance; }
+  float GetDistanceToSV() const { return values_.distance_sv; }
   float GetL() const { return values_.l; }
   float GetLdL() const { return values_.l_over_dl; }
+  float GetDistancePV() const { return values_.distance_pv; }
   float GetCosineTopo(int i) const { return values_.cos_topo[i]; }
 
   float GetX() const { return x_; }

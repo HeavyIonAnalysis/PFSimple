@@ -1,6 +1,6 @@
 //#include "AnalysisTree/PlainTreeFiller.hpp"
-#include <PlainTreeFiller.hpp>
 #include "PFSimpleTask.hpp"
+#include <PlainTreeFiller.hpp>
 
 #include "ConverterIn.hpp"
 #include "ConverterOut.hpp"
@@ -17,25 +17,25 @@ int main(int argc, char** argv) {
 
   const std::string& filename = argv[1];
 
-//   Daughter proton(2212);
-//   Daughter pion(-211);
-//   
-//   proton.SetCutChi2Prim(26);
-//   proton.SetCutCos(0.99825);
-//   
-//   pion.SetCutChi2Prim(110);
-// 
-//   Mother lambda(3122);
-//   lambda.SetCutChi2Geo(11);
-//   lambda.SetCutChi2Topo(29);
-//   lambda.SetCutDistance(0.15);
-//   lambda.SetCutLdL(4);
+  //   Daughter proton(2212);
+  //   Daughter pion(-211);
+  //
+  //   proton.SetCutChi2Prim(26);
+  //   proton.SetCutCos(0.99825);
+  //
+  //   pion.SetCutChi2Prim(110);
+  //
+  //   Mother lambda(3122);
+  //   lambda.SetCutChi2Geo(11);
+  //   lambda.SetCutChi2Topo(29);
+  //   lambda.SetCutDistance(0.15);
+  //   lambda.SetCutLdL(4);
 
   Daughter proton(2212);
   Daughter pion(-211);
-  
+
   proton.SetCutChi2Prim(18.42);
-  
+
   pion.SetCutChi2Prim(18.42);
 
   Mother lambda(3122);
@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
   auto* in_converter = new ConverterIn();
   in_converter->SetTrackCuts(new AnalysisTree::Cuts("Cut to reproduce KFPF", {AnalysisTree::EqualsCut("VtxTracks.pass_cuts", 1)}));
   in_converter->SetIsShine(false);//TODO maybe change name
-  
+
   auto* pf_task = new PFSimpleTask();
   pf_task->SetInTask(in_converter);
   pf_task->SetDecays({lambda_pi_p});
@@ -79,10 +79,10 @@ int main(int argc, char** argv) {
 
     man->SetOutputName("PFSimplePlainTree.root", "plain_tree");
 
-//    auto* tree_task_events = new AnalysisTree::PlainTreeFiller();
-//    std::string branchname_events = "Events";
-//    tree_task_events->SetInputBranchNames({branchname_events});
-//    tree_task_events->AddBranch(branchname_events);
+    //    auto* tree_task_events = new AnalysisTree::PlainTreeFiller();
+    //    std::string branchname_events = "Events";
+    //    tree_task_events->SetInputBranchNames({branchname_events});
+    //    tree_task_events->AddBranch(branchname_events);
 
     auto* tree_task = new AnalysisTree::PlainTreeFiller();
     std::string branchname_rec = "Candidates";

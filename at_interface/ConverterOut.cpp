@@ -29,29 +29,29 @@ void ConverterOut::CopyParticle(const OutputContainer& kf_particle, AnalysisTree
   for (int i = 0; i < decay_.GetNDaughters(); ++i) {
     particle.SetField(kf_particle.GetChi2Prim(i), chi2prim_field_id_ + i);
     particle.SetField(kf_particle.GetCos(i), cosine_field_id_ + i);
-    particle.SetField(kf_particle.GetDaughterIds().at(i), daughter_id_field_id_+i);
+    particle.SetField(kf_particle.GetDaughterIds().at(i), daughter_id_field_id_ + i);
   }
 
   particle.SetField(kf_particle.GetDistance(), distance_field_id_);
-  
+
   if (decay_.GetNDaughters() == 3) {
+    particle.SetField(kf_particle.GetDistanceToSV(), distance_field_id_ + 1);
     for (int i = 0; i < decay_.GetNDaughters(); ++i) {
-      particle.SetField(kf_particle.GetChi2Geo(i+1), chi2geo_sm_field_id_ + i);
-      particle.SetField(kf_particle.GetChi2Topo(i+1), chi2topo_sm_field_id_ + i);
-      particle.SetField(kf_particle.GetCosineTopo(i+1), cosine_topo_sm_field_id_ + i);
+      particle.SetField(kf_particle.GetChi2Geo(i + 1), chi2geo_sm_field_id_ + i);
+      particle.SetField(kf_particle.GetChi2Topo(i + 1), chi2topo_sm_field_id_ + i);
+      particle.SetField(kf_particle.GetCosineTopo(i + 1), cosine_topo_sm_field_id_ + i);
     }
   }
-  
+
   particle.SetField(kf_particle.GetChi2Geo(0), chi2geo_field_id_);
   particle.SetField(kf_particle.GetL(), chi2geo_field_id_ + 1);
   particle.SetField(kf_particle.GetLdL(), chi2geo_field_id_ + 2);
   particle.SetField(kf_particle.GetChi2Topo(0), chi2geo_field_id_ + 3);
   particle.SetField(kf_particle.GetCosineTopo(0), chi2geo_field_id_ + 4);
-
 }
 
 void ConverterOut::Exec() {
-  
+
   candidates_ = pfsimple_task_->GetSimpleFinder()->GetCandidates();
 
   lambda_reco_->ClearChannels();
@@ -63,12 +63,12 @@ void ConverterOut::Exec() {
   events_->SetField(float(sim_events_->GetField<float>(b_field_id_)), 0);//TODO
 
   const auto& br_conf = out_config->GetBranchConfig(lambda_reco_->GetId());
-  
+
   for (const auto& candidate : candidates_) {
     auto& lambdarec = lambda_reco_->AddChannel(br_conf);
     CopyParticle(candidate, lambdarec);
   }
-  
+
   MatchWithMc();
 }
 
@@ -98,18 +98,18 @@ void ConverterOut::Init() {
   if (decay_.GetNDaughters() == 3) {
     out_particles.AddFields<int>({"daughter1_id", "daughter2_id", "daughter3_id"});
     out_particles.AddFields<float>({"chi2_prim_first", "chi2_prim_second", "chi2_prim_third"});
-    out_particles.AddFields<float>({"distance", "distance_third"});
+    out_particles.AddFields<float>({"distance", "distance_sv"});
     out_particles.AddFields<float>({"cosine_first", "cosine_second", "cosine_third"});
-    out_particles.AddFields<float>({"chi2_geo_sm1","chi2_geo_sm2","chi2_geo_sm3"});
-    out_particles.AddFields<float>({"chi2_topo_sm1","chi2_topo_sm2","chi2_topo_sm3"});
-    out_particles.AddFields<float>({"cosine_topo_sm1","cosine_topo_sm2","cosine_topo_sm3"});
+    out_particles.AddFields<float>({"chi2_geo_sm1", "chi2_geo_sm2", "chi2_geo_sm3"});
+    out_particles.AddFields<float>({"chi2_topo_sm1", "chi2_topo_sm2", "chi2_topo_sm3"});
+    out_particles.AddFields<float>({"cosine_topo_sm1", "cosine_topo_sm2", "cosine_topo_sm3"});
   } else if (decay_.GetNDaughters() == 2) {
     out_particles.AddFields<int>({"daughter1_id", "daughter2_id"});
     out_particles.AddFields<float>({"chi2_prim_first", "chi2_prim_second"});
     out_particles.AddField<float>("distance");
     out_particles.AddFields<float>({"cosine_first", "cosine_second"});
   }
-  
+
   out_particles.AddFields<float>({"chi2_geo", "l", "l_over_dl", "chi2_topo", "cosine_topo"});
 
   if (mc_particles_) {
@@ -126,38 +126,35 @@ void ConverterOut::Init() {
   InitIndexes();
 }
 
-int ConverterOut::GetMothersSimId(AnalysisTree::Particle& lambdarec)
-{
+int ConverterOut::GetMothersSimId(AnalysisTree::Particle& lambdarec) {
   std::vector<int> daughter_sim_id;
-  for(int i=0; i<decay_.GetNDaughters(); i++)
-    daughter_sim_id.push_back(rec_to_mc_->GetMatch(lambdarec.GetField<int>(daughter_id_field_id_+i)));
-  
-  if(*std::min_element(daughter_sim_id.begin(), daughter_sim_id.end())<0) // at least one daughter has no matching with mc
-    return -1; 
-  
-  std::vector<int> mother_sim_id;
-  for(int i=0; i<decay_.GetNDaughters(); i++)
-    mother_sim_id.push_back(mc_particles_->GetChannel(daughter_sim_id.at(i)).GetField<int>(mother_id_field_id_));
-  
-  if(*std::min_element(mother_sim_id.begin(), mother_sim_id.end()) != *std::max_element(mother_sim_id.begin(), mother_sim_id.end())) // daughters belong to not the same mother
-    return -1;
-  
-  if(mother_sim_id.at(0)<0) // mother has negative id
-    return -1;
-  
-//   if(mc_particles_->GetChannel(mother_sim_id.at(0)).GetPid() != decay_.GetMother().GetPdg()) // mother has not PDG which was supposed
-  if(mc_particles_->GetChannel(mother_sim_id.at(0)).GetPid() != lambdarec.GetPid()) // mother has not PDG which was supposed
+  for (int i = 0; i < decay_.GetNDaughters(); i++)
+    daughter_sim_id.push_back(rec_to_mc_->GetMatch(lambdarec.GetField<int>(daughter_id_field_id_ + i)));
+
+  if (*std::min_element(daughter_sim_id.begin(), daughter_sim_id.end()) < 0)// at least one daughter has no matching with mc
     return -1;
 
-  return mother_sim_id.at(0);  
+  std::vector<int> mother_sim_id;
+  for (int i = 0; i < decay_.GetNDaughters(); i++)
+    mother_sim_id.push_back(mc_particles_->GetChannel(daughter_sim_id.at(i)).GetField<int>(mother_id_field_id_));
+
+  if (*std::min_element(mother_sim_id.begin(), mother_sim_id.end()) != *std::max_element(mother_sim_id.begin(), mother_sim_id.end()))// daughters belong to not the same mother
+    return -1;
+
+  if (mother_sim_id.at(0) < 0)// mother has negative id
+    return -1;
+
+  //   if(mc_particles_->GetChannel(mother_sim_id.at(0)).GetPid() != decay_.GetMother().GetPdg()) // mother has not PDG which was supposed
+  if (mc_particles_->GetChannel(mother_sim_id.at(0)).GetPid() != lambdarec.GetPid())// mother has not PDG which was supposed
+    return -1;
+
+  return mother_sim_id.at(0);
 }
 
-int ConverterOut::DetermineGeneration(int mother_sim_id)
-{
+int ConverterOut::DetermineGeneration(int mother_sim_id) {
   int generation = 0;
   int older_id = mother_sim_id;
-  while(older_id>=0)
-  {
+  while (older_id >= 0) {
     const auto& simtrackolder = mc_particles_->GetChannel(older_id);
     older_id = simtrackolder.GetField<int>(mother_id_field_id_);
     generation++;
@@ -167,16 +164,16 @@ int ConverterOut::DetermineGeneration(int mother_sim_id)
 }
 
 void ConverterOut::MatchWithMc() {
-  
+
   for (auto& lambdarec : *lambda_reco_) {
     auto out_config = AnalysisTree::TaskManager::GetInstance()->GetConfig();
-    
+
     int mother_id = GetMothersSimId(lambdarec);
     int generation = DetermineGeneration(mother_id);
     lambdarec.SetField(generation, generation_field_id_);
-    
-    if (generation<1) continue;
-        
+
+    if (generation < 1) continue;
+
     const AnalysisTree::Particle& simtrackmother = mc_particles_->GetChannel(mother_id);
 
     auto& lambdasim = lambda_sim_->AddChannel(out_config->GetBranchConfig(lambda_sim_->GetId()));
@@ -184,13 +181,12 @@ void ConverterOut::MatchWithMc() {
     lambdasim.SetMomentum(simtrackmother.GetPx(), simtrackmother.GetPy(), simtrackmother.GetPz());
     lambdasim.SetMass(simtrackmother.GetMass());
     lambdasim.SetPid(simtrackmother.GetPid());
-    lambda_reco2sim_->AddMatch(lambdarec.GetId(), lambdasim.GetId());    
+    lambda_reco2sim_->AddMatch(lambdarec.GetId(), lambdasim.GetId());
   }
-
 }
 
 void ConverterOut::InitIndexes() {
-  
+
   auto out_config = AnalysisTree::TaskManager::GetInstance()->GetConfig();
 
   const auto& out_branch = out_config->GetBranchConfig(lambda_reco_->GetId());
@@ -215,6 +211,6 @@ void ConverterOut::InitIndexes() {
   chi2geo_sm_field_id_ = out_branch.GetFieldId("chi2_geo_sm1");
   chi2topo_sm_field_id_ = out_branch.GetFieldId("chi2_topo_sm1");
   cosine_topo_sm_field_id_ = out_branch.GetFieldId("cosine_topo_sm1");
-  
+
   chi2geo_field_id_ = out_branch.GetFieldId("chi2_geo");
 }

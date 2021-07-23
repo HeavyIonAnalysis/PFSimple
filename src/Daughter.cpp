@@ -1,7 +1,6 @@
 #include "Daughter.hpp"
 
-
-void Daughter::CancelCuts(){
+void Daughter::CancelCuts() {
   this->CancelCutChi2Prim();
   this->CancelCutCos();
 }
