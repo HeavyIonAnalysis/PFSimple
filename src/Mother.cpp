@@ -1,6 +1,6 @@
 #include "Mother.hpp"
 
-void Mother::CancelCuts(){
+void Mother::CancelCuts() {
   this->CancelCutDistance();
   this->CancelCutDistanceToSV();
   this->CancelCutChi2Geo();
@@ -13,4 +13,3 @@ void Mother::CancelCuts(){
   this->CancelCutCosTopo();
   this->CancelCutCosTopoSM();
 }
-

@@ -23,7 +23,7 @@ class Decay {
                                                                                    mother_(mother),
                                                                                    daughters_(std::move(daughters)) {
     int i{0};
-    for(auto& daughter : daughters_){
+    for (auto& daughter : daughters_) {
       daughter.SetId(i++);
     }
   }

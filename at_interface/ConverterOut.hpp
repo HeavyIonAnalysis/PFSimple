@@ -48,7 +48,7 @@ class ConverterOut : public AnalysisTree::Task {
   Decay decay_{};
 
   std::vector<OutputContainer> candidates_;
-  
+
   PFSimpleTask* pfsimple_task_{nullptr};
 
   // field ids of simulated events
@@ -70,7 +70,6 @@ class ConverterOut : public AnalysisTree::Task {
   int chi2geo_sm_field_id_{-1};
   int chi2topo_sm_field_id_{-1};
   int cosine_topo_sm_field_id_{-1};
-  
 };
 
 #endif//KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_
