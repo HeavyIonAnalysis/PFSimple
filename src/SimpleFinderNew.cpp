@@ -194,9 +194,9 @@ bool SimpleFinderNew::IsGoodPair(const KFParticle& track1,
                                  const Decay& decay) {
   const auto& daughters = decay.GetDaughters();
   CalculateParamsInPCA(track1, daughters[0].GetPdgHypo(), track2, daughters[1].GetPdgHypo());
-  values_.distance[0] = CalculateDistanceBetweenParticles(params_); 
+  values_.distance = CalculateDistanceBetweenParticles(params_); 
 
-  if (values_.distance[0] > decay.GetMother().GetCutDistance() || std::isnan(values_.distance[0])) { return false; }
+  if (values_.distance > decay.GetMother().GetCutDistance() || std::isnan(values_.distance)) { return false; }
   return true;
 }
 
@@ -207,8 +207,8 @@ bool SimpleFinderNew::IsGoodThree(const KFParticle& track,
 
   CalculateSecondaryVertex();
   CalculateParamsInSV(track, daughters[2].GetPdgHypo(),daughters[2].GetId());
-  values_.distance_sv[0] = CalculateDistanceToSV(daughters[2].GetId());
-  if (values_.distance_sv[0] > decay.GetMother().GetCutDistanceToSV() || std::isnan(values_.distance_sv[0])) { return false; }
+  values_.distance_sv = CalculateDistanceToSV(daughters[2].GetId());
+  if (values_.distance_sv > decay.GetMother().GetCutDistanceToSV() || std::isnan(values_.distance_sv)) { return false; }
   return true;
 }
 

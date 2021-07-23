@@ -35,6 +35,7 @@ void ConverterOut::CopyParticle(const OutputContainer& kf_particle, AnalysisTree
   particle.SetField(kf_particle.GetDistance(), distance_field_id_);
   
   if (decay_.GetNDaughters() == 3) {
+    particle.SetField(kf_particle.GetDistanceToSV(), distance_field_id_ + 1);
     for (int i = 0; i < decay_.GetNDaughters(); ++i) {
       particle.SetField(kf_particle.GetChi2Geo(i+1), chi2geo_sm_field_id_ + i);
       particle.SetField(kf_particle.GetChi2Topo(i+1), chi2topo_sm_field_id_ + i);
@@ -98,7 +99,7 @@ void ConverterOut::Init() {
   if (decay_.GetNDaughters() == 3) {
     out_particles.AddFields<int>({"daughter1_id", "daughter2_id", "daughter3_id"});
     out_particles.AddFields<float>({"chi2_prim_first", "chi2_prim_second", "chi2_prim_third"});
-    out_particles.AddFields<float>({"distance", "distance_third"});
+    out_particles.AddFields<float>({"distance", "distance_sv"});
     out_particles.AddFields<float>({"cosine_first", "cosine_second", "cosine_third"});
     out_particles.AddFields<float>({"chi2_geo_sm1","chi2_geo_sm2","chi2_geo_sm3"});
     out_particles.AddFields<float>({"chi2_topo_sm1","chi2_topo_sm2","chi2_topo_sm3"});

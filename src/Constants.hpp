@@ -11,8 +11,8 @@ struct SelectionValues {
 
   std::array<float, 3> chi2_prim {{-1.f, -1.f, -1.f}};        ///< \f$\chi^2\f$ of the particle to the primary vertex (PV)
   std::array<float, 3> cos{{-1.f, -1.f, -1.f}};               ///< cosine of angle between daughter track and mother particle
-  std::array<float, 2> distance{{-1.f, -1.f}};                ///< Distance between daughter tracks in their closest approach
-  std::array<float, 3> distance_sv{{-1.f, -1.f, -1.f}};       ///< Distance between daughter track and SV
+  float distance{-1.f};                                      ///< Distance between daughter tracks in their closest approach
+  float distance_sv{-1.f};                                    ///< Distance between daughter track and SV
   float l{-1.f};                                              ///< Lenght of interpolated track from secondary to primary vertex
   float l_over_dl{-1.f};                                      ///< Distance between primary and secondary vertices divided by error
   float distance_pv{-1.f};                                    ///< Distance between secondary vertex and primary vertex line
