@@ -4,6 +4,7 @@
 #include "Decay.hpp"
 #include "OutputContainer.hpp"
 
+#include "AnalysisTree/Cuts.hpp"
 #include "AnalysisTree/Detector.hpp"
 #include "AnalysisTree/EventHeader.hpp"
 #include "AnalysisTree/Task.hpp"
@@ -23,10 +24,11 @@ class ConverterOut : public AnalysisTree::Task {
 
   void CopyParticle(const OutputContainer& kf_particle, AnalysisTree::Particle& particle) const;
   void SetDecay(const Decay& decay) { decay_ = decay; }
+  void SetOutputCuts(AnalysisTree::Cuts* output_cuts) { output_cuts_ = output_cuts; }
 
  protected:
   void InitIndexes();
-  void MatchWithMc();
+  void MatchWithMc(AnalysisTree::Particle& particle);
   int GetMothersSimId(AnalysisTree::Particle& lambdarec);
   int DetermineGeneration(int mother_sim_id);
 
@@ -45,6 +47,7 @@ class ConverterOut : public AnalysisTree::Task {
   AnalysisTree::TrackDetector* rec_tracks_{nullptr};
   AnalysisTree::Matching* rec_to_mc_{nullptr};
   AnalysisTree::EventHeader* sim_events_{nullptr};
+  AnalysisTree::Cuts* output_cuts_{nullptr};
   Decay decay_{};
 
   std::vector<OutputContainer> candidates_;
