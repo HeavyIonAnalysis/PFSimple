@@ -17,20 +17,23 @@ int main(int argc, char** argv) {
 
   const std::string& filename = argv[1];
 
-  //   Daughter proton(2212);
-  //   Daughter pion(-211);
-  //
-  //   proton.SetCutChi2Prim(26);
-  //   proton.SetCutCos(0.99825);
-  //
-  //   pion.SetCutChi2Prim(110);
-  //
-  //   Mother lambda(3122);
-  //   lambda.SetCutChi2Geo(11);
-  //   lambda.SetCutChi2Topo(29);
-  //   lambda.SetCutDistance(0.15);
-  //   lambda.SetCutLdL(4);
+//   // ******** optimized cuts ***************
+//     Daughter proton(2212);
+//     Daughter pion(-211);
+//   
+//     proton.SetCutChi2Prim(26);
+//     proton.SetCutCos(0.99825);
+//   
+//     pion.SetCutChi2Prim(110);
+//   
+//     Mother lambda(3122);
+//     lambda.SetCutChi2Geo(11);
+//     lambda.SetCutChi2Topo(29);
+//     lambda.SetCutDistance(0.15);
+//     lambda.SetCutLdL(4);
+//   //****************************************
 
+  // ******** default kfpf cuts *************
   Daughter proton(2212);
   Daughter pion(-211);
 
@@ -42,6 +45,16 @@ int main(int argc, char** argv) {
   lambda.SetCutChi2Geo(3);
   lambda.SetCutDistance(1);
   lambda.SetCutLdL(5);
+  // ***************************************
+  
+//   // ******** no cuts **********************
+//   Daughter proton(2212);
+//   Daughter pion(-211);
+//   Mother lambda(3122);
+//   proton.CancelCuts();
+//   pion.CancelCuts();
+//   lambda.CancelCuts();
+//   // ***************************************
 
   Decay lambda_pi_p("lambda", lambda, {pion, proton});
 
