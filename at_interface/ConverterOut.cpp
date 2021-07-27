@@ -124,13 +124,14 @@ void ConverterOut::Init() {
   }
 
   out_particles.AddFields<float>({"chi2_geo", "l", "l_over_dl", "chi2_topo", "cosine_topo"});
+  
+  AnalysisTree::BranchConfig LambdaSimBranch(out_branch_sim, AnalysisTree::DetType::kParticle);
 
   if (mc_particles_) {
     out_particles.AddField<int>("generation");
+    LambdaSimBranch.AddField<int>("geant_process_id");
   }
     
-  AnalysisTree::BranchConfig LambdaSimBranch(out_branch_sim, AnalysisTree::DetType::kParticle);
-
   man->AddBranch(out_branch_event, events_, EventBranch);
   man->AddBranch(out_branch, lambda_reco_, out_particles);
   man->AddBranch(out_branch_sim, lambda_sim_, LambdaSimBranch);
@@ -196,6 +197,7 @@ void ConverterOut::MatchWithMc(AnalysisTree::Particle& lambdarec) {
   lambdasim.SetMomentum(simtrackmother.GetPx(), simtrackmother.GetPy(), simtrackmother.GetPz());
   lambdasim.SetMass(simtrackmother.GetMass());
   lambdasim.SetPid(simtrackmother.GetPid());
+  lambdasim.SetField(simtrackmother.GetField<int>(g4process_field_id_), g4process_field_id_w_);
   lambda_reco2sim_->AddMatch(lambdarec.GetId(), lambdasim.GetId());
 }
 
@@ -203,28 +205,31 @@ void ConverterOut::InitIndexes() {
 
   auto out_config = AnalysisTree::TaskManager::GetInstance()->GetConfig();
 
-  const auto& out_branch = out_config->GetBranchConfig(lambda_reco_->GetId());
+  const auto& out_branch_reco = out_config->GetBranchConfig(lambda_reco_->GetId());
+  const auto& out_branch_sim = out_config->GetBranchConfig(lambda_sim_->GetId());
 
   auto branch_conf_sim_event = config_->GetBranchConfig(sim_events_name_);
   b_field_id_ = branch_conf_sim_event.GetFieldId("b");
 
-  x_field_id_ = out_branch.GetFieldId("x");
-  daughter_id_field_id_ = out_branch.GetFieldId("daughter1_id");
-  pt_err_field_id_ = out_branch.GetFieldId("pT_err");
+  x_field_id_ = out_branch_reco.GetFieldId("x");
+  daughter_id_field_id_ = out_branch_reco.GetFieldId("daughter1_id");
+  pt_err_field_id_ = out_branch_reco.GetFieldId("pT_err");
 
   if (mc_particles_) {
     auto branch_conf_sim = config_->GetBranchConfig(mc_particles_name_);
     mother_id_field_id_ = branch_conf_sim.GetFieldId("mother_id");
-    generation_field_id_ = out_branch.GetFieldId("generation");
+    g4process_field_id_ = branch_conf_sim.GetFieldId("geant_process_id");
+    generation_field_id_ = out_branch_reco.GetFieldId("generation");
+    g4process_field_id_w_ = out_branch_sim.GetFieldId("geant_process_id");
   }
 
-  chi2prim_field_id_ = out_branch.GetFieldId("chi2_prim_first");
-  distance_field_id_ = out_branch.GetFieldId("distance");
-  cosine_field_id_ = out_branch.GetFieldId("cosine_first");
+  chi2prim_field_id_ = out_branch_reco.GetFieldId("chi2_prim_first");
+  distance_field_id_ = out_branch_reco.GetFieldId("distance");
+  cosine_field_id_ = out_branch_reco.GetFieldId("cosine_first");
 
-  chi2geo_sm_field_id_ = out_branch.GetFieldId("chi2_geo_sm1");
-  chi2topo_sm_field_id_ = out_branch.GetFieldId("chi2_topo_sm1");
-  cosine_topo_sm_field_id_ = out_branch.GetFieldId("cosine_topo_sm1");
+  chi2geo_sm_field_id_ = out_branch_reco.GetFieldId("chi2_geo_sm1");
+  chi2topo_sm_field_id_ = out_branch_reco.GetFieldId("chi2_topo_sm1");
+  cosine_topo_sm_field_id_ = out_branch_reco.GetFieldId("cosine_topo_sm1");
 
-  chi2geo_field_id_ = out_branch.GetFieldId("chi2_geo");
+  chi2geo_field_id_ = out_branch_reco.GetFieldId("chi2_geo");
 }
