@@ -17,21 +17,21 @@ int main(int argc, char** argv) {
   const std::string& filename = argv[1];
 
   // ******** Lambda *********************************
-  Daughter proton(2212, {2212, 211, -1});
+  Daughter proton(2212, {2212});
   Daughter pion(-211, {-211});
   Mother lambda(3122);
   
-//   proton.CancelCuts();
-//   pion.CancelCuts();
-//   lambda.CancelCuts();
+  proton.CancelCuts();
+  pion.CancelCuts();
+  lambda.CancelCuts();
   
-//   proton.SetCutChi2Prim(18.42);
-//   pion.SetCutChi2Prim(18.42);
-//   lambda.SetCutDistance(1.);
-//   lambda.SetCutChi2Geo(3.);
-//   lambda.SetCutLdL(10.);
-//   lambda.SetCutChi2TopoLower(5.);
-//   lambda.SetCutInvMass(3.);
+  proton.SetCutChi2Prim(18.42);
+  pion.SetCutChi2Prim(18.42);
+  lambda.SetCutDistance(1.);
+  lambda.SetCutChi2Geo(3.);
+  lambda.SetCutLdL(10.);
+  lambda.SetCutChi2TopoLower(5.);
+  lambda.SetCutInvMass(3.);
   
 // // ***** optimized ******************
 //   proton.SetCutChi2Prim(26);
@@ -49,6 +49,7 @@ int main(int argc, char** argv) {
 
   
   Decay lambda_pi_p("lambda", lambda, {pion, proton});
+  lambda_pi_p.SetIsApplyMassConstraint();
   //**************************************************
   
   // ******* Xi - ************************************
@@ -68,6 +69,7 @@ int main(int argc, char** argv) {
   
 //   
   Decay xi_pi_lambda("xi", xi, {pion_from_xi, lambda_from_xi});
+  xi_pi_lambda.SetIsTransportToPV();
   //**************************************************
 
   auto* man = AnalysisTree::TaskManager::GetInstance();
@@ -79,8 +81,8 @@ int main(int argc, char** argv) {
 
   auto* pf_task = new PFSimpleTask();
   pf_task->SetInTask(in_converter);
-  pf_task->SetDecays({lambda_pi_p});  
-//   pf_task->SetDecays({lambda_pi_p, xi_pi_lambda});  
+//   pf_task->SetDecays({lambda_pi_p});  
+  pf_task->SetDecays({lambda_pi_p, xi_pi_lambda});  
   
   auto* out_converter = new ConverterOut();
   out_converter->SetPFSimpleTask(pf_task);
