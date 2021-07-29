@@ -68,12 +68,22 @@ void ConverterOut::Exec() {
   const auto& br_conf = out_config->GetBranchConfig(lambda_reco_->GetId());
 
   for (const auto& candidate : candidates_) {
-    auto& lambdarec = lambda_reco_->AddChannel(br_conf);
-    CopyParticle(candidate, lambdarec);
+    AnalysisTree::Particle particle(lambda_reco_->GetNumberOfChannels(), br_conf);
+    CopyParticle(candidate, particle);
+    if(mc_particles_){
+      MatchWithMc(particle);
+    }
+    
+    bool is_write = true;
+    if(output_cuts_){
+      is_write = output_cuts_->Apply(particle);
+    }
+    
+    if(is_write){
+      auto& lambdarec = lambda_reco_->AddChannel(br_conf);
+      lambdarec = particle;
+    }
   }
-  
-  if(mc_particles_ != nullptr)
-    MatchWithMc();
 }
 
 void ConverterOut::Init() {
@@ -86,6 +96,8 @@ void ConverterOut::Init() {
   rec_tracks_ = ANALYSISTREE_UTILS_GET<AnalysisTree::TrackDetector*>(chain->GetPointerToBranch(rec_tracks_name_));
   rec_to_mc_ = chain->GetMatchPointers().find(config_->GetMatchName(rec_tracks_name_, mc_particles_name_))->second;
 
+  auto out_config = AnalysisTree::TaskManager::GetInstance()->GetConfig();
+  
   std::string out_branch_event = "Events";
   std::string out_branch = std::string("Candidates");
   std::string out_branch_sim = std::string("Simulated");
@@ -118,6 +130,9 @@ void ConverterOut::Init() {
   man->AddBranch(out_branch, lambda_reco_, out_particles);
   man->AddBranch(out_branch_sim, lambda_sim_, LambdaSimBranch);
   man->AddMatching(out_branch, out_branch_sim, lambda_reco2sim_);
+  
+  if(output_cuts_)
+    output_cuts_ -> Init(*out_config);
 
   events_->Init(EventBranch);
   InitIndexes();
@@ -200,37 +215,28 @@ int ConverterOut::DetermineGeneration(int mother_sim_id)
   return generation;
 }
 
-void ConverterOut::MatchWithMc() {
+void ConverterOut::MatchWithMc(AnalysisTree::Particle& lambdarec) {
   
-  for (auto& lambdarec : *lambda_reco_) {
-    auto out_config = AnalysisTree::TaskManager::GetInstance()->GetConfig();
+  auto out_config = AnalysisTree::TaskManager::GetInstance()->GetConfig();
     
-    int mother_id = GetMothersSimId(lambdarec);
-    int generation = DetermineGeneration(mother_id);
-    lambdarec.SetField(generation, generation_field_id_);
-    
-//     if(generation > 1 && lambdarec.GetPid() == 3122)
-//     {
-//       const int mpdg = mc_particles_->GetChannel(mc_particles_->GetChannel(mother_id).GetField<int>(mother_id_field_id_)).GetPid();
-//       if (mpdg == 3312)
-//         std::cout << mpdg << "\n";
-//     }
-    
-    if (generation<1) continue;
+  int mother_id = GetMothersSimId(lambdarec);
+  int generation = DetermineGeneration(mother_id);
+  lambdarec.SetField(generation, generation_field_id_);
         
-    const AnalysisTree::Particle& simtrackmother = mc_particles_->GetChannel(mother_id);
+  if (generation<1) return;
+      
+  const AnalysisTree::Particle& simtrackmother = mc_particles_->GetChannel(mother_id);
 
-    auto& lambdasim = lambda_sim_->AddChannel(out_config->GetBranchConfig(lambda_sim_->GetId()));
+  auto& lambdasim = lambda_sim_->AddChannel(out_config->GetBranchConfig(lambda_sim_->GetId()));
 
-    lambdasim.SetMomentum(simtrackmother.GetPx(), simtrackmother.GetPy(), simtrackmother.GetPz());
-    lambdasim.SetMass(simtrackmother.GetMass());
-    lambdasim.SetPid(simtrackmother.GetPid());
-    lambdasim.SetField(simtrackmother.GetField<int>(mother_id_field_id_), mother_id_field_id_w_);
-    for(int i=0; i<3; i++)
-      lambdasim.SetField(simtrackmother.GetField<float>(x_sim_field_id_+i), x_sim_field_id_w_+i);
+  lambdasim.SetMomentum(simtrackmother.GetPx(), simtrackmother.GetPy(), simtrackmother.GetPz());
+  lambdasim.SetMass(simtrackmother.GetMass());
+  lambdasim.SetPid(simtrackmother.GetPid());
+  lambdasim.SetField(simtrackmother.GetField<int>(mother_id_field_id_), mother_id_field_id_w_);
+  for(int i=0; i<3; i++)
+    lambdasim.SetField(simtrackmother.GetField<float>(x_sim_field_id_+i), x_sim_field_id_w_+i);
 //     std::cout << "lambdarec.GetId() = " << lambdarec.GetId() << "\tlambdasim.GetId() = " << lambdasim.GetId() << "\n";
-    lambda_reco2sim_->AddMatch(lambdarec.GetId(), lambdasim.GetId());    
-  }
+  lambda_reco2sim_->AddMatch(lambdarec.GetId(), lambdasim.GetId());    
 }
 
 void ConverterOut::InitIndexes() {

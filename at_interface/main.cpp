@@ -85,8 +85,12 @@ int main(int argc, char** argv) {
   auto* out_converter = new ConverterOut();
   out_converter->SetPFSimpleTask(pf_task);
   out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "SimEventHeader", "RecEventHeader"});
+  
+//   AnalysisTree::Cuts* post_cuts = new AnalysisTree::Cuts("post_cuts", {AnalysisTree::RangeCut("Candidates.generation", 0.9, 100)});
+//   AnalysisTree::Cuts* post_cuts = new AnalysisTree::Cuts("post_cuts", {AnalysisTree::EqualsCut("Candidates.generation", 0)});
+//   AnalysisTree::Cuts* post_cuts = new AnalysisTree::Cuts("post_cuts", {AnalysisTree::RangeCut("Candidates.mass", 1.09, 1.14)});
+//   out_converter->SetOutputCuts(post_cuts);
 
-  //  man.AddTasks(in_converter, out_converter);
   man->AddTask(in_converter);
   man->AddTask(pf_task);
   man->AddTask(out_converter);

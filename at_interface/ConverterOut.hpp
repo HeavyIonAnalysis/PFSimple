@@ -4,6 +4,7 @@
 #include "Decay.hpp"
 #include "OutputContainer.hpp"
 
+#include "AnalysisTree/Cuts.hpp"
 #include "AnalysisTree/Detector.hpp"
 #include "AnalysisTree/EventHeader.hpp"
 #include "AnalysisTree/Task.hpp"
@@ -20,12 +21,13 @@ class ConverterOut : public AnalysisTree::Task {
   void Finish() override {}
 
   void SetPFSimpleTask(PFSimpleTask* pfsimple_task) { pfsimple_task_ = pfsimple_task; }
+  void SetOutputCuts(AnalysisTree::Cuts* output_cuts) { output_cuts_ = output_cuts; }
 
   void CopyParticle(const OutputContainer& kf_particle, AnalysisTree::Particle& particle) const;
 
  protected:
   void InitIndexes();
-  void MatchWithMc();
+  void MatchWithMc(AnalysisTree::Particle& particle);
   int GetMothersSimId(AnalysisTree::Particle& lambdarec);
   int DetermineGeneration(int mother_sim_id);
 
@@ -44,6 +46,7 @@ class ConverterOut : public AnalysisTree::Task {
   AnalysisTree::TrackDetector* rec_tracks_{nullptr};
   AnalysisTree::Matching* rec_to_mc_{nullptr};
   AnalysisTree::EventHeader* sim_events_{nullptr};
+  AnalysisTree::Cuts* output_cuts_{nullptr};
 
   std::vector<OutputContainer> candidates_;
   
