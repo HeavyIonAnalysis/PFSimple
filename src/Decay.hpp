@@ -23,14 +23,15 @@ class Decay {
                                                                                    mother_(mother),
                                                                                    daughters_(std::move(daughters)) {
     int i{0};
-    for (auto& daughter : daughters_) {
+    for(auto& daughter : daughters_){
       daughter.SetId(i++);
     }
   }
 
   const std::vector<Daughter>& GetDaughters() const { return daughters_; }
   const Mother& GetMother() const { return mother_; }
-
+  const std::string GetName() const { return name_; }
+  
   void SetDaughters(const std::vector<Daughter>& daughters) {
     if (!daughters_.empty()) {
       throw std::runtime_error("Daughters are already set!");
