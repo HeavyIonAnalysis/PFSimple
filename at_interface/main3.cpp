@@ -1,9 +1,7 @@
-//#include "AnalysisTree/PlainTreeFiller.hpp"
 #include "PFSimpleTask.hpp"
-#include <PlainTreeFiller.hpp>
 
 #include "ConverterIn.hpp"
-#include "ConverterOut.hpp"
+#include "ConverterOutTree.hpp"
 
 #include "AnalysisTree/TaskManager.hpp"
 
@@ -13,8 +11,6 @@ int main(int argc, char** argv) {
     std::cout << "Wrong number of arguments! Please use:\n  ./main filelist.txt\n";
     return EXIT_FAILURE;
   }
-
-  const bool make_plain_tree{false};
 
   const std::string& filename = argv[1];
 
@@ -46,12 +42,12 @@ int main(int argc, char** argv) {
   pf_task->SetInTask(in_converter);
   pf_task->SetDecays({decay});
 
-  auto* out_converter = new ConverterOut();
+  auto* out_converter = new ConverterOutTree();
   out_converter->SetPFSimpleTask(pf_task);
   out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "SimEventHeader", "RecEventHeader"});
   out_converter->SetDecay(decay);
+  out_converter->SetOutFilename("PFSimpleTree.root");
 
-  //man.AddTasks(in_converter, out_converter);
   man->AddTask(in_converter);
   man->AddTask(pf_task);
   man->AddTask(out_converter);
@@ -60,31 +56,6 @@ int main(int argc, char** argv) {
   man->Run(-1);// -1 = all events
   man->Finish();
   //man->ClearTasks();
-
-  if (make_plain_tree) {
-    std::ofstream filelist;
-    filelist.open("filelist.txt");
-    filelist << "PFSimpleOutput.root\n";
-    filelist.close();
-
-    man->SetOutputName("PFSimplePlainTree.root", "plain_tree");
-
-    //    auto* tree_task_events = new AnalysisTree::PlainTreeFiller();
-    //    std::string branchname_events = "Events";
-    //    tree_task_events->SetInputBranchNames({branchname_events});
-    //    tree_task_events->AddBranch(branchname_events);
-
-    auto* tree_task = new AnalysisTree::PlainTreeFiller();
-    std::string branchname_rec = "Candidates";
-    tree_task->SetInputBranchNames({branchname_rec});
-    tree_task->AddBranch(branchname_rec);
-
-    man->AddTask(tree_task);
-
-    man->Init({"filelist.txt"}, {"pTree"});
-    man->Run(-1);// -1 = all events
-    man->Finish();
-  }
 
   return EXIT_SUCCESS;
 }

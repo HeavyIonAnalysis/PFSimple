@@ -58,7 +58,7 @@ class OutputContainer {
   float GetDistanceToSV() const { return values_.distance_sv; }
   float GetL() const { return values_.l; }
   float GetLdL() const { return values_.l_over_dl; }
-  float GetDistancePV() const { return values_.distance_pv; }
+  float GetDistanceToPVLine() const { return values_.distance_pv; }
   float GetCosineTopo(int i) const { return values_.cos_topo[i]; }
 
   float GetX() const { return x_; }
