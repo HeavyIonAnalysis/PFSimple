@@ -7,6 +7,8 @@
 
 #include "AnalysisTree/TaskManager.hpp"
 
+using namespace AnalysisTree;
+
 int main(int argc, char** argv) {
   if (argc < 2) {
     std::cout << "Wrong number of arguments! Please use:\n  ./main filelist.txt\n";
@@ -58,11 +60,18 @@ int main(int argc, char** argv) {
 
   Decay lambda_pi_p("lambda", lambda, {pion, proton});
 
-  auto* man = AnalysisTree::TaskManager::GetInstance();
+  auto* man = TaskManager::GetInstance();
   man->SetOutputName("PFSimpleOutput.root", "pTree");
 
   auto* in_converter = new ConverterIn();
-  in_converter->SetTrackCuts(new AnalysisTree::Cuts("Cut to reproduce KFPF", {AnalysisTree::EqualsCut("VtxTracks.pass_cuts", 1)}));
+  
+//   SimpleCut kfpf_cut = EqualsCut("VtxTracks.pass_cuts", 1);
+//   SimpleCut mother_cut = EqualsCut("VtxTracks.mother_pdg", 3122);
+//   SimpleCut several_mother_cut = SimpleCut({"VtxTracks.mother_pdg"}, []( std::vector<double>& var ) { return var.at(0)==3122 || var.at(0)==3312; });
+//   Cuts* cuts = new Cuts("cuts", {kfpf_cut, several_mother_cut});
+//   in_converter->SetTrackCuts(cuts);
+  
+  in_converter->SetTrackCuts(new Cuts("Cut to reproduce KFPF", {EqualsCut("VtxTracks.pass_cuts", 1)}));
   in_converter->SetIsShine(false);//TODO maybe change name
 
   auto* pf_task = new PFSimpleTask();
@@ -74,9 +83,9 @@ int main(int argc, char** argv) {
   out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "SimEventHeader", "RecEventHeader"});
   out_converter->SetDecay(lambda_pi_p);
   
-//   AnalysisTree::Cuts* post_cuts = new AnalysisTree::Cuts("post_cuts", {AnalysisTree::RangeCut("Candidates.generation", 0.9, 100)});
-//   AnalysisTree::Cuts* post_cuts = new AnalysisTree::Cuts("post_cuts", {AnalysisTree::EqualsCut("Candidates.generation", 0)});
-//   AnalysisTree::Cuts* post_cuts = new AnalysisTree::Cuts("post_cuts", {AnalysisTree::RangeCut("Candidates.mass", 1.09, 1.14)});
+//   Cuts* post_cuts = new Cuts("post_cuts", {RangeCut("Candidates.generation", 0.9, 100)});
+//   Cuts* post_cuts = new Cuts("post_cuts", {EqualsCut("Candidates.generation", 0)});
+//   Cuts* post_cuts = new Cuts("post_cuts", {RangeCut("Candidates.mass", 1.09, 1.14)});
 //   out_converter->SetOutputCuts(post_cuts);
 
   man->AddTask(in_converter);
@@ -96,12 +105,12 @@ int main(int argc, char** argv) {
 
     man->SetOutputName("PFSimplePlainTree.root", "plain_tree");
 
-    //    auto* tree_task_events = new AnalysisTree::PlainTreeFiller();
+    //    auto* tree_task_events = new PlainTreeFiller();
     //    std::string branchname_events = "Events";
     //    tree_task_events->SetInputBranchNames({branchname_events});
     //    tree_task_events->AddBranch(branchname_events);
 
-    auto* tree_task = new AnalysisTree::PlainTreeFiller();
+    auto* tree_task = new PlainTreeFiller();
     std::string branchname_rec = "Candidates";
     tree_task->SetInputBranchNames({branchname_rec});
     tree_task->AddBranch(branchname_rec);
