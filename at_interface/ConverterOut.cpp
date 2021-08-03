@@ -82,6 +82,7 @@ void ConverterOut::Exec() {
       lambdarec = particle;
     }
   }
+  delete pfsimple_task_->GetSimpleFinder();
 }
 
 void ConverterOut::Init() {
