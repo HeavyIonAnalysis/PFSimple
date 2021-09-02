@@ -14,6 +14,7 @@
 #define KFPARTICLESIMPLE_KFSIMPLE_SIMPLEFINDERNEW_HPP_
 
 #include <vector>
+#include <map>
 
 #include <KFParticle.h>
 #include <KFPTrack.h>
