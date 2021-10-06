@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
   
 //   SimpleCut kfpf_cut = EqualsCut("VtxTracks.pass_cuts", 1);
 //   SimpleCut mother_cut = EqualsCut("VtxTracks.mother_pdg", 3122);
-//   SimpleCut several_mother_cut = SimpleCut({"VtxTracks.mother_pdg"}, []( std::vector<double>& var ) { return var.at(0)==3122 || var.at(0)==3312; });
+//   SimpleCut several_mother_cut = SimpleCut({"VtxTracks.mother_pdg"}, []( std::vector<double>& var ) { return std::fabs(var.at(0)-3122)<0.1 || std::fabs(var.at(0)-3312)<0.1; });
 //   Cuts* cuts = new Cuts("cuts", {kfpf_cut, several_mother_cut});
 //   in_converter->SetTrackCuts(cuts);
   
