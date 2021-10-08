@@ -71,6 +71,8 @@ int main(int argc, char** argv) {
 //   Cuts* cuts = new Cuts("cuts", {kfpf_cut, several_mother_cut});
 //   in_converter->SetTrackCuts(cuts);
   
+//   in_converter->SetMotherPdgsToBeConsidered({3122});
+  
   in_converter->SetTrackCuts(new Cuts("Cut to reproduce KFPF", {EqualsCut("VtxTracks.pass_cuts", 1)}));
   in_converter->SetIsShine(false);//TODO maybe change name
 

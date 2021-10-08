@@ -27,7 +27,7 @@ void ConverterIn::FillParticle(const AnalysisTree::Track& rec_particle) {
 
   const int pdg = rec_particle.GetField<int>(pdg_field_id_);//TODO
                                                             //  const int pdg = rec_particle.GetPid();
-
+  
   container_.AddTrack(par, cov_matrix, mf, rec_particle.GetField<int>(q_field_id_), pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
 }
 
@@ -70,6 +70,7 @@ void ConverterIn::Exec() {
   for (int i_track = 0; i_track < n_tracks; ++i_track) {
     const auto& rec_track = kf_tracks_->GetChannel(i_track);
     if (!IsGoodTrack(rec_track)) continue;
+    if (!CheckMotherPdgs(rec_track)) continue;
     FillParticle(rec_track);
     n_good_tracks++;
   }
@@ -133,4 +134,38 @@ std::vector<float> ConverterIn::GetCovMatrixShine(const AnalysisTree::Track& par
 
 bool ConverterIn::IsGoodTrack(const AnalysisTree::Track& rec_track) const {
   return track_cuts_ ? track_cuts_->Apply(rec_track) : true;
+}
+
+bool ConverterIn::CheckMotherPdgs(const AnalysisTree::Track& rec_track) const
+{
+  if(mother_pdgs_to_be_considered_.size()==0)
+    return true;
+  
+  if(!sim_tracks_ || !kf2sim_tracks_)
+  {
+    std::cout << "No MC info available!\n";
+    assert(false);
+  }
+  
+  const int sim_id = kf2sim_tracks_->GetMatch(rec_track.GetId());
+  if(sim_id<0)
+    return false;
+  
+  const AnalysisTree::Particle& sim_track = sim_tracks_->GetChannel(sim_id);
+  const int mother_id = sim_track.GetField<int>(mother_id_field_id_);
+  if(mother_id<0)
+    return false;
+  
+  const int mother_pdg = sim_tracks_->GetChannel(mother_id).GetPid();
+  
+  bool ok = false;
+  
+  for(auto& good_mother_pdgs : mother_pdgs_to_be_considered_)
+    if(mother_pdg == good_mother_pdgs)
+    {
+      ok = true;
+      break;
+    }
+    
+  return ok;
 }
