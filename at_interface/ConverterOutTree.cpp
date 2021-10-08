@@ -151,10 +151,10 @@ void ConverterOutTree::Init() {
     out_sim_ = new TTree("MC","MC");
     out_sim_->Branch("id",&id_mc_,"id_mc_/I");
     out_sim_->Branch("pid",&pid_,"pid_/I");
-    out_sim_->Branch("mass",&mass_,"mass_/F");
-    out_sim_->Branch("px",&px_,"px_/F");
-    out_sim_->Branch("py",&py_,"py_/F");
-    out_sim_->Branch("pz",&pz_,"pz_/F");
+    out_sim_->Branch("mass_mc",&mass_mc_,"mass_mc_/F");
+    out_sim_->Branch("px_mc",&px_mc_,"px_mc_/F");
+    out_sim_->Branch("py_mc",&py_mc_,"py_mc_/F");
+    out_sim_->Branch("pz_mc",&pz_mc_,"pz_mc_/F");
     out_sim_->Branch("g4process",&g4process_,"g4process_/I");
     
     out_match_ = new TTree("Match","Match");
@@ -217,10 +217,10 @@ void ConverterOutTree::MatchWithMc() {
   
   const auto& particle_mc = mc_particles_->GetChannel(mother_id);
   pid_ = particle_mc.GetPid();
-  mass_ = particle_mc.GetMass();
-  px_ = particle_mc.GetPx();
-  py_ = particle_mc.GetPy();
-  pz_ = particle_mc.GetPz();
+  mass_mc_ = particle_mc.GetMass();
+  px_mc_ = particle_mc.GetPx();
+  py_mc_ = particle_mc.GetPy();
+  pz_mc_ = particle_mc.GetPz();
   g4process_ = particle_mc.GetField<int>(g4process_field_id_);
   out_sim_->Fill();
 }
