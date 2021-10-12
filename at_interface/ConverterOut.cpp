@@ -139,7 +139,7 @@ void ConverterOut::Init() {
   InitIndexes();
 }
 
-int ConverterOut::GetMothersSimId(AnalysisTree::Particle& lambdarec)
+int ConverterOut::GetMothersSimId(AnalysisTree::Particle& lambdarec) const
 {
   /** Returnes mother's id in SimParticles branch if:
    ** 1) all reconstructed daughters have matching with simulated particles
@@ -202,7 +202,7 @@ int ConverterOut::GetMothersSimId(AnalysisTree::Particle& lambdarec)
   }
 }
 
-int ConverterOut::DetermineGeneration(int mother_sim_id)
+int ConverterOut::DetermineGeneration(int mother_sim_id) const
 {
   int generation = 0;
   int older_id = mother_sim_id;

@@ -28,8 +28,8 @@ class ConverterOut : public AnalysisTree::Task {
  protected:
   void InitIndexes();
   void MatchWithMc(AnalysisTree::Particle& particle);
-  int GetMothersSimId(AnalysisTree::Particle& lambdarec);
-  int DetermineGeneration(int mother_sim_id);
+  int GetMothersSimId(AnalysisTree::Particle& lambdarec) const;
+  int DetermineGeneration(int mother_sim_id) const;
 
   // output branches
   AnalysisTree::EventHeader* events_{nullptr};

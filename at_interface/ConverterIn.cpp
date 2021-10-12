@@ -71,7 +71,7 @@ void ConverterIn::Exec() {
   for (int i_track = 0; i_track < n_tracks; ++i_track) {
     const auto& rec_track = kf_tracks_->GetChannel(i_track);
     if (!IsGoodTrack(rec_track)) continue;
-    if (!CheckMotherPdgs(rec_track)) continue;
+    if (!CheckAncestorPdgs(rec_track)) continue;
     FillParticle(rec_track);
     n_good_tracks++;
   }
@@ -137,9 +137,14 @@ bool ConverterIn::IsGoodTrack(const AnalysisTree::Track& rec_track) const {
   return track_cuts_ ? track_cuts_->Apply(rec_track) : true;
 }
 
-bool ConverterIn::CheckMotherPdgs(const AnalysisTree::Track& rec_track) const
+bool ConverterIn::CheckAncestorPdgs(const AnalysisTree::Track& rec_track) const
 {
-  if(mother_pdgs_to_be_considered_.size()==0)
+  // This function allows to consider only those tracks, which have among their
+  // ancestors certain particles (known from mc-pdg).
+  // Needed not for data-driven analysis, but to determin those particles which
+  // are signal.
+  // But some background will be also saved.
+  if(ancestor_pdgs_to_be_considered_.size()==0)
     return true;
   
   if(!sim_tracks_ || !kf2sim_tracks_)
@@ -151,22 +156,25 @@ bool ConverterIn::CheckMotherPdgs(const AnalysisTree::Track& rec_track) const
   const int sim_id = kf2sim_tracks_->GetMatch(rec_track.GetId());
   if(sim_id<0)
     return false;
-  
-  const AnalysisTree::Particle& sim_track = sim_tracks_->GetChannel(sim_id);
-  const int mother_id = sim_track.GetField<int>(mother_id_field_id_);
-  if(mother_id<0)
-    return false;
-  
-  const int mother_pdg = sim_tracks_->GetChannel(mother_id).GetPid();
-  
+    
+  const AnalysisTree::Particle& sim_track = sim_tracks_->GetChannel(sim_id);  
+
   bool ok = false;
   
-  for(auto& good_mother_pdgs : mother_pdgs_to_be_considered_)
-    if(mother_pdg == good_mother_pdgs)
-    {
-      ok = true;
-      break;
-    }
-    
+  int older_id = sim_track.GetField<int>(mother_id_field_id_);
+  while(older_id>=0)
+  {
+    const auto& simtrackolder = sim_tracks_->GetChannel(older_id);
+    const int older_pdg = simtrackolder.GetPid();
+    for(auto& good_ancestor_pdg : ancestor_pdgs_to_be_considered_)
+      if(older_pdg == good_ancestor_pdg)
+      {
+        ok = true;
+        break;
+      }      
+    if(ok == true) break;
+    older_id = simtrackolder.GetField<int>(mother_id_field_id_);
+  }
+  
   return ok;
 }

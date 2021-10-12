@@ -33,14 +33,14 @@ class ConverterIn : public AnalysisTree::Task {
   const InputContainer& GetInputContainer() const { return container_; }
   void SetIsShine(bool is = true) { is_shine_ = is; }
   void SetTrackCuts(AnalysisTree::Cuts* const cuts) { track_cuts_ = cuts; };
-  void SetMotherPdgsToBeConsidered(std::vector<int>&& pdgs){ mother_pdgs_to_be_considered_ = pdgs; };
+  void SetAncestorPdgsToBeConsidered(std::vector<int>&& pdgs){ ancestor_pdgs_to_be_considered_ = pdgs; };
 
  protected:
   std::vector<float> GetCovMatrixCbm(const AnalysisTree::Track&) const;
   std::vector<float> GetCovMatrixShine(const AnalysisTree::Track&) const;
   void FillParticle(const AnalysisTree::Track&);
   bool IsGoodTrack(const AnalysisTree::Track& rec_track) const;
-  bool CheckMotherPdgs(const AnalysisTree::Track& rec_track) const;
+  bool CheckAncestorPdgs(const AnalysisTree::Track& rec_track) const;
 
   AnalysisTree::TrackDetector* kf_tracks_{nullptr};
   AnalysisTree::Particles* sim_tracks_{nullptr};
@@ -48,7 +48,7 @@ class ConverterIn : public AnalysisTree::Task {
   AnalysisTree::EventHeader* rec_event_header_{nullptr};
   AnalysisTree::EventHeader* sim_event_header_{nullptr};
   AnalysisTree::Cuts* track_cuts_{nullptr};
-  std::vector<int> mother_pdgs_to_be_considered_;
+  std::vector<int> ancestor_pdgs_to_be_considered_;
 
   InputContainer container_;
 
