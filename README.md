@@ -36,6 +36,8 @@ Export AnalysisTree libraries
 
     export AnalysisTree_DIR=/path-to-analysistree/install/lib/cmake/AnalysisTree
     
+You need to source root and export AnalysisTree each time when you are compiling project from 0 (perform cmake command) but have no need to do it when just recompiling project (perform just make).
+    
 Install PFSimple
     
     mkdir build
@@ -46,3 +48,16 @@ Install PFSimple
 ## First run
 
 Use AnalysisTreeInterface/main.cxx to configure the reconstruction: select cuts, number of events to analyze etc.
+
+Each time before running the prepared executable you should set the environment variables to let your system know where to find libraries:
+
+    source /path-to-root/install/bin/thisroot.sh
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path-to-pfsimple-installation/lib/
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path-to-pfsimple-installation/external/lib/
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path-to-analysistree-installation/lib/
+ 
+Then run the executable:
+
+    ./main2 filelist.txt
+    
+where filelist.txt must be a text file with names (including paths) to files which you want to analyze with PFSimple. Each file name should be on the next line, and the last symbol should also be a switch to next line. The example of filelist is in the source directory of PFSimple (filelist_example.txt)
