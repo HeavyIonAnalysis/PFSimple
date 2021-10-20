@@ -1,25 +1,25 @@
-#include "SimpleFinderNew.hpp"
+#include "SimpleFinder.hpp"
 #include <KFParticleSIMD.h>
 
-void SimpleFinderNew::Init(std::vector<KFParticle>&& tracks, const KFVertex& pv) {
+void SimpleFinder::Init(std::vector<KFParticle>&& tracks, const KFVertex& pv) {
   tracks_ = tracks;
   prim_vx_ = pv;
   InitIndexesMap();
 }
 
-void SimpleFinderNew::Init(const InputContainer& input) {// TODO know how to de-const without time lose for copying by value
+void SimpleFinder::Init(const InputContainer& input) {// TODO know how to de-const without time lose for copying by value
   std::vector<KFParticle> tracks = input.GetTracks();
   Init(std::move(tracks), input.GetVertex());
 }
 
-float SimpleFinderNew::CalculateDistanceBetweenParticles(const Parameters_t& parameters) {
+float SimpleFinder::CalculateDistanceBetweenParticles(const Parameters_t& parameters) {
   const float dx = parameters.at(0).at(kX) - parameters.at(1).at(kX);
   const float dy = parameters.at(0).at(kY) - parameters.at(1).at(kY);
   const float dz = parameters.at(0).at(kZ) - parameters.at(1).at(kZ);
   return std::sqrt(dx * dx + dy * dy + dz * dz);
 }
 
-void SimpleFinderNew::CalculateParamsInPCA(const KFParticle& track1, int pid1, const KFParticle& track2, int pid2) {
+void SimpleFinder::CalculateParamsInPCA(const KFParticle& track1, int pid1, const KFParticle& track2, int pid2) {
   params_ = Parameters_t(2);
 
   KFParticle particle1(track1);
@@ -41,7 +41,7 @@ void SimpleFinderNew::CalculateParamsInPCA(const KFParticle& track1, int pid1, c
   }
 }
 
-void SimpleFinderNew::CalculateParamsInSV(const KFParticle& track, int pid, const int id_daughter) {
+void SimpleFinder::CalculateParamsInSV(const KFParticle& track, int pid, const int id_daughter) {
   params_.resize(3);
 
   KFParticle particle(track);
@@ -63,7 +63,7 @@ void SimpleFinderNew::CalculateParamsInSV(const KFParticle& track, int pid, cons
     params_.at(id_daughter).at(i) = params[i][0];
 }
 
-float SimpleFinderNew::CalculateDistanceToSV(const int id_daughter) const {
+float SimpleFinder::CalculateDistanceToSV(const int id_daughter) const {
   const float dx = params_.at(id_daughter).at(0) - sec_vx_.at(0);
   const float dy = params_.at(id_daughter).at(1) - sec_vx_.at(1);
   const float dz = params_.at(id_daughter).at(2) - sec_vx_.at(2);
@@ -71,7 +71,7 @@ float SimpleFinderNew::CalculateDistanceToSV(const int id_daughter) const {
   return dr;
 }
 
-KFParticleSIMD SimpleFinderNew::ConstructMother(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs) {
+KFParticleSIMD SimpleFinder::ConstructMother(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs) {
   const auto n = tracks.size();
 
   KFParticleSIMD mother;
@@ -111,7 +111,7 @@ KFParticleSIMD SimpleFinderNew::ConstructMother(const std::vector<KFParticle>& t
   return mother;
 }
 
-float SimpleFinderNew::CalculateChiToPrimaryVertex(const KFParticle& track, Pdg_t pid) const {
+float SimpleFinder::CalculateChiToPrimaryVertex(const KFParticle& track, Pdg_t pid) const {
   // SIMD'ized version
   KFParticle tmpPart = track;
   tmpPart.SetPDG(pid);
@@ -126,7 +126,7 @@ float SimpleFinderNew::CalculateChiToPrimaryVertex(const KFParticle& track, Pdg_
   return chi2vec[0];
 }
 
-std::vector<int> SimpleFinderNew::GetIndexes(const Daughter& daughter) {
+std::vector<int> SimpleFinder::GetIndexes(const Daughter& daughter) {
   std::vector<int> result{};
   for (auto pid : daughter.GetPids()) {
     auto it = indexes_.find(pid);
@@ -142,7 +142,7 @@ std::vector<int> SimpleFinderNew::GetIndexes(const Daughter& daughter) {
   return result;
 }
 
-void SimpleFinderNew::InitIndexesMap() {
+void SimpleFinder::InitIndexesMap() {
   for (size_t i = 0; i < tracks_.size(); i++) {
     auto pdg = tracks_.at(i).GetPDG();
     auto it = indexes_.find(pdg);
@@ -154,7 +154,7 @@ void SimpleFinderNew::InitIndexesMap() {
   }
 }
 
-KFPTrack SimpleFinderNew::ToKFPTrack(const KFParticle& particle) {
+KFPTrack SimpleFinder::ToKFPTrack(const KFParticle& particle) {
   KFPTrack track;
 
   track.SetX(particle.GetX());
@@ -176,19 +176,19 @@ KFPTrack SimpleFinderNew::ToKFPTrack(const KFParticle& particle) {
   return track;
 }
 
-void SimpleFinderNew::SetKFParticleEnergy(KFParticle& particle, int pdg) const {
+void SimpleFinder::SetKFParticleEnergy(KFParticle& particle, int pdg) const {
   const KFPTrack& track = ToKFPTrack(particle);
   particle = KFParticle(track, pdg);
 }
 
-bool SimpleFinderNew::IsGoodDaughter(const KFParticle& track, const Daughter& daughter) {
+bool SimpleFinder::IsGoodDaughter(const KFParticle& track, const Daughter& daughter) {
   int id = daughter.GetId();
   values_.chi2_prim.at(id) = CalculateChiToPrimaryVertex(track, daughter.GetPdgHypo());
   if (values_.chi2_prim.at(id) < daughter.GetCutChi2Prim() || std::isnan(values_.chi2_prim.at(id))) { return false; }
   return true;
 }
 
-bool SimpleFinderNew::IsGoodPair(const KFParticle& track1,
+bool SimpleFinder::IsGoodPair(const KFParticle& track1,
                                  const KFParticle& track2,
                                  const Decay& decay) {
   const auto& daughters = decay.GetDaughters();
@@ -199,7 +199,7 @@ bool SimpleFinderNew::IsGoodPair(const KFParticle& track1,
   return true;
 }
 
-bool SimpleFinderNew::IsGoodThree(const KFParticle& track,
+bool SimpleFinder::IsGoodThree(const KFParticle& track,
                                   const Decay& decay) {
 
   const auto& daughters = decay.GetDaughters();
@@ -211,13 +211,13 @@ bool SimpleFinderNew::IsGoodThree(const KFParticle& track,
   return true;
 }
 
-bool SimpleFinderNew::IsGoodMother(const KFParticleSIMD& kf_mother, const Mother& mother, const int id_mother) {
+bool SimpleFinder::IsGoodMother(const KFParticleSIMD& kf_mother, const Mother& mother, const int id_mother) {
   values_.chi2_geo[id_mother] = kf_mother.Chi2()[0] / simd_cast<float_v>(kf_mother.NDF())[0];
   if (values_.chi2_geo[id_mother] > mother.GetCutChi2Geo()[id_mother] || std::isnan(values_.chi2_geo[id_mother])) { return false; }
   return true;
 }
 
-bool SimpleFinderNew::IsMotherFromPV(const KFParticleSIMD& kf_mother, const Mother& mother, const int id_mother) {
+bool SimpleFinder::IsMotherFromPV(const KFParticleSIMD& kf_mother, const Mother& mother, const int id_mother) {
   KFVertex prim_vx_tmp = prim_vx_;
   const KFParticleSIMD prim_vx_Simd(prim_vx_tmp);
   KFParticleSIMD motherTopo = kf_mother;
@@ -240,7 +240,7 @@ bool SimpleFinderNew::IsMotherFromPV(const KFParticleSIMD& kf_mother, const Moth
   return true;
 }
 
-bool SimpleFinderNew::IsGoodDecayLength(const KFParticleSIMD& kf_mother, const Mother& mother) {
+bool SimpleFinder::IsGoodDecayLength(const KFParticleSIMD& kf_mother, const Mother& mother) {
 
   float_v d_pv_Simd, dd_pv_Simd, l_Simd, dl_Simd;
   float_m isFromPV_Simd;
@@ -266,7 +266,7 @@ bool SimpleFinderNew::IsGoodDecayLength(const KFParticleSIMD& kf_mother, const M
   return true;
 }
 
-void SimpleFinderNew::SaveParticle(KFParticleSIMD& particle_simd, const Decay& decay) {
+void SimpleFinder::SaveParticle(KFParticleSIMD& particle_simd, const Decay& decay) {
   KFParticle particle;
 
   particle_simd.GetKFParticle(particle, 0);
@@ -279,7 +279,7 @@ void SimpleFinderNew::SaveParticle(KFParticleSIMD& particle_simd, const Decay& d
   tracks_.emplace_back(particle);
 }
 
-float SimpleFinderNew::CalculateCosTopo(const KFParticleSIMD& mother) const {
+float SimpleFinder::CalculateCosTopo(const KFParticleSIMD& mother) const {
   const float px = mother.GetPx()[0];
   const float py = mother.GetPy()[0];
   const float pz = mother.GetPz()[0];
@@ -293,7 +293,7 @@ float SimpleFinderNew::CalculateCosTopo(const KFParticleSIMD& mother) const {
   return sp / norm;
 }
 
-bool SimpleFinderNew::IsGoodCos(const KFParticleSIMD& mother, const SimpleFinderNew::Parameters_t& daughter_pars, const Decay& decay) {
+bool SimpleFinder::IsGoodCos(const KFParticleSIMD& mother, const SimpleFinder::Parameters_t& daughter_pars, const Decay& decay) {
   for (int i = 0; i < decay.GetNDaughters(); ++i) {
     const auto cut = decay.GetDaughters()[i].GetCutCos();
     const auto& par = daughter_pars.at(i);
@@ -306,7 +306,7 @@ bool SimpleFinderNew::IsGoodCos(const KFParticleSIMD& mother, const SimpleFinder
   return true;
 }
 
-void SimpleFinderNew::CalculateSecondaryVertex() {
+void SimpleFinder::CalculateSecondaryVertex() {
   if (params_.size() < 2 || params_.size() > 3) {
     throw std::runtime_error("Daughter parameters size is wrong");
   }
@@ -314,7 +314,7 @@ void SimpleFinderNew::CalculateSecondaryVertex() {
     sec_vx_.at(i) = (params_[0].at(kX + i) + params_[1].at(kX + i)) / 2;
 }
 
-void SimpleFinderNew::ReconstructDecay(const Decay& decay) {
+void SimpleFinder::ReconstructDecay(const Decay& decay) {
 
   std::vector<std::vector<int>> indexes{};
   std::vector<Pdg_t> pdgs{};
@@ -386,7 +386,7 @@ void SimpleFinderNew::ReconstructDecay(const Decay& decay) {
   }
 }
 
-void SimpleFinderNew::FillDaughtersInfo(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs) {
+void SimpleFinder::FillDaughtersInfo(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs) {
   for (size_t i = 0; i < tracks.size(); ++i) {
     values_.chi2_prim[i] = CalculateChiToPrimaryVertex(tracks.at(i), pdgs.at(i));
   }

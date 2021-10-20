@@ -27,18 +27,18 @@
 #include "Decay.hpp"
 #include "NonLinearCutBase.hpp"
 
-class SimpleFinderNew {
+class SimpleFinder {
 
   typedef std::array<float, 8> Param_t;
   typedef std::vector<Param_t> Parameters_t;
 
  public:
-  SimpleFinderNew() = default;
-  SimpleFinderNew(const SimpleFinderNew&) = default;
-  SimpleFinderNew(SimpleFinderNew&&) = default;
-  SimpleFinderNew& operator=(SimpleFinderNew&&) = default;
-  SimpleFinderNew& operator=(const SimpleFinderNew&) = default;
-  ~SimpleFinderNew() = default;
+  SimpleFinder() = default;
+  SimpleFinder(const SimpleFinder&) = default;
+  SimpleFinder(SimpleFinder&&) = default;
+  SimpleFinder& operator=(SimpleFinder&&) = default;
+  SimpleFinder& operator=(const SimpleFinder&) = default;
+  ~SimpleFinder() = default;
 
   void Init(std::vector<KFParticle>&& tracks, const KFVertex& pv);///< Initialize SimpleFinder object with PV and set of tracks of the current event
   void Init(const InputContainer& input);
@@ -80,8 +80,8 @@ class SimpleFinderNew {
   bool IsGoodDaughter(const KFParticle& track, const Daughter& cuts);
   bool IsGoodPair(const KFParticle& track1, const KFParticle& track2, const Decay& decay);
   bool IsGoodThree(const KFParticle& track, const Decay& decay);
-  bool IsGoodMother(const KFParticleSIMD& mother, const Mother& cuts, const int id_mother);
-  bool IsMotherFromPV(const KFParticleSIMD& mother, const Mother& cuts, const int id_mother);
+  bool IsGoodMother(const KFParticleSIMD& mother, const Mother& cuts, int id_mother);
+  bool IsMotherFromPV(const KFParticleSIMD& mother, const Mother& cuts, int id_mother);
   bool IsGoodDecayLength(const KFParticleSIMD& mother, const Mother& cuts);
   bool IsGoodCos(const KFParticleSIMD& mother, const Parameters_t& daughter_pars, const Decay& decay);
 
@@ -89,11 +89,11 @@ class SimpleFinderNew {
   void CalculateSecondaryVertex();
 
   void CalculateParamsInPCA(const KFParticle& track1, int pid1, const KFParticle& track2, int pid2);
-  void CalculateParamsInSV(const KFParticle& track, int pid, const int id);
+  void CalculateParamsInSV(const KFParticle& track, int pid, int id);
   float CalculateChiToPrimaryVertex(const KFParticle& track, Pdg_t pid) const;
   float CalculateCosTopo(const KFParticleSIMD& mother) const;
   static float CalculateDistanceBetweenParticles(const Parameters_t& parameters);
-  float CalculateDistanceToSV(const int id) const;
+  float CalculateDistanceToSV(int id) const;
 
   void FillDaughtersInfo(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs);
   void SaveParticle(KFParticleSIMD& particle_simd, const Decay& decay);

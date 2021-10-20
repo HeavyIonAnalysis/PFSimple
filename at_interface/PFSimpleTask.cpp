@@ -4,7 +4,7 @@
 #include "ConverterOut.hpp"
 
 void PFSimpleTask::Exec() {
-  pf_simple_ = new SimpleFinderNew();
+  pf_simple_ = new SimpleFinder();
 
   pf_simple_->SetDecays(decays_);
 
