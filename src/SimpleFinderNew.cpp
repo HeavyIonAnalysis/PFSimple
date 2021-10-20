@@ -143,18 +143,18 @@ std::vector<int> SimpleFinderNew::GetIndexes(const Daughter& daughter) {
 }
 
 void SimpleFinderNew::InitIndexesMap() {
-  for (int i = 0; i < tracks_.size(); i++) {
+  for (size_t i = 0; i < tracks_.size(); i++) {
     auto pdg = tracks_.at(i).GetPDG();
     auto it = indexes_.find(pdg);
     if (it != indexes_.end()) {
       it->second.emplace_back(i);
     } else {
-      indexes_[pdg] = {i};
+      indexes_[pdg] = {static_cast<int>(i)};
     }
   }
 }
 
-KFPTrack SimpleFinderNew::ToKFPTrack(const KFParticle& particle) const {
+KFPTrack SimpleFinderNew::ToKFPTrack(const KFParticle& particle) {
   KFPTrack track;
 
   track.SetX(particle.GetX());
@@ -387,7 +387,7 @@ void SimpleFinderNew::ReconstructDecay(const Decay& decay) {
 }
 
 void SimpleFinderNew::FillDaughtersInfo(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs) {
-  for (int i = 0; i < tracks.size(); ++i) {
+  for (size_t i = 0; i < tracks.size(); ++i) {
     values_.chi2_prim[i] = CalculateChiToPrimaryVertex(tracks.at(i), pdgs.at(i));
   }
 }

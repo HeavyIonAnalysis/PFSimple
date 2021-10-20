@@ -106,7 +106,7 @@ class SimpleFinderNew {
     return tracks_.at(i);
   }
 
-  KFPTrack ToKFPTrack(const KFParticle& particle) const;
+  static KFPTrack ToKFPTrack(const KFParticle& particle) ;
   void SetKFParticleEnergy(KFParticle& particle, int pdg) const;
 };
 

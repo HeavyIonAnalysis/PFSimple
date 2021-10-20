@@ -20,7 +20,7 @@ AnalysisTree is needed for usage the interface based on AnalysisTree. If it is n
 
 https://github.com/HeavyIonAnalysis/AnalysisTree
 
-Follow instructions. Use v2.1.3 tag.
+Follow instructions. Use v2.2.0 tag.
 
 ## Installation
 

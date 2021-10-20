@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
   const std::string& filename = argv[1];
 
   std::vector<Daughter> daughters = {2212, -211, 1000010020};
-  for (int idaughter = 0; idaughter < daughters.size(); idaughter++) {
+  for (size_t idaughter = 0; idaughter < daughters.size(); ++idaughter) {
     daughters.at(idaughter).CancelCuts();
     daughters.at(idaughter).SetCutChi2Prim(18.42);
     //daughters.at(idaughter).SetCutCos(0.99825);

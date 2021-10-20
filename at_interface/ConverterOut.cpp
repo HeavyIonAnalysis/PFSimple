@@ -103,40 +103,40 @@ void ConverterOut::Init() {
   std::string out_branch_reco2sim = out_branch + "2" + out_branch_sim;
 
   AnalysisTree::BranchConfig EventBranch(out_branch_event, AnalysisTree::DetType::kEventHeader);
-  EventBranch.AddField<float>("b");
+  EventBranch.AddField<float>("b", "Impact parameter, fm");
 
   AnalysisTree::BranchConfig out_particles(out_branch, AnalysisTree::DetType::kParticle);
-  out_particles.AddFields<float>({"x", "y", "z", "x_error", "y_error", "z_error"});
-  out_particles.AddFields<float>({"pT_err", "phi_err", "eta_err", "mass_err"});
+  out_particles.AddFields<float>({"x", "y", "z", "x_error", "y_error", "z_error"}, "Position error, cm(?)");
+  out_particles.AddFields<float>({"pT_err", "phi_err", "eta_err", "mass_err"}, "Momentum error");
 
   if (decay_.GetNDaughters() == 3) {
-    out_particles.AddFields<int>({"daughter1_id", "daughter2_id", "daughter3_id"});
-    out_particles.AddFields<float>({"chi2_prim_first", "chi2_prim_second", "chi2_prim_third"});
-    out_particles.AddFields<float>({"distance", "distance_sv"});
-    out_particles.AddFields<float>({"cosine_first", "cosine_second", "cosine_third"});
-    out_particles.AddFields<float>({"chi2_geo_sm1", "chi2_geo_sm2", "chi2_geo_sm3"});
-    out_particles.AddFields<float>({"chi2_topo_sm1", "chi2_topo_sm2", "chi2_topo_sm3"});
-    out_particles.AddFields<float>({"cosine_topo_sm1", "cosine_topo_sm2", "cosine_topo_sm3"});
+    out_particles.AddFields<int>({"daughter1_id", "daughter2_id", "daughter3_id"}, "");
+    out_particles.AddFields<float>({"chi2_prim_first", "chi2_prim_second", "chi2_prim_third"}, "");
+    out_particles.AddFields<float>({"distance", "distance_sv"}, "Distance between the particles");
+    out_particles.AddFields<float>({"cosine_first", "cosine_second", "cosine_third"}, "Cos between mother and daughter particle");
+    out_particles.AddFields<float>({"chi2_geo_sm1", "chi2_geo_sm2", "chi2_geo_sm3"}, "");
+    out_particles.AddFields<float>({"chi2_topo_sm1", "chi2_topo_sm2", "chi2_topo_sm3"}, "");
+    out_particles.AddFields<float>({"cosine_topo_sm1", "cosine_topo_sm2", "cosine_topo_sm3"}, "");
   } else if (decay_.GetNDaughters() == 2) {
-    out_particles.AddFields<int>({"daughter1_id", "daughter2_id"});
-    out_particles.AddFields<float>({"chi2_prim_first", "chi2_prim_second"});
-    out_particles.AddField<float>("distance");
-    out_particles.AddFields<float>({"cosine_first", "cosine_second"});
+    out_particles.AddFields<int>({"daughter1_id", "daughter2_id"}, "");
+    out_particles.AddFields<float>({"chi2_prim_first", "chi2_prim_second"}, "");
+    out_particles.AddField<float>("distance", "");
+    out_particles.AddFields<float>({"cosine_first", "cosine_second"}, "");
   }
 
-  out_particles.AddFields<float>({"chi2_geo", "l", "l_over_dl", "chi2_topo", "cosine_topo"});
+  out_particles.AddFields<float>({"chi2_geo", "l", "l_over_dl", "chi2_topo", "cosine_topo"}, "");
   
   AnalysisTree::BranchConfig LambdaSimBranch(out_branch_sim, AnalysisTree::DetType::kParticle);
 
   if (mc_particles_) {
-    out_particles.AddField<int>("generation");
-    LambdaSimBranch.AddField<int>("geant_process_id");
+    out_particles.AddField<int>("generation", "");
+    LambdaSimBranch.AddField<int>("geant_process_id", "");
   }
     
-  man->AddBranch(out_branch_event, events_, EventBranch);
-  man->AddBranch(out_branch, lambda_reco_, out_particles);
-  man->AddBranch(out_branch_sim, lambda_sim_, LambdaSimBranch);
-  man->AddMatching(out_branch, out_branch_sim, lambda_reco2sim_);
+  man->AddBranch(events_, EventBranch);
+  man->AddBranch(lambda_reco_, out_particles);
+  man->AddBranch(lambda_sim_, LambdaSimBranch);
+  man->AddMatching(out_branch_sim, mc_particles_name_, lambda_reco2sim_);
   
   if(output_cuts_)
     output_cuts_ -> Init(*out_config);

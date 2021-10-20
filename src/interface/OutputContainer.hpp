@@ -20,7 +20,8 @@
 class OutputContainer {
  public:
   OutputContainer() = default;
-  explicit OutputContainer(const KFParticle& particle) : px_(particle.GetPx()),
+  explicit OutputContainer(const KFParticle& particle) : daughter_ids_(particle.DaughterIds()),
+                                                         px_(particle.GetPx()),
                                                          py_(particle.GetPy()),
                                                          pz_(particle.GetPz()),
                                                          mass_(particle.GetMass()),
@@ -34,42 +35,41 @@ class OutputContainer {
                                                          z_(particle.GetZ()),
                                                          x_error_(particle.GetErrX()),
                                                          y_error_(particle.GetErrY()),
-                                                         z_error_(particle.GetErrZ()),
-                                                         daughter_ids_(particle.DaughterIds()) {}
+                                                         z_error_(particle.GetErrZ()) {}
 
   virtual ~OutputContainer() = default;
 
-  const std::vector<int>& GetDaughterIds() const { return daughter_ids_; }
-  float GetPx() const { return px_; }
-  float GetPy() const { return py_; }
-  float GetPz() const { return pz_; }
-  float GetMass() const { return mass_; }
-  float GetPtError() const { return pt_error_; }
-  float GetPhiError() const { return phi_error_; }
-  float GetEtaError() const { return eta_error_; }
-  float GetMassError() const { return mass_error_; }
-  Pdg_t GetPdg() const { return pdg_; }
+  [[nodiscard]] const std::vector<int>& GetDaughterIds() const { return daughter_ids_; }
+  [[nodiscard]] float GetPx() const { return px_; }
+  [[nodiscard]] float GetPy() const { return py_; }
+  [[nodiscard]] float GetPz() const { return pz_; }
+  [[nodiscard]] float GetMass() const { return mass_; }
+  [[nodiscard]] float GetPtError() const { return pt_error_; }
+  [[nodiscard]] float GetPhiError() const { return phi_error_; }
+  [[nodiscard]] float GetEtaError() const { return eta_error_; }
+  [[nodiscard]] float GetMassError() const { return mass_error_; }
+  [[nodiscard]] Pdg_t GetPdg() const { return pdg_; }
 
-  float GetChi2Prim(int i) const { return values_.chi2_prim[i]; }
-  float GetCos(int i) const { return values_.cos[i]; }
-  float GetChi2Geo(int i) const { return values_.chi2_geo[i]; }
-  float GetChi2Topo(int i) const { return values_.chi2_topo[i]; }
-  float GetDistance() const { return values_.distance; }
-  float GetDistanceToSV() const { return values_.distance_sv; }
-  float GetL() const { return values_.l; }
-  float GetLdL() const { return values_.l_over_dl; }
-  float GetDistanceToPVLine() const { return values_.distance_pv; }
-  float GetCosineTopo(int i) const { return values_.cos_topo[i]; }
+  [[nodiscard]] float GetChi2Prim(int i) const { return values_.chi2_prim[i]; }
+  [[nodiscard]] float GetCos(int i) const { return values_.cos[i]; }
+  [[nodiscard]] float GetChi2Geo(int i) const { return values_.chi2_geo[i]; }
+  [[nodiscard]] float GetChi2Topo(int i) const { return values_.chi2_topo[i]; }
+  [[nodiscard]] float GetDistance() const { return values_.distance; }
+  [[nodiscard]] float GetDistanceToSV() const { return values_.distance_sv; }
+  [[nodiscard]] float GetL() const { return values_.l; }
+  [[nodiscard]] float GetLdL() const { return values_.l_over_dl; }
+  [[nodiscard]] float GetDistanceToPVLine() const { return values_.distance_pv; }
+  [[nodiscard]] float GetCosineTopo(int i) const { return values_.cos_topo[i]; }
 
-  float GetX() const { return x_; }
-  float GetY() const { return y_; }
-  float GetZ() const { return z_; }
-  float GetXError() const { return x_error_; }
-  float GetYError() const { return y_error_; }
-  float GetZError() const { return z_error_; }
+  [[nodiscard]] float GetX() const { return x_; }
+  [[nodiscard]] float GetY() const { return y_; }
+  [[nodiscard]] float GetZ() const { return z_; }
+  [[nodiscard]] float GetXError() const { return x_error_; }
+  [[nodiscard]] float GetYError() const { return y_error_; }
+  [[nodiscard]] float GetZError() const { return z_error_; }
 
-  int GetId() const { return id_; }
-  bool IsFromPV() const { return values_.is_from_PV; }
+  [[nodiscard]] int GetId() const { return id_; }
+  [[nodiscard]] bool IsFromPV() const { return values_.is_from_PV; }
 
   void SetId(int id) { id_ = id; }
 
