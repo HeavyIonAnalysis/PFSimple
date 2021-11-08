@@ -136,7 +136,7 @@ void ConverterOut::Init() {
   man->AddBranch(events_, EventBranch);
   man->AddBranch(lambda_reco_, out_particles);
   man->AddBranch(lambda_sim_, LambdaSimBranch);
-  man->AddMatching(out_branch_sim, mc_particles_name_, lambda_reco2sim_);
+  man->AddMatching(out_branch, out_branch_sim, lambda_reco2sim_);
   
   if(output_cuts_)
     output_cuts_ -> Init(*out_config);
