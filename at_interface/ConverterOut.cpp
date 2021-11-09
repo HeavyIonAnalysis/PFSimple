@@ -106,13 +106,13 @@ void ConverterOut::Init() {
   EventBranch.AddField<float>("b", "Impact parameter, fm");
 
   AnalysisTree::BranchConfig out_particles(out_branch, AnalysisTree::DetType::kParticle);
-  out_particles.AddFields<float>({"x", "y", "z", "x_error", "y_error", "z_error"}, "Position error, cm(?)");
+  out_particles.AddFields<float>({"x", "y", "z", "x_error", "y_error", "z_error"}, "Position and its error, cm");
   out_particles.AddFields<float>({"pT_err", "phi_err", "eta_err", "mass_err"}, "Momentum error");
 
   if (decay_.GetNDaughters() == 3) {
     out_particles.AddFields<int>({"daughter1_id", "daughter2_id", "daughter3_id"}, "");
     out_particles.AddFields<float>({"chi2_prim_first", "chi2_prim_second", "chi2_prim_third"}, "");
-    out_particles.AddFields<float>({"distance", "distance_sv"}, "Distance between the particles");
+    out_particles.AddFields<float>({"distance", "distance_sv"}, "Distance between the particles, cm");
     out_particles.AddFields<float>({"cosine_first", "cosine_second", "cosine_third"}, "Cos between mother and daughter particle");
     out_particles.AddFields<float>({"chi2_geo_sm1", "chi2_geo_sm2", "chi2_geo_sm3"}, "");
     out_particles.AddFields<float>({"chi2_topo_sm1", "chi2_topo_sm2", "chi2_topo_sm3"}, "");
@@ -120,8 +120,8 @@ void ConverterOut::Init() {
   } else if (decay_.GetNDaughters() == 2) {
     out_particles.AddFields<int>({"daughter1_id", "daughter2_id"}, "");
     out_particles.AddFields<float>({"chi2_prim_first", "chi2_prim_second"}, "");
-    out_particles.AddField<float>("distance", "");
-    out_particles.AddFields<float>({"cosine_first", "cosine_second"}, "");
+    out_particles.AddField<float>("distance", "Distance between the particles, cm");
+    out_particles.AddFields<float>({"cosine_first", "cosine_second"}, "Cos between mother and daughter particle");
   }
 
   out_particles.AddFields<float>({"chi2_geo", "l", "l_over_dl", "chi2_topo", "cosine_topo"}, "");
