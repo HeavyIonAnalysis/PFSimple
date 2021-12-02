@@ -125,11 +125,11 @@ void ConverterOut::Init() {
     LambdaSimBranch.AddField<int>("geant_process_id");
   }
   LambdaSimBranch.AddField<int>("mother_id", "particle mother's id in SimParticles branch");   // particle mother's id in SimParticles branch
-  LambdaSimBranch.AddFields<float>({"x", "y", "z"}, "cm");
+//   LambdaSimBranch.AddFields<float>({"x", "y", "z"}, "cm");
 
-  man->AddBranch(out_branch_event, events_, EventBranch);
-  man->AddBranch(out_branch, lambda_reco_, out_particles);
-  man->AddBranch(out_branch_sim, lambda_sim_, LambdaSimBranch);
+  man->AddBranch(events_, EventBranch);
+  man->AddBranch(lambda_reco_, out_particles);
+  man->AddBranch(lambda_sim_, LambdaSimBranch);
   man->AddMatching(out_branch, out_branch_sim, lambda_reco2sim_);
   
   if(output_cuts_)
@@ -234,8 +234,8 @@ void ConverterOut::MatchWithMc(AnalysisTree::Particle& lambdarec) {
   lambdasim.SetMass(simtrackmother.GetMass());
   lambdasim.SetPid(simtrackmother.GetPid());
   lambdasim.SetField(simtrackmother.GetField<int>(mother_id_field_id_), mother_id_field_id_w_);
-  for(int i=0; i<3; i++)
-    lambdasim.SetField(simtrackmother.GetField<float>(x_sim_field_id_+i), x_sim_field_id_w_+i);
+//   for(int i=0; i<3; i++)
+//     lambdasim.SetField(simtrackmother.GetField<float>(x_sim_field_id_+i), x_sim_field_id_w_+i);
 //     std::cout << "lambdarec.GetId() = " << lambdarec.GetId() << "\tlambdasim.GetId() = " << lambdasim.GetId() << "\n";
   lambdasim.SetField(simtrackmother.GetField<int>(g4process_field_id_), g4process_field_id_w_);
   lambda_reco2sim_->AddMatch(lambdarec.GetId(), lambdasim.GetId());    

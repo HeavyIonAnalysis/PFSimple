@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
   man->AddTask(pf_task);
   man->AddTask(out_converter);
 
-  man->Init({filename}, {"rTree"});
+  man->Init({filename}, {"aTree"});
   man->Run(-1);// -1 = all events
   man->Finish();
 
