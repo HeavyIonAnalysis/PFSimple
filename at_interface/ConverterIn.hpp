@@ -32,6 +32,9 @@ class ConverterIn : public AnalysisTree::Task {
 
   const InputContainer& GetInputContainer() const { return container_; }
   void SetIsShine(bool is = true) { is_shine_ = is; }
+  void SetPidMode(int value) { pid_mode_ = value; }
+  void UseNoPID() { pid_mode_ = 0; }
+  void UseMcPID() { pid_mode_ = 1; }
   void SetTrackCuts(AnalysisTree::Cuts* const cuts) { track_cuts_ = cuts; };
   void SetMotherPdgsToBeConsidered(std::vector<int>&& pdgs){ mother_pdgs_to_be_considered_ = pdgs; };
 
@@ -69,6 +72,7 @@ class ConverterIn : public AnalysisTree::Task {
   int nhits_field_id_{AnalysisTree::UndefValueInt};
 
   bool is_shine_{false};
+  int pid_mode_{1};
 };
 
 #endif//KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTERIN_H_

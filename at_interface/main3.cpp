@@ -14,7 +14,12 @@ int main(int argc, char** argv) {
 
   const std::string& filename = argv[1];
 
+  const int pid_mode = 1; // mc-pid
   std::vector<Daughter> daughters = {2212, -211, 1000010020};
+  
+//   const int pid_mode = 0; // no-pid
+//   std::vector<Daughter> daughters = {{2212, {1}}, {-211, {-1}}, {1000010020, {1}}};
+  
   for (size_t idaughter = 0; idaughter < daughters.size(); ++idaughter) {
     daughters.at(idaughter).CancelCuts();
     daughters.at(idaughter).SetCutChi2Prim(18.42);
@@ -37,6 +42,7 @@ int main(int argc, char** argv) {
   auto* in_converter = new ConverterIn();
   in_converter->SetTrackCuts(new AnalysisTree::Cuts("Cut to reproduce KFPF", {AnalysisTree::EqualsCut("VtxTracks.pass_cuts", 1)}));
   in_converter->SetIsShine(false);//TODO maybe change name
+  in_converter->SetPidMode(pid_mode);
 
   auto* pf_task = new PFSimpleTask();
   pf_task->SetInTask(in_converter);

@@ -79,7 +79,7 @@ class SimpleFinder {
 
   bool IsGoodDaughter(const KFParticle& track, const Daughter& cuts);
   bool IsGoodPair(const KFParticle& track1, const KFParticle& track2, const Decay& decay);
-  bool IsGoodThree(const KFParticle& track, const Decay& decay);
+  bool IsGoodThree(const KFParticle& track1, const KFParticle& track2, const KFParticle& track3, const Decay& decay);
   bool IsGoodMother(const KFParticleSIMD& mother, const Mother& cuts, int id_mother);
   bool IsMotherFromPV(const KFParticleSIMD& mother, const Mother& cuts, int id_mother);
   bool IsGoodDecayLength(const KFParticleSIMD& mother, const Mother& cuts);

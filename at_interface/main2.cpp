@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  const bool make_plain_tree{true};
+  const bool make_plain_tree{false};
 
   const std::string& filename = argv[1];
 
@@ -36,8 +36,13 @@ int main(int argc, char** argv) {
 //   //****************************************
 
   // ******** default kfpf cuts *************
-  Daughter proton(2212);
+  const int pid_mode = 1;
+  Daughter proton(2212);            // for MC-PID
   Daughter pion(-211);
+  
+//   const int pid_mode = 0;
+//   Daughter proton(2212, {1});       // for no-PID
+//   Daughter pion(-211, {-1});
 
   proton.SetCutChi2Prim(18.42);
 
@@ -75,6 +80,7 @@ int main(int argc, char** argv) {
   
   in_converter->SetTrackCuts(new Cuts("Cut to reproduce KFPF", {EqualsCut("VtxTracks.pass_cuts", 1)}));
   in_converter->SetIsShine(false);//TODO maybe change name
+  in_converter->SetPidMode(pid_mode);
 
   auto* pf_task = new PFSimpleTask();
   pf_task->SetInTask(in_converter);

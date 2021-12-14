@@ -25,9 +25,12 @@ void ConverterIn::FillParticle(const AnalysisTree::Track& rec_particle) {
   par[kPy] = rec_particle.GetPy();
   par[kPz] = rec_particle.GetPz();
 
-  const int pdg = rec_particle.GetField<int>(pdg_field_id_);//TODO
-                                                            //  const int pdg = rec_particle.GetPid();
-  
+  int pdg = -999;
+  if(pid_mode_ == 0)
+    pdg = rec_particle.GetField<int>(q_field_id_);
+  else if(pid_mode_ == 1)
+    pdg = rec_particle.GetField<int>(pdg_field_id_);
+                                                            
   container_.AddTrack(par, cov_matrix, mf, rec_particle.GetField<int>(q_field_id_), pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
 }
 

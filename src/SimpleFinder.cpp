@@ -191,6 +191,8 @@ bool SimpleFinder::IsGoodDaughter(const KFParticle& track, const Daughter& daugh
 bool SimpleFinder::IsGoodPair(const KFParticle& track1,
                                  const KFParticle& track2,
                                  const Decay& decay) {
+  if(track1.Id() == track2.Id()) { return false; }
+  
   const auto& daughters = decay.GetDaughters();
   CalculateParamsInPCA(track1, daughters[0].GetPdgHypo(), track2, daughters[1].GetPdgHypo());
   values_.distance = CalculateDistanceBetweenParticles(params_);
@@ -199,13 +201,19 @@ bool SimpleFinder::IsGoodPair(const KFParticle& track1,
   return true;
 }
 
-bool SimpleFinder::IsGoodThree(const KFParticle& track,
+bool SimpleFinder::IsGoodThree(const KFParticle& track1,
+                               const KFParticle& track2,
+                               const KFParticle& track3,
                                   const Decay& decay) {
 
+  if(track1.Id() == track2.Id()) { return false; }
+  if(track1.Id() == track3.Id()) { return false; }
+  if(track2.Id() == track3.Id()) { return false; }
+  
   const auto& daughters = decay.GetDaughters();
 
   CalculateSecondaryVertex();
-  CalculateParamsInSV(track, daughters[2].GetPdgHypo(), daughters[2].GetId());
+  CalculateParamsInSV(track3, daughters[2].GetPdgHypo(), daughters[2].GetId());
   values_.distance_sv = CalculateDistanceToSV(daughters[2].GetId());
   if (values_.distance_sv > decay.GetMother().GetCutDistanceToSV() || std::isnan(values_.distance_sv)) { return false; }
   return true;
@@ -356,7 +364,7 @@ void SimpleFinder::ReconstructDecay(const Decay& decay) {
 
           track.at(2) = GetTrack(index_3);
 
-          if (!IsGoodThree(track.at(2), decay)) continue;
+          if (!IsGoodThree(track.at(0), track.at(1), track.at(2), decay)) continue;
 
           kf_mother = ConstructMother({track.at(0), track.at(2)}, {pdgs.at(0), pdgs.at(2)});
           id_mother = 2;
