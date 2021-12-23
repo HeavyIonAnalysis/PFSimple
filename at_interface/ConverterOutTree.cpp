@@ -80,6 +80,8 @@ void ConverterOutTree::Exec() {
 
 void ConverterOutTree::Init() {
 
+  if (pid_mode_ > 1) rec_tracks_name_ = "RecTracks";
+
   auto* man = AnalysisTree::TaskManager::GetInstance();
   auto* chain = man->GetChain();
 
@@ -164,6 +166,7 @@ void ConverterOutTree::Init() {
     mother_id_field_id_ = config_->GetBranchConfig(mc_particles_name_).GetFieldId("mother_id");
     g4process_field_id_ = config_->GetBranchConfig(mc_particles_name_).GetFieldId("geant_process_id");
   }
+  std::cout<<"finish init out"<<std::endl;
 }
 
 int ConverterOutTree::GetMothersSimId()

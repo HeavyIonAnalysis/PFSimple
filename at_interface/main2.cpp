@@ -44,6 +44,11 @@ int main(int argc, char** argv) {
 //   Daughter proton(2212, {1});       // for no-PID
 //   Daughter pion(-211, {-1});
 
+//   const int pid_mode = 2;                 // for reconstructed PID with max. purity & min. required purity
+//   float purity = 0.7;
+//   const int pid_mode = 3;                 // for reconstructed PID with min. required purity
+//   std::array<float,2> purity_pdg = {0.5,0.7};
+  
   proton.SetCutChi2Prim(18.42);
 
   pion.SetCutChi2Prim(18.42);
@@ -81,6 +86,10 @@ int main(int argc, char** argv) {
   in_converter->SetTrackCuts(new Cuts("Cut to reproduce KFPF", {EqualsCut("VtxTracks.pass_cuts", 1)}));
   in_converter->SetIsShine(false);//TODO maybe change name
   in_converter->SetPidMode(pid_mode);
+  //  in_converter->SetPidPurity(purity);             // purity for all pdgs (pid-mode 2 or 3)
+  //  in_converter->SetPidPurityProton(purity_pdg.at(0)); // pdg-specific purity (pid-mode 3) 
+  //  in_converter->SetPidPurityPion(purity_pdg.at(1));
+
 
   auto* pf_task = new PFSimpleTask();
   pf_task->SetInTask(in_converter);
@@ -90,6 +99,7 @@ int main(int argc, char** argv) {
   out_converter->SetPFSimpleTask(pf_task);
   out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "SimEventHeader", "RecEventHeader"});
   out_converter->SetDecay(lambda_pi_p);
+  //  out_converter->SetPidMode(pid_mode);
   
 //   Cuts* post_cuts = new Cuts("post_cuts", {RangeCut("Candidates.generation", 0.9, 100)});
 //   Cuts* post_cuts = new Cuts("post_cuts", {EqualsCut("Candidates.generation", 0)});

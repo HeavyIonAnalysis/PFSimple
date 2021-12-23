@@ -25,17 +25,54 @@ void ConverterIn::FillParticle(const AnalysisTree::Track& rec_particle) {
   par[kPy] = rec_particle.GetPy();
   par[kPz] = rec_particle.GetPz();
 
-  int pdg = -999;
-  if(pid_mode_ == 0)
-    pdg = rec_particle.GetField<int>(q_field_id_);
-  else if(pid_mode_ == 1)
-    pdg = rec_particle.GetField<int>(pdg_field_id_);
-                                                            
-  container_.AddTrack(par, cov_matrix, mf, rec_particle.GetField<int>(q_field_id_), pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
-}
+  const int q = rec_particle.GetField<int>(q_field_id_);
 
+  int pdg = -999;
+  if(pid_mode_ == 0) {
+    pdg = rec_particle.GetField<int>(q_field_id_);
+    container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
+    }
+  else if(pid_mode_ == 1) {
+    pdg = rec_particle.GetField<int>(pdg_field_id_);
+    container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
+  }
+  else {
+    if (rec_particle.GetField<float>(pdg_prob_field_id_) == -1) // needs to be done to exclude tracks with no TOF id (tracks with no TOF id have the same pid than negative background)
+      return;
+
+    if (pid_mode_ == 2 && pid_purity_.at(0) == 0.5) {
+      const int pdg = rec_particle.GetField<int>(pdg_rec_field_id_)*q;
+      container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
+      
+    } else {
+    
+      std::vector<float> pdg_prob;
+      for(size_t i=0; i<pid_codes_rec.size(); ++i)
+	pdg_prob.push_back(rec_particle.GetField<float>(pdg_prob_field_id_ + i));
+  
+      if (pid_mode_ == 2) {
+	if (*std::max_element(pdg_prob.begin(), pdg_prob.end()) < pid_purity_.at(0))
+	  return;
+	auto it_prob = find(pdg_prob.begin(), pdg_prob.end(), *std::max_element(pdg_prob.begin(), pdg_prob.end()));
+	int ipid = std::distance(pdg_prob.begin(),it_prob);
+	pdg = pid_codes_rec[ipid]*q;
+	container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
+      }
+
+      if (pid_mode_ == 3) {
+	for(size_t ipid=0; ipid<pid_codes_rec.size(); ipid++) 
+	  if (pdg_prob[ipid] >= pid_purity_.at(ipid)) {
+	    pdg = pid_codes_rec[ipid]*q;
+	    container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
+	  }
+      }
+    }
+  }
+}
 void ConverterIn::Init() {
   auto* chain = AnalysisTree::TaskManager::GetInstance()->GetChain();
+
+  if (pid_mode_ > 1) kf_tracks_name_ = "RecTracks";
 
   rec_event_header_ = ANALYSISTREE_UTILS_GET<AnalysisTree::EventHeader*>(chain->GetPointerToBranch(rec_event_header_name_));
   sim_event_header_ = ANALYSISTREE_UTILS_GET<AnalysisTree::EventHeader*>(chain->GetPointerToBranch(sim_event_header_name_));
@@ -51,6 +88,11 @@ void ConverterIn::Init() {
   passcuts_field_id_ = branch_conf_kftr.GetFieldId("pass_cuts");
   pdg_field_id_ = branch_conf_kftr.GetFieldId("mc_pdg");
   nhits_field_id_ = branch_conf_kftr.GetFieldId("nhits");
+
+  if (pid_mode_ > 1) {
+    pdg_prob_field_id_ = branch_conf_kftr.GetFieldId("prob_p");
+    pdg_rec_field_id_ = branch_conf_kftr.GetFieldId("rec_pdg");
+  }
 
   const auto& branch_conf_simtr = config_->GetBranchConfig(sim_tracks_name_);
   mother_id_field_id_ = branch_conf_simtr.GetFieldId("mother_id");

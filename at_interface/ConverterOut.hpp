@@ -25,6 +25,7 @@ class ConverterOut : public AnalysisTree::Task {
   void CopyParticle(const OutputContainer& kf_particle, AnalysisTree::Particle& particle) const;
   void SetDecay(const Decay& decay) { decay_ = decay; }
   void SetOutputCuts(AnalysisTree::Cuts* output_cuts) { output_cuts_ = output_cuts; }
+  void SetPidMode(const int pid_mode) { pid_mode_ = pid_mode; }
 
  protected:
   void InitIndexes();
@@ -49,6 +50,7 @@ class ConverterOut : public AnalysisTree::Task {
   AnalysisTree::EventHeader* sim_events_{nullptr};
   AnalysisTree::Cuts* output_cuts_{nullptr};
   Decay decay_{};
+  int pid_mode_{0};
 
   std::vector<OutputContainer> candidates_;
 
