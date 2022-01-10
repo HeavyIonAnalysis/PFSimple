@@ -37,7 +37,7 @@ class ConverterOutTree : public AnalysisTree::Task {
   TTree* out_reco_{nullptr};
   TTree* out_sim_{nullptr};
   TTree* out_match_{nullptr};
-  
+
   // input branches
   std::string mc_particles_name_{"SimParticles"};
   std::string rec_tracks_name_{"VtxTracks"};
@@ -53,7 +53,7 @@ class ConverterOutTree : public AnalysisTree::Task {
   std::vector<OutputContainer> candidates_;
 
   PFSimpleTask* pfsimple_task_{nullptr};
-  
+
   // field ids of simulated events
   int b_field_id_{-1};
 
@@ -74,20 +74,20 @@ class ConverterOutTree : public AnalysisTree::Task {
 
   int daughter_id_1_{-1}, daughter_id_2_{-1}, daughter_id_3_{-1};
   float chi2prim_1_{-1.f}, chi2prim_2_{-1.f}, chi2prim_3_{-1.f};
-  float cos_1_{-1.f}, cos_2_{-1.f}, cos_3_{-1.f};  
+  float cos_1_{-1.f}, cos_2_{-1.f}, cos_3_{-1.f};
   float distance_{-1.f}, distance_sv_{-1.f};
   float chi2geo_sm_1_{-1.f}, chi2geo_sm_2_{-1.f}, chi2geo_sm_3_{-1.f};
   float chi2topo_sm_1_{-1.f}, chi2topo_sm_2_{-1.f}, chi2topo_sm_3_{-1.f};
-  float costopo_sm_1_{-1.f}, costopo_sm_2_{-1.f}, costopo_sm_3_{-1.f};  
+  float costopo_sm_1_{-1.f}, costopo_sm_2_{-1.f}, costopo_sm_3_{-1.f};
   float chi2geo_{-1.f};
   float chi2topo_{-1.f};
   float costopo_{-1.f};
   float L_{-1.f}, LdL_{-1.f}, distance_pv_line_{-1.f};
 
   float mass_mc_, px_mc_, py_mc_, pz_mc_;
-  int generation_{-1}; 
+  int generation_{-1};
   int g4process_{-1};
-  int is_mc_{0};  
+  int is_mc_{0};
   int id_mc_{-1};
 };
 

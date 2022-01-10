@@ -65,19 +65,19 @@ void ConverterOut::Exec() {
   const auto& br_conf = out_config->GetBranchConfig(lambda_reco_->GetId());
 
   for (const auto& candidate : candidates_) {
-    
+
     AnalysisTree::Particle particle(lambda_reco_->GetNumberOfChannels(), br_conf);
     CopyParticle(candidate, particle);
-    if(mc_particles_){
+    if (mc_particles_) {
       MatchWithMc(particle);
     }
-    
+
     bool is_write = true;
-    if(output_cuts_){
+    if (output_cuts_) {
       is_write = output_cuts_->Apply(particle);
     }
-    
-    if(is_write){
+
+    if (is_write) {
       auto& lambdarec = lambda_reco_->AddChannel(br_conf);
       lambdarec = particle;
     }
@@ -88,7 +88,7 @@ void ConverterOut::Exec() {
 void ConverterOut::Init() {
 
   if (pid_mode_ != 0) rec_tracks_name_ = "RecTracks";
-  
+
   auto* man = AnalysisTree::TaskManager::GetInstance();
   auto* chain = man->GetChain();
 
@@ -96,9 +96,9 @@ void ConverterOut::Init() {
   mc_particles_ = ANALYSISTREE_UTILS_GET<AnalysisTree::Particles*>(chain->GetPointerToBranch(mc_particles_name_));
   rec_tracks_ = ANALYSISTREE_UTILS_GET<AnalysisTree::TrackDetector*>(chain->GetPointerToBranch(rec_tracks_name_));
   rec_to_mc_ = chain->GetMatchPointers().find(config_->GetMatchName(rec_tracks_name_, mc_particles_name_))->second;
-  
+
   auto out_config = AnalysisTree::TaskManager::GetInstance()->GetConfig();
-  
+
   std::string out_branch_event = "Events";
   std::string out_branch = std::string("Candidates");
   std::string out_branch_sim = std::string("Simulated");
@@ -127,22 +127,22 @@ void ConverterOut::Init() {
   }
 
   out_particles.AddFields<float>({"chi2_geo", "l", "l_over_dl", "chi2_topo", "cosine_topo"}, "");
-  
+
   AnalysisTree::BranchConfig LambdaSimBranch(out_branch_sim, AnalysisTree::DetType::kParticle);
 
   if (mc_particles_) {
     out_particles.AddField<int>("generation", "");
     LambdaSimBranch.AddField<int>("geant_process_id", "");
   }
-    
+
   man->AddBranch(events_, EventBranch);
   man->AddBranch(lambda_reco_, out_particles);
   man->AddBranch(lambda_sim_, LambdaSimBranch);
   man->AddMatching(out_branch, out_branch_sim, lambda_reco2sim_);
-  
-  if(output_cuts_)
-    output_cuts_ -> Init(*out_config);
-  
+
+  if (output_cuts_)
+    output_cuts_->Init(*out_config);
+
   events_->Init(EventBranch);
   InitIndexes();
 }

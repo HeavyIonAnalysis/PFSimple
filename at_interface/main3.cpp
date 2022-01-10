@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
 
   for (size_t idaughter = 0; idaughter < daughters.size(); ++idaughter) {
     daughters.at(idaughter).CancelCuts();
-    daughters.at(idaughter).SetCutChi2Prim(18.42);  
+    daughters.at(idaughter).SetCutChi2Prim(18.42);
     //daughters.at(idaughter).SetCutCos(0.99825);
   }
   Mother mother(3004);
@@ -39,16 +39,18 @@ int main(int argc, char** argv) {
   //mother.SetCutLdL(3);
   Decay decay("H3L", mother, {daughters});
 
-  std::string outname;                                                                                   
-  if (argc > 2) outname = argv[2];                                                                             
-  else outname = "PFSimpleOutput";                                                                         
+  std::string outname;
+  if (argc > 2) outname = argv[2];
+  else
+    outname = "PFSimpleOutput";
   std::string outfilename;
-  if (pid_mode == 1) outfilename = outname + "_pid_mc.root";               
+  if (pid_mode == 1) outfilename = outname + "_pid_mc.root";
   if (pid_mode > 1) outfilename = outname + "_pid_rec.root";
 
   std::string tracks_name;
   if (pid_mode < 2) tracks_name = "VtxTracks";
-  else tracks_name = "RecTracks";
+  else
+    tracks_name = "RecTracks";
 
   auto* man = AnalysisTree::TaskManager::GetInstance();
   //man->SetOutputName("PFSimpleOutput.root", "pTree");
@@ -65,7 +67,6 @@ int main(int argc, char** argv) {
     //in_converter->SetPidPurityDeuteron(purity_pdg.at(2));
   }
 
-  
   auto* pf_task = new PFSimpleTask();
   pf_task->SetInTask(in_converter);
   pf_task->SetDecays({decay});

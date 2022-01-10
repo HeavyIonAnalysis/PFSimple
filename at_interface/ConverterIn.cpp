@@ -28,43 +28,41 @@ void ConverterIn::FillParticle(const AnalysisTree::Track& rec_particle) {
   const int q = rec_particle.GetField<int>(q_field_id_);
 
   int pdg = -999;
-  if(pid_mode_ == 0) {
+  if (pid_mode_ == 0) {
     pdg = rec_particle.GetField<int>(q_field_id_);
     container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
-    }
-  else if(pid_mode_ == 1) {
+  } else if (pid_mode_ == 1) {
     pdg = rec_particle.GetField<int>(pdg_field_id_);
     container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
-  }
-  else {
-    if (rec_particle.GetField<float>(pdg_prob_field_id_) == -1) // needs to be done to exclude tracks with no TOF id (tracks with no TOF id have the same pid than negative background)
+  } else {
+    if (rec_particle.GetField<float>(pdg_prob_field_id_) == -1)// needs to be done to exclude tracks with no TOF id (tracks with no TOF id have the same pid than negative background)
       return;
 
     if (pid_mode_ == 2 && pid_purity_.at(0) == 0.5) {
-      const int pdg = rec_particle.GetField<int>(pdg_rec_field_id_)*q;
+      const int pdg = rec_particle.GetField<int>(pdg_rec_field_id_) * q;
       container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
-      
+
     } else {
-    
+
       std::vector<float> pdg_prob;
-      for(size_t i=0; i<pid_codes_rec.size(); ++i)
-	pdg_prob.push_back(rec_particle.GetField<float>(pdg_prob_field_id_ + i));
-  
+      for (size_t i = 0; i < pid_codes_rec.size(); ++i)
+        pdg_prob.push_back(rec_particle.GetField<float>(pdg_prob_field_id_ + i));
+
       if (pid_mode_ == 2) {
-	if (*std::max_element(pdg_prob.begin(), pdg_prob.end()) < pid_purity_.at(0))
-	  return;
-	auto it_prob = find(pdg_prob.begin(), pdg_prob.end(), *std::max_element(pdg_prob.begin(), pdg_prob.end()));
-	int ipid = std::distance(pdg_prob.begin(),it_prob);
-	pdg = pid_codes_rec[ipid]*q;
-	container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
+        if (*std::max_element(pdg_prob.begin(), pdg_prob.end()) < pid_purity_.at(0))
+          return;
+        auto it_prob = find(pdg_prob.begin(), pdg_prob.end(), *std::max_element(pdg_prob.begin(), pdg_prob.end()));
+        int ipid = std::distance(pdg_prob.begin(), it_prob);
+        pdg = pid_codes_rec[ipid] * q;
+        container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
       }
 
       if (pid_mode_ == 3) {
-	for(size_t ipid=0; ipid<pid_codes_rec.size(); ipid++) 
-	  if (pdg_prob[ipid] >= pid_purity_.at(ipid)) {
-	    pdg = pid_codes_rec[ipid]*q;
-	    container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
-	  }
+        for (size_t ipid = 0; ipid < pid_codes_rec.size(); ipid++)
+          if (pdg_prob[ipid] >= pid_purity_.at(ipid)) {
+            pdg = pid_codes_rec[ipid] * q;
+            container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
+          }
       }
     }
   }
@@ -181,36 +179,33 @@ bool ConverterIn::IsGoodTrack(const AnalysisTree::Track& rec_track) const {
   return track_cuts_ ? track_cuts_->Apply(rec_track) : true;
 }
 
-bool ConverterIn::CheckMotherPdgs(const AnalysisTree::Track& rec_track) const
-{
-  if(mother_pdgs_to_be_considered_.size()==0)
+bool ConverterIn::CheckMotherPdgs(const AnalysisTree::Track& rec_track) const {
+  if (mother_pdgs_to_be_considered_.size() == 0)
     return true;
-  
-  if(!sim_tracks_ || !kf2sim_tracks_)
-  {
+
+  if (!sim_tracks_ || !kf2sim_tracks_) {
     std::cout << "No MC info available!\n";
     assert(false);
   }
-  
+
   const int sim_id = kf2sim_tracks_->GetMatch(rec_track.GetId());
-  if(sim_id<0)
+  if (sim_id < 0)
     return false;
-  
+
   const AnalysisTree::Particle& sim_track = sim_tracks_->GetChannel(sim_id);
   const int mother_id = sim_track.GetField<int>(mother_id_field_id_);
-  if(mother_id<0)
+  if (mother_id < 0)
     return false;
-  
+
   const int mother_pdg = sim_tracks_->GetChannel(mother_id).GetPid();
-  
+
   bool ok = false;
-  
-  for(auto& good_mother_pdgs : mother_pdgs_to_be_considered_)
-    if(mother_pdg == good_mother_pdgs)
-    {
+
+  for (auto& good_mother_pdgs : mother_pdgs_to_be_considered_)
+    if (mother_pdg == good_mother_pdgs) {
       ok = true;
       break;
     }
-    
+
   return ok;
 }

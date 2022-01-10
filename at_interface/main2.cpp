@@ -19,36 +19,36 @@ int main(int argc, char** argv) {
 
   const std::string& filename = argv[1];
 
-//   // ******** optimized cuts ***************
-//     Daughter proton(2212);
-//     Daughter pion(-211);
-//   
-//     proton.SetCutChi2Prim(26);
-//     proton.SetCutCos(0.99825);
-//   
-//     pion.SetCutChi2Prim(110);
-//   
-//     Mother lambda(3122);
-//     lambda.SetCutChi2Geo(11);
-//     lambda.SetCutChi2Topo(29);
-//     lambda.SetCutDistance(0.15);
-//     lambda.SetCutLdL(4);
-//   //****************************************
+  //   // ******** optimized cuts ***************
+  //     Daughter proton(2212);
+  //     Daughter pion(-211);
+  //
+  //     proton.SetCutChi2Prim(26);
+  //     proton.SetCutCos(0.99825);
+  //
+  //     pion.SetCutChi2Prim(110);
+  //
+  //     Mother lambda(3122);
+  //     lambda.SetCutChi2Geo(11);
+  //     lambda.SetCutChi2Topo(29);
+  //     lambda.SetCutDistance(0.15);
+  //     lambda.SetCutLdL(4);
+  //   //****************************************
 
   // ******** default kfpf cuts *************
   const int pid_mode = 1;
-  Daughter proton(2212);            // for MC-PID
+  Daughter proton(2212);// for MC-PID
   Daughter pion(-211);
-  
-//   const int pid_mode = 0;
-//   Daughter proton(2212, {1});       // for no-PID
-//   Daughter pion(-211, {-1});
 
-//   const int pid_mode = 2;                 // for reconstructed PID with max. purity & min. required purity
-//   float purity = 0.7;
-//   const int pid_mode = 3;                 // for reconstructed PID with min. required purity
-//   std::array<float,2> purity_pdg = {0.5,0.7};
-  
+  //   const int pid_mode = 0;
+  //   Daughter proton(2212, {1});       // for no-PID
+  //   Daughter pion(-211, {-1});
+
+  //   const int pid_mode = 2;                 // for reconstructed PID with max. purity & min. required purity
+  //   float purity = 0.7;
+  //   const int pid_mode = 3;                 // for reconstructed PID with min. required purity
+  //   std::array<float,2> purity_pdg = {0.5,0.7};
+
   proton.SetCutChi2Prim(18.42);
 
   pion.SetCutChi2Prim(18.42);
@@ -58,15 +58,15 @@ int main(int argc, char** argv) {
   lambda.SetCutDistance(1);
   lambda.SetCutLdL(5);
   // ***************************************
-  
-//   // ******** no cuts **********************
-//   Daughter proton(2212);
-//   Daughter pion(-211);
-//   Mother lambda(3122);
-//   proton.CancelCuts();
-//   pion.CancelCuts();
-//   lambda.CancelCuts();
-//   // ***************************************
+
+  //   // ******** no cuts **********************
+  //   Daughter proton(2212);
+  //   Daughter pion(-211);
+  //   Mother lambda(3122);
+  //   proton.CancelCuts();
+  //   pion.CancelCuts();
+  //   lambda.CancelCuts();
+  //   // ***************************************
 
   Decay lambda_pi_p("lambda", lambda, {pion, proton});
 
@@ -74,22 +74,21 @@ int main(int argc, char** argv) {
   man->SetOutputName("PFSimpleOutput.root", "pTree");
 
   auto* in_converter = new ConverterIn();
-  
-//   SimpleCut kfpf_cut = EqualsCut("VtxTracks.pass_cuts", 1);
-//   SimpleCut mother_cut = EqualsCut("VtxTracks.mother_pdg", 3122);
-//   SimpleCut several_mother_cut = SimpleCut({"VtxTracks.mother_pdg"}, []( std::vector<double>& var ) { return std::fabs(var.at(0)-3122)<0.1 || std::fabs(var.at(0)-3312)<0.1; });
-//   Cuts* cuts = new Cuts("cuts", {kfpf_cut, several_mother_cut});
-//   in_converter->SetTrackCuts(cuts);
-  
-//   in_converter->SetMotherPdgsToBeConsidered({3122});
-  
+
+  //   SimpleCut kfpf_cut = EqualsCut("VtxTracks.pass_cuts", 1);
+  //   SimpleCut mother_cut = EqualsCut("VtxTracks.mother_pdg", 3122);
+  //   SimpleCut several_mother_cut = SimpleCut({"VtxTracks.mother_pdg"}, []( std::vector<double>& var ) { return std::fabs(var.at(0)-3122)<0.1 || std::fabs(var.at(0)-3312)<0.1; });
+  //   Cuts* cuts = new Cuts("cuts", {kfpf_cut, several_mother_cut});
+  //   in_converter->SetTrackCuts(cuts);
+
+  //   in_converter->SetMotherPdgsToBeConsidered({3122});
+
   in_converter->SetTrackCuts(new Cuts("Cut to reproduce KFPF", {EqualsCut("VtxTracks.pass_cuts", 1)}));
   in_converter->SetIsShine(false);//TODO maybe change name
   in_converter->SetPidMode(pid_mode);
   //  in_converter->SetPidPurity(purity);             // purity for all pdgs (pid-mode 2 or 3)
-  //  in_converter->SetPidPurityProton(purity_pdg.at(0)); // pdg-specific purity (pid-mode 3) 
+  //  in_converter->SetPidPurityProton(purity_pdg.at(0)); // pdg-specific purity (pid-mode 3)
   //  in_converter->SetPidPurityPion(purity_pdg.at(1));
-
 
   auto* pf_task = new PFSimpleTask();
   pf_task->SetInTask(in_converter);
@@ -100,11 +99,11 @@ int main(int argc, char** argv) {
   out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "SimEventHeader", "RecEventHeader"});
   out_converter->SetDecay(lambda_pi_p);
   //  out_converter->SetPidMode(pid_mode);
-  
-//   Cuts* post_cuts = new Cuts("post_cuts", {RangeCut("Candidates.generation", 0.9, 100)});
-//   Cuts* post_cuts = new Cuts("post_cuts", {EqualsCut("Candidates.generation", 0)});
-//   Cuts* post_cuts = new Cuts("post_cuts", {RangeCut("Candidates.mass", 1.09, 1.14)});
-//   out_converter->SetOutputCuts(post_cuts);
+
+  //   Cuts* post_cuts = new Cuts("post_cuts", {RangeCut("Candidates.generation", 0.9, 100)});
+  //   Cuts* post_cuts = new Cuts("post_cuts", {EqualsCut("Candidates.generation", 0)});
+  //   Cuts* post_cuts = new Cuts("post_cuts", {RangeCut("Candidates.mass", 1.09, 1.14)});
+  //   out_converter->SetOutputCuts(post_cuts);
 
   man->AddTask(in_converter);
   man->AddTask(pf_task);
