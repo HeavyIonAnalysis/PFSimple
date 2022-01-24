@@ -44,6 +44,8 @@ class ConverterIn : public AnalysisTree::Task {
   void UseRecPIDPurityMax() { pid_mode_ = 2; }
   void UseRecPIDPurityMin() { pid_mode_ = 3; }
   void SetPidPurity(const float pid_purity) {
+    if (pid_mode_ != 2 && pid_mode_ != 3)
+      throw std::runtime_error("Pdg purity can only be set in pidmode 2 or 3");
     for (int ipid = 0; ipid < pid_purity_.size(); ipid++)
       pid_purity_.at(ipid) = pid_purity;
   }

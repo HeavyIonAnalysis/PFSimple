@@ -39,7 +39,7 @@ void ConverterIn::FillParticle(const AnalysisTree::Track& rec_particle) {
       return;
 
     if (pid_mode_ == 2 && pid_purity_.at(0) == 0.5) {
-      const int pdg = rec_particle.GetField<int>(pdg_rec_field_id_) * q;
+      const int pdg = rec_particle.GetField<int>(pdg_rec_field_id_) * q;    // Be careful if use electrons and muons, because then the sign of pdg and charge do not match
       container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
 
     } else {
@@ -51,7 +51,7 @@ void ConverterIn::FillParticle(const AnalysisTree::Track& rec_particle) {
       if (pid_mode_ == 2) {
         if (*std::max_element(pdg_prob.begin(), pdg_prob.end()) < pid_purity_.at(0))
           return;
-        auto it_prob = find(pdg_prob.begin(), pdg_prob.end(), *std::max_element(pdg_prob.begin(), pdg_prob.end()));
+        auto it_prob = std::max_element(pdg_prob.begin(), pdg_prob.end());
         int ipid = std::distance(pdg_prob.begin(), it_prob);
         pdg = pid_codes_rec[ipid] * q;
         container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle.GetField<int>(nhits_field_id_));
