@@ -43,10 +43,13 @@ int main(int argc, char** argv) {
   //   const int pid_mode = 0;
   //   Daughter proton(2212, {1});       // for no-PID
   //   Daughter pion(-211, {-1});
+  
+//   const int pid_mode = 2;
+  
 
-  //   const int pid_mode = 2;                 // for reconstructed PID with max. purity & min. required purity
-  //   float purity = 0.7;
-  //   const int pid_mode = 3;                 // for reconstructed PID with min. required purity
+//     const int pid_mode = 3;                 // for reconstructed PID with max. purity & min. required purity
+//     float purity = 0.7;
+  //   const int pid_mode = 4;                 // for reconstructed PID with min. required purity
   //   std::array<float,2> purity_pdg = {0.5,0.7};
 
   proton.SetCutChi2Prim(18.42);
@@ -84,6 +87,7 @@ int main(int argc, char** argv) {
   //   in_converter->SetMotherPdgsToBeConsidered({3122});
 
   in_converter->SetTrackCuts(new Cuts("Cut to reproduce KFPF", {EqualsCut("VtxTracks.pass_cuts", 1)}));
+  in_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "RecParticles", "SimEventHeader", "RecEventHeader"});
   in_converter->SetIsShine(false);//TODO maybe change name
   in_converter->SetPidMode(pid_mode);
   //  in_converter->SetPidPurity(purity);             // purity for all pdgs (pid-mode 2 or 3)
@@ -109,7 +113,7 @@ int main(int argc, char** argv) {
   man->AddTask(pf_task);
   man->AddTask(out_converter);
 
-  man->Init({filename}, {"rTree"});
+  man->Init({filename}, {"aTree"});
   man->Run(-1);// -1 = all events
   man->Finish();
   man->ClearTasks();

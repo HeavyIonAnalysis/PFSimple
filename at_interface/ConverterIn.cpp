@@ -35,46 +35,43 @@ void ConverterIn::FillParticle(const AnalysisTree::BranchChannel& rec_particle) 
   } else if (pid_mode_ == 1) {
     pdg = rec_particle[mc_pdg_field_];
     container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle[nhits_field_]);
+  }
+    else if (pid_mode_ == 2) {
+    pdg = rec_particle[rec_pdg_field_] * q; // Be careful if q != 1 (e.g. He) or if pdg has negative sign (e, mu)
+    container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle[nhits_field_]);
   } else {
     if (rec_particle[prob_p_field_] == -1)// needs to be done to exclude tracks with no TOF id (tracks with no TOF id have the same pid than negative background)
       return;
 
-    if (pid_mode_ == 2 && pid_purity_.at(0) == 0.5) {
-      const int pdg = rec_particle[rec_pdg_field_] * q;    // Be careful if use electrons and muons, because then the sign of pdg and charge do not match
+    std::vector<float> pdg_prob;
+    pdg_prob.push_back(rec_particle[prob_p_field_]); 
+    pdg_prob.push_back(rec_particle[prob_pi_field_]);
+    pdg_prob.push_back(rec_particle[prob_K_field_]); 
+    pdg_prob.push_back(rec_particle[prob_d_field_]);
+    pdg_prob.push_back(rec_particle[prob_bg_field_]);     
+
+    if (pid_mode_ == 3) {
+      if (*std::max_element(pdg_prob.begin(), pdg_prob.end()) < pid_purity_.at(0))
+        return;
+      auto it_prob = std::max_element(pdg_prob.begin(), pdg_prob.end());
+      int ipid = std::distance(pdg_prob.begin(), it_prob);
+      pdg = pid_codes_rec[ipid] * q;
       container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle[nhits_field_]);
+    }
 
-    } else {
-
-      std::vector<float> pdg_prob;
-      pdg_prob.push_back(rec_particle[prob_p_field_]); 
-      pdg_prob.push_back(rec_particle[prob_pi_field_]);
-      pdg_prob.push_back(rec_particle[prob_K_field_]); 
-      pdg_prob.push_back(rec_particle[prob_d_field_]);
-      pdg_prob.push_back(rec_particle[prob_bg_field_]);     
-
-      if (pid_mode_ == 2) {
-        if (*std::max_element(pdg_prob.begin(), pdg_prob.end()) < pid_purity_.at(0))
-          return;
-        auto it_prob = std::max_element(pdg_prob.begin(), pdg_prob.end());
-        int ipid = std::distance(pdg_prob.begin(), it_prob);
-        pdg = pid_codes_rec[ipid] * q;
-        container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle[nhits_field_]);
-      }
-
-      if (pid_mode_ == 3) {
-        for (size_t ipid = 0; ipid < pid_codes_rec.size(); ipid++)
-          if (pdg_prob[ipid] >= pid_purity_.at(ipid)) {
-            pdg = pid_codes_rec[ipid] * q;
-            container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle[nhits_field_]);
-          }
-      }
+    if (pid_mode_ == 4) {
+      for (size_t ipid = 0; ipid < pid_codes_rec.size(); ipid++)
+        if (pdg_prob[ipid] >= pid_purity_.at(ipid)) {
+          pdg = pid_codes_rec[ipid] * q;
+          container_.AddTrack(par, cov_matrix, mf, q, pdg, rec_particle.GetId(), rec_particle[nhits_field_]);
+        }
     }
   }
 }
 void ConverterIn::Init() {
   auto* chain = AnalysisTree::TaskManager::GetInstance()->GetChain();
 
-  if (pid_mode_ > 1) kf_tracks_name_ = "RecTracks";
+  if (pid_mode_ > 1) kf_tracks_name_ = "RecParticles";
 
   rec_event_header_ = chain->GetBranch(rec_event_header_name_);
   sim_event_header_ = chain->GetBranch(sim_event_header_name_);
@@ -96,13 +93,16 @@ void ConverterIn::Init() {
   mc_pdg_field_ = kf_tracks_.GetField("mc_pdg");  
   nhits_field_ = kf_tracks_.GetField("nhits");
     
-  if(pid_mode_>1) {
+  if(pid_mode_>1)
     rec_pdg_field_ = kf_tracks_.GetField("pid");  
+  
+  if(pid_mode_>2) {
     prob_p_field_ = kf_tracks_.GetField("prob_p");  
     prob_pi_field_ = kf_tracks_.GetField("prob_pi");  
     prob_K_field_ = kf_tracks_.GetField("prob_K");  
     prob_d_field_ = kf_tracks_.GetField("prob_d");  
-    prob_bg_field_ = kf_tracks_.GetField("prob_bg"); }
+    prob_bg_field_ = kf_tracks_.GetField("prob_bg");
+  }
   
   vtx_x_field_ = rec_event_header_.GetField("vtx_x");
   vtx_y_field_ = rec_event_header_.GetField("vtx_y");

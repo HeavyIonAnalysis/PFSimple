@@ -37,45 +37,47 @@ class ConverterIn : public AnalysisTree::Task {
   void SetPidMode(int value) { pid_mode_ = value; }/// selection mode for pid:
                                                    /// 0 = no pid
                                                    /// 1 = mc pid
-                                                   /// 2 = rec pid with max. purity & purity > min. requested purity;
-                                                   /// 3 = rec pid with purity > min. requested purity, pdg-specific purity is possible
+                                                   /// 2 = rec pid (as is, without taking care of purities)
+                                                   /// 3 = rec pid with max. purity & purity > min. requested purity;
+                                                   /// 4 = rec pid with purity > min. requested purity, pdg-specific purity is possible
   void UseNoPID() { pid_mode_ = 0; }
   void UseMcPID() { pid_mode_ = 1; }
-  void UseRecPIDPurityMax() { pid_mode_ = 2; }
-  void UseRecPIDPurityMin() { pid_mode_ = 3; }
+  void UseRecPID() { pid_mode_ = 2; }
+  void UseRecPIDPurityMax() { pid_mode_ = 3; }
+  void UseRecPIDPurityMin() { pid_mode_ = 4; }
   void SetPidPurity(const float pid_purity) {
-    if (pid_mode_ != 2 && pid_mode_ != 3)
-      throw std::runtime_error("Pdg purity can only be set in pidmode 2 or 3");
+    if (pid_mode_ != 3 && pid_mode_ != 4)
+      throw std::runtime_error("Pdg purity can only be set in pidmode 3 or 4");
     for (int ipid = 0; ipid < pid_purity_.size(); ipid++)
       pid_purity_.at(ipid) = pid_purity;
   }
   void SetPidPurityProton(const float pid_purity) {
-    if (pid_mode_ != 3) {
-      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 3");
+    if (pid_mode_ != 4) {
+      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 4");
     } else
       pid_purity_.at(0) = pid_purity;
   };
   void SetPidPurityPion(const float pid_purity) {
-    if (pid_mode_ != 3) {
-      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 3");
+    if (pid_mode_ != 4) {
+      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 4");
     } else
       pid_purity_.at(1) = pid_purity;
   };
   void SetPidPurityKaon(const float pid_purity) {
-    if (pid_mode_ != 3) {
-      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 3");
+    if (pid_mode_ != 4) {
+      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 4");
     } else
       pid_purity_.at(2) = pid_purity;
   };
   void SetPidPurityDeuteron(const float pid_purity) {
-    if (pid_mode_ != 3) {
-      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 3");
+    if (pid_mode_ != 4) {
+      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 4");
     } else
       pid_purity_.at(3) = pid_purity;
   };
   void SetPidPurityBG(const float pid_purity) {
-    if (pid_mode_ != 3) {
-      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 3");
+    if (pid_mode_ != 4) {
+      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 4");
     } else
       pid_purity_.at(4) = pid_purity;
   };
