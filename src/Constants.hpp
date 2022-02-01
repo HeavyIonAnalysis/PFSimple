@@ -41,4 +41,9 @@ constexpr float lambda_mass_sigma = 1.5e-3;
 constexpr int NumberOfCovElements = 21;
 constexpr int NumberOfFieldPars = 10;
 
+constexpr int NumberOfPids = 5;
+
+constexpr std::array<int, NumberOfPids> pid_codes_rec = { 
+	     2212, 211, 321, 1000010020, 1
+};
 #endif// Constants_H
