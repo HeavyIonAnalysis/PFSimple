@@ -37,7 +37,7 @@ class ConverterIn : public AnalysisTree::Task {
   void SetPidMode(int value) { pid_mode_ = value; }/// selection mode for pid:
                                                    /// 0 = no pid
                                                    /// 1 = mc pid
-                                                   /// 2 = rec pid (as is, without taking care of purities)
+                                                   /// 2 = rec pid provided by Pid framework
                                                    /// 3 = rec pid with max. purity & purity > min. requested purity;
                                                    /// 4 = rec pid with purity > min. requested purity, pdg-specific purity is possible
   void UseNoPID() { pid_mode_ = 0; }
