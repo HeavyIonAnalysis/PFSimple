@@ -25,18 +25,18 @@ class Mother {
   void SetCutDistanceToSV(float distance_sv) { distance_sv_ = distance_sv; }
   void SetCutChi2Geo(float chi_2_geo) { chi2_geo_.at(0) = chi_2_geo; }
   void SetCutChi2GeoSM(std::vector<float> chi_2_geo_sm) {
-    for (std::size_t i = 1; i < chi_2_geo_sm.size()+1; ++i) chi2_geo_.at(i) = chi_2_geo_sm.at(i-1);
+    for (std::size_t i = 1; i < chi_2_geo_sm.size() + 1; ++i) chi2_geo_.at(i) = chi_2_geo_sm.at(i - 1);
   }
   void SetCutLdL(float ldl) { ldl_ = ldl; }
   void SetCutDecayLength(float l) { l_ = l; }
   void SetCutDistancePVLine(float distance_pv) { distance_pv_ = distance_pv; }
   void SetCutChi2Topo(float chi_2_topo) { chi2_topo_.at(0) = chi_2_topo; }
   void SetCutChi2TopoSM(std::vector<float> chi_2_topo_sm) {
-    for (std::size_t i = 1; i < chi_2_topo_sm.size()+1; ++i) chi2_topo_.at(i) = chi_2_topo_sm.at(i-1);
+    for (std::size_t i = 1; i < chi_2_topo_sm.size() + 1; ++i) chi2_topo_.at(i) = chi_2_topo_sm.at(i - 1);
   }
   void SetCutCosTopo(float cos_topo) { cos_topo_.at(0) = cos_topo; }
   void SetCutCosTopoSM(std::vector<float> cos_topo_sm) {
-    for (std::size_t i = 1; i < cos_topo_sm.size()+1; ++i) cos_topo_.at(i) = cos_topo_sm.at(i-1);
+    for (std::size_t i = 1; i < cos_topo_sm.size() + 1; ++i) cos_topo_.at(i) = cos_topo_sm.at(i - 1);
   }
 
   void CancelCutDistance() { this->SetCutDistance(huge_value); }

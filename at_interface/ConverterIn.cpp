@@ -11,13 +11,13 @@
 using namespace AnalysisTree;
 
 void ConverterIn::FillParticle(const AnalysisTree::BranchChannel& rec_particle) {
-  
+
   std::vector<float> mf(NumberOfFieldPars, 0.f);
-  for(int i=0; i<NumberOfFieldPars; i++)
+  for (int i = 0; i < NumberOfFieldPars; i++)
     mf.at(i) = rec_particle[mf_field_.at(i)];
 
   auto cov_matrix = is_shine_ ? GetCovMatrixShine(rec_particle) : GetCovMatrixCbm(rec_particle);
-  
+
   std::vector<float> par(kNumberOfTrackPars, 0.f);
   par.at(kX) = rec_particle[x_field_];
   par.at(kY) = rec_particle[y_field_];
@@ -41,32 +41,32 @@ void ConverterIn::FillParticle(const AnalysisTree::BranchChannel& rec_particle) 
     pdg = rec_particle[rec_pdg_field_];
     container_.AddTrack(par, cov_matrix, mf, q, pdg, id, nhits);
   } else {
-    if ((int)std::abs(rec_particle[rec_pdg_field_]) == 2) {
+    if ((int) std::abs(rec_particle[rec_pdg_field_]) == 2) {
       pdg = rec_particle[rec_pdg_field_];
       container_.AddTrack(par, cov_matrix, mf, q, pdg, id, nhits);
       return;
     }
 
     std::vector<float> pdg_prob;
-    pdg_prob.push_back(rec_particle[prob_p_field_]); 
+    pdg_prob.push_back(rec_particle[prob_p_field_]);
     pdg_prob.push_back(rec_particle[prob_pi_field_]);
-    pdg_prob.push_back(rec_particle[prob_K_field_]); 
+    pdg_prob.push_back(rec_particle[prob_K_field_]);
     pdg_prob.push_back(rec_particle[prob_d_field_]);
-    pdg_prob.push_back(rec_particle[prob_bg_field_]);     
+    pdg_prob.push_back(rec_particle[prob_bg_field_]);
 
     if (pid_mode_ == 3) {
       if (*std::max_element(pdg_prob.begin(), pdg_prob.end()) < pid_purity_.at(0))
         return;
       auto it_prob = std::max_element(pdg_prob.begin(), pdg_prob.end());
       int ipid = std::distance(pdg_prob.begin(), it_prob);
-      pdg = pid_codes_rec[ipid] * q;  // Will not work with He3, electrons, muons
+      pdg = pid_codes_rec[ipid] * q;// Will not work with He3, electrons, muons
       container_.AddTrack(par, cov_matrix, mf, q, pdg, id, nhits);
     }
 
     if (pid_mode_ == 4) {
       for (size_t ipid = 0; ipid < pid_codes_rec.size(); ipid++)
         if (pdg_prob[ipid] >= pid_purity_.at(ipid)) {
-          pdg = pid_codes_rec[ipid] * q;  // Will not work with He3, electrons, muons
+          pdg = pid_codes_rec[ipid] * q;// Will not work with He3, electrons, muons
           container_.AddTrack(par, cov_matrix, mf, q, pdg, id, nhits);
         }
     }
@@ -82,45 +82,45 @@ void ConverterIn::Init() {
   kf_tracks_ = chain->GetBranch(kf_tracks_name_);
   sim_tracks_ = chain->GetBranch(sim_tracks_name_);
   kf2sim_tracks_ = chain->GetMatching(kf_tracks_name_, sim_tracks_name_);
-  
-  for(auto& mf_comp : {"cx0", "cx1", "cx2", "cy0", "cy1", "cy2", "cz0", "cz1", "cz2", "z0"})
+
+  for (auto& mf_comp : {"cx0", "cx1", "cx2", "cy0", "cy1", "cy2", "cz0", "cz1", "cz2", "z0"})
     mf_field_.push_back(kf_tracks_.GetField(mf_comp));
-    
+
   x_field_ = kf_tracks_.GetField("x");
-  y_field_ = kf_tracks_.GetField("y");  
-  z_field_ = kf_tracks_.GetField("z");  
-  px_field_ = kf_tracks_.GetField("px");  
-  py_field_ = kf_tracks_.GetField("py");  
-  pz_field_ = kf_tracks_.GetField("pz");  
-    
-  q_field_ = kf_tracks_.GetField("q");  
-  mc_pdg_field_ = kf_tracks_.GetField("mc_pdg");  
+  y_field_ = kf_tracks_.GetField("y");
+  z_field_ = kf_tracks_.GetField("z");
+  px_field_ = kf_tracks_.GetField("px");
+  py_field_ = kf_tracks_.GetField("py");
+  pz_field_ = kf_tracks_.GetField("pz");
+
+  q_field_ = kf_tracks_.GetField("q");
+  mc_pdg_field_ = kf_tracks_.GetField("mc_pdg");
   nhits_field_ = kf_tracks_.GetField("nhits");
-    
-  if(pid_mode_>1)
-    rec_pdg_field_ = kf_tracks_.GetField("pid");  
-  
-  if(pid_mode_>2) {
-    prob_p_field_ = kf_tracks_.GetField("prob_p");  
-    prob_pi_field_ = kf_tracks_.GetField("prob_pi");  
-    prob_K_field_ = kf_tracks_.GetField("prob_K");  
-    prob_d_field_ = kf_tracks_.GetField("prob_d");  
+
+  if (pid_mode_ > 1)
+    rec_pdg_field_ = kf_tracks_.GetField("pid");
+
+  if (pid_mode_ > 2) {
+    prob_p_field_ = kf_tracks_.GetField("prob_p");
+    prob_pi_field_ = kf_tracks_.GetField("prob_pi");
+    prob_K_field_ = kf_tracks_.GetField("prob_K");
+    prob_d_field_ = kf_tracks_.GetField("prob_d");
     prob_bg_field_ = kf_tracks_.GetField("prob_bg");
   }
-  
+
   vtx_x_field_ = rec_event_header_.GetField("vtx_x");
   vtx_y_field_ = rec_event_header_.GetField("vtx_y");
   vtx_z_field_ = rec_event_header_.GetField("vtx_z");
-  
+
   tx_field_ = kf_tracks_.GetField("tx");
   ty_field_ = kf_tracks_.GetField("ty");
   qp_field_ = kf_tracks_.GetField("qp");
-  
+
   int Ncov = is_shine_ ? 21 : 15;
-  
-  for(int i=0; i<Ncov; i++)
-    cov_field_.push_back(kf_tracks_.GetField(("cov" + std::to_string(i+1)).c_str()));
-  
+
+  for (int i = 0; i < Ncov; i++)
+    cov_field_.push_back(kf_tracks_.GetField(("cov" + std::to_string(i + 1)).c_str()));
+
   mother_id_field_ = sim_tracks_.GetField("mother_id");
   sim_pdg_field_ = sim_tracks_.GetField("pid");
 
@@ -153,7 +153,7 @@ std::vector<float> ConverterIn::GetCovMatrixCbm(const AnalysisTree::BranchChanne
   const float tx = particle[tx_field_];
   const float ty = particle[ty_field_];
   const float qp = particle[qp_field_];
-  const float q =  particle[q_field_];
+  const float q = particle[q_field_];
 
   //calculate covariance matrix
   const float t = sqrt(1.f + tx * tx + ty * ty);
@@ -213,10 +213,10 @@ bool ConverterIn::CheckMotherPdgs(const AnalysisTree::BranchChannel& rec_track) 
   if (mother_pdgs_to_be_considered_.size() == 0)
     return true;
 
-//   if (!sim_tracks_ || !kf2sim_tracks_) {
-//     std::cout << "No MC info available!\n";
-//     assert(false);
-//   }
+  //   if (!sim_tracks_ || !kf2sim_tracks_) {
+  //     std::cout << "No MC info available!\n";
+  //     assert(false);
+  //   }
 
   const int sim_id = kf2sim_tracks_->GetMatch(rec_track.GetId());
   if (sim_id < 0)

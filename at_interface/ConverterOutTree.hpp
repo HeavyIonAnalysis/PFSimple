@@ -23,7 +23,7 @@ class ConverterOutTree : public AnalysisTree::Task {
   void SetOutFilename(const std::string out_file_name) { out_file_name_ = out_file_name; }
   void CopyParticle(const OutputContainer& kf_particle);
   void SetDecay(const Decay& decay) { decay_ = decay; }
-//   void SetPidMode(const int pid_mode) { pid_mode_ = pid_mode; }
+  //   void SetPidMode(const int pid_mode) { pid_mode_ = pid_mode; }
 
  protected:
   void MatchWithMc();
@@ -48,7 +48,7 @@ class ConverterOutTree : public AnalysisTree::Task {
   AnalysisTree::Matching* rec_to_mc_{nullptr};
   AnalysisTree::EventHeader* sim_events_{nullptr};
   Decay decay_{};
-//   int pid_mode_{0};
+  //   int pid_mode_{0};
 
   std::vector<OutputContainer> candidates_;
 

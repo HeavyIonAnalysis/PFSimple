@@ -189,10 +189,10 @@ bool SimpleFinder::IsGoodDaughter(const KFParticle& track, const Daughter& daugh
 }
 
 bool SimpleFinder::IsGoodPair(const KFParticle& track1,
-                                 const KFParticle& track2,
-                                 const Decay& decay) {
-  if(track1.Id() == track2.Id()) { return false; }
-  
+                              const KFParticle& track2,
+                              const Decay& decay) {
+  if (track1.Id() == track2.Id()) { return false; }
+
   const auto& daughters = decay.GetDaughters();
   CalculateParamsInPCA(track1, daughters[0].GetPdgHypo(), track2, daughters[1].GetPdgHypo());
   values_.distance = CalculateDistanceBetweenParticles(params_);
@@ -204,12 +204,12 @@ bool SimpleFinder::IsGoodPair(const KFParticle& track1,
 bool SimpleFinder::IsGoodThree(const KFParticle& track1,
                                const KFParticle& track2,
                                const KFParticle& track3,
-                                  const Decay& decay) {
+                               const Decay& decay) {
 
-  if(track1.Id() == track2.Id()) { return false; }
-  if(track1.Id() == track3.Id()) { return false; }
-  if(track2.Id() == track3.Id()) { return false; }
-  
+  if (track1.Id() == track2.Id()) { return false; }
+  if (track1.Id() == track3.Id()) { return false; }
+  if (track2.Id() == track3.Id()) { return false; }
+
   const auto& daughters = decay.GetDaughters();
 
   CalculateSecondaryVertex();

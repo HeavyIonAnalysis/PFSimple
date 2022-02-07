@@ -80,14 +80,14 @@ void ConverterOutTree::Exec() {
 
 void ConverterOutTree::Init() {
 
-//   if (pid_mode_ > 1) rec_tracks_name_ = "RecTracks";
+  //   if (pid_mode_ > 1) rec_tracks_name_ = "RecTracks";
 
   auto* man = AnalysisTree::TaskManager::GetInstance();
   auto* chain = man->GetChain();
 
   sim_events_ = ANALYSISTREE_UTILS_GET<AnalysisTree::EventHeader*>(chain->GetPointerToBranch(sim_events_name_));
   mc_particles_ = ANALYSISTREE_UTILS_GET<AnalysisTree::Particles*>(chain->GetPointerToBranch(mc_particles_name_));
-//   rec_tracks_ = ANALYSISTREE_UTILS_GET<AnalysisTree::TrackDetector*>(chain->GetPointerToBranch(rec_tracks_name_));
+  //   rec_tracks_ = ANALYSISTREE_UTILS_GET<AnalysisTree::TrackDetector*>(chain->GetPointerToBranch(rec_tracks_name_));
   rec_to_mc_ = chain->GetMatchPointers().find(config_->GetMatchName(rec_tracks_name_, mc_particles_name_))->second;
 
   out_file_ = TFile::Open(out_file_name_.c_str(), "RECREATE");
