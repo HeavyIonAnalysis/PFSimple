@@ -17,12 +17,12 @@ int main(int argc, char** argv) {
   const std::string& filename = argv[1];
   
 //   const int pid_mode = 0; // no pid (topo)
-  const int pid_mode = 1; // mc pid
-//   const int pid_mode = 2; // rec pid
+//   const int pid_mode = 1; // mc pid
+  const int pid_mode = 2; // rec pid
 
   // ******** Lambda *********************************
-  Daughter proton(2212);
-  Daughter pion(-211);
+  Daughter proton(2212, {2212, 2});
+  Daughter pion(-211, {-211, -2});
   Mother lambda(3122);
   
   proton.CancelCuts();
@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
   //**************************************************
   
   // ******* Xi - ************************************
-  Daughter pion_from_xi(-211);
+  Daughter pion_from_xi(-211, {-211, -2});
   Daughter lambda_from_xi(3122);
   Mother xi(3312);
   
@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
   //**************************************************
 
   // ******* Omega - ************************************
-  Daughter kaon_from_omega(-321);
+  Daughter kaon_from_omega(-321, {-321, -2});
   Daughter lambda_from_omega(3122);
   Mother omega(3334);
   
@@ -97,7 +97,7 @@ int main(int argc, char** argv) {
   
   auto* out_converter = new ConverterOut();
   out_converter->SetPFSimpleTask(pf_task);
-  out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "SimEventHeader", "RecEventHeader"});
+  out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "RecParticles", "SimEventHeader", "RecEventHeader"});
   
 //   AnalysisTree::Cuts* post_cuts = new AnalysisTree::Cuts("post_cuts", {AnalysisTree::RangeCut("Candidates.generation", 0.9, 100)});
 //   AnalysisTree::Cuts* post_cuts = new AnalysisTree::Cuts("post_cuts", {AnalysisTree::EqualsCut("Candidates.generation", 0)});
