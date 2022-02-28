@@ -36,18 +36,27 @@ int main(int argc, char** argv) {
   //   //****************************************
 
   // ******** default kfpf cuts *************
-  //   const int pid_mode = 1;
-  const int pid_mode = 2;
-  Daughter proton(2212, {2212, 2});// for MC-PID
-  Daughter pion(-211, {-211, -2});
-  Daughter pion_plus(211, {211, 2});
-  Daughter pion_minus(-211, {-211, -2});
+  
+//   const int pid_mode = 0;    // no-PID
+//   Daughter proton(2212, {1});
+//   Daughter pion(-211, {-1});
+//   Daughter pion_plus(211, {1});
+//   Daughter pion_minus(-211, {-1});  
+  
+  
+  const int pid_mode = 1;       // MC-PID
+  Daughter proton(2212);
+  Daughter pion(-211);
+  Daughter pion_plus(211);
+  Daughter pion_minus(-211);    
+  
+  
+//   const int pid_mode = 2;
+//   Daughter proton(2212, {2212, 2});// for TOF-PID
+//   Daughter pion(-211, {-211, -2});
+//   Daughter pion_plus(211, {211, 2});
+//   Daughter pion_minus(-211, {-211, -2});
 
-  //   const int pid_mode = 0;
-  //   Daughter proton(2212, {1});       // for no-PID
-  //   Daughter pion(-211, {-1});
-  //   Daughter pion_plus(211, {1});
-  //   Daughter pion_minus(-211, {-1});
 
   proton.SetCutChi2Prim(18.42);
   pion_plus.SetCutChi2Prim(18.42);
@@ -80,10 +89,21 @@ int main(int argc, char** argv) {
 
   auto* man = TaskManager::GetInstance();
   man->SetOutputName("PFSimpleOutput.root", "pTree");
+  
+  std::string tree_name;
+  std::string rec_tracks_name;
+  if(pid_mode < 2) {
+    tree_name = "rTree";
+    rec_tracks_name = "VtxTracks";
+  }
+  else {
+    tree_name = "aTree";
+    rec_tracks_name = "RecParticles";
+  }
 
   auto* in_converter = new ConverterIn();
   in_converter->SetRecEventHeaderName("RecEventHeader");
-  in_converter->SetRecTracksName("RecParticles");
+  in_converter->SetRecTracksName(rec_tracks_name);
   in_converter->SetSimTracksName("SimParticles");
   
 
@@ -95,7 +115,7 @@ int main(int argc, char** argv) {
 
   //   in_converter->SetMotherPdgsToBeConsidered({3122});
 
-  in_converter->SetTrackCuts(new Cuts("Cut to reproduce KFPF", {EqualsCut("RecParticles.pass_cuts", 1)}));
+  in_converter->SetTrackCuts(new Cuts("Cut to reproduce KFPF", {EqualsCut((rec_tracks_name + ".pass_cuts").c_str(), 1)}));
   in_converter->SetIsShine(false);//TODO maybe change name
   in_converter->SetPidMode(pid_mode);
   //   in_converter->SetPidPurity(min_pur);
@@ -106,7 +126,7 @@ int main(int argc, char** argv) {
 
   auto* out_converter = new ConverterOut();
   out_converter->SetSimEventHeaderName("SimEventHeader");
-  out_converter->SetRecTracksName("RecParticles");
+  out_converter->SetRecTracksName(rec_tracks_name);
   out_converter->SetSimTracksName("SimParticles");
   out_converter->SetPFSimpleTask(pf_task);
   out_converter->SetDecay(lambda_pi_p);
@@ -120,7 +140,7 @@ int main(int argc, char** argv) {
   man->AddTask(pf_task);
   man->AddTask(out_converter);
 
-  man->Init({filename}, {"aTree"});
+  man->Init({filename}, {tree_name});
   man->Run(-1);// -1 = all events
                //   man->Run(9900);// -1 = all events
   man->Finish();
