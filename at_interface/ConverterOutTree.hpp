@@ -23,8 +23,10 @@ class ConverterOutTree : public AnalysisTree::Task {
   void SetOutFilename(const std::string out_file_name) { out_file_name_ = out_file_name; }
   void CopyParticle(const OutputContainer& kf_particle);
   void SetDecay(const Decay& decay) { decay_ = decay; }
-  //   void SetPidMode(const int pid_mode) { pid_mode_ = pid_mode; }
-
+  void SetSimEventHeaderName(const std::string& name) { sim_events_name_ = name; }
+  void SetRecTracksName(const std::string& name) { rec_tracks_name_ = name; }
+  void SetSimTracksName(const std::string& name) { mc_particles_name_ = name; }
+  
  protected:
   void MatchWithMc();
   int GetMothersSimId();
@@ -39,9 +41,9 @@ class ConverterOutTree : public AnalysisTree::Task {
   TTree* out_match_{nullptr};
 
   // input branches
-  std::string mc_particles_name_{"SimParticles"};
-  std::string rec_tracks_name_{"VtxTracks"};
-  std::string sim_events_name_{"SimEventHeader"};
+  std::string mc_particles_name_;
+  std::string rec_tracks_name_;
+  std::string sim_events_name_;
 
   AnalysisTree::Particles* mc_particles_{nullptr};
   AnalysisTree::TrackDetector* rec_tracks_{nullptr};

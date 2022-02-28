@@ -25,8 +25,11 @@ class ConverterOut : public AnalysisTree::Task {
   void CopyParticle(const OutputContainer& kf_particle, AnalysisTree::Particle& particle) const;
   void SetDecay(const Decay& decay) { decay_ = decay; }
   void SetOutputCuts(AnalysisTree::Cuts* output_cuts) { output_cuts_ = output_cuts; }
-  //   void SetPidMode(const int pid_mode) { pid_mode_ = pid_mode; }
-
+  
+  void SetSimEventHeaderName(const std::string& name) { sim_events_name_ = name; }
+  void SetRecTracksName(const std::string& name) { rec_tracks_name_ = name; }
+  void SetSimTracksName(const std::string& name) { mc_particles_name_ = name; }
+  
  protected:
   void InitIndexes();
   void MatchWithMc(AnalysisTree::Particle& particle);
@@ -41,7 +44,7 @@ class ConverterOut : public AnalysisTree::Task {
 
   // input branches
   std::string mc_particles_name_{"SimParticles"};
-  std::string rec_tracks_name_{"VtxTracks"};
+  std::string rec_tracks_name_{"RecParticles"};
   std::string sim_events_name_{"SimEventHeader"};
 
   AnalysisTree::Particles* mc_particles_{nullptr};

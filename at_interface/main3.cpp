@@ -56,11 +56,13 @@ int main(int argc, char** argv) {
   //man->SetOutputName("PFSimpleOutput.root", "pTree");
 
   auto* in_converter = new ConverterIn();
+  in_converter->SetRecEventHeaderName("RecEventHeader");
+  in_converter->SetRecTracksName(tracks_name);
+  in_converter->SetSimTracksName("SimParticles");  
   in_converter->SetTrackCuts(new AnalysisTree::Cuts("Cut to reproduce KFPF", {AnalysisTree::EqualsCut(tracks_name + ".pass_cuts", 1)}));
-  in_converter->SetInputBranchNames({"SimParticles", tracks_name, "SimEventHeader", "RecEventHeader"});
   in_converter->SetIsShine(false);//TODO maybe change name
   in_converter->SetPidMode(pid_mode);
-  if (pid_mode > 1) {
+  if (pid_mode > 2) {
     in_converter->SetPidPurity(purity);
     //in_converter->SetPidPurityProton(purity_pdg.at(0)); // in pid-mode 3 pdg-specific purity possible
     //in_converter->SetPidPurityPion(purity_pdg.at(1));
@@ -72,8 +74,10 @@ int main(int argc, char** argv) {
   pf_task->SetDecays({decay});
 
   auto* out_converter = new ConverterOutTree();
+  out_converter->SetSimEventHeaderName("SimEventHeader");
+  out_converter->SetRecTracksName("RecParticles");
+  out_converter->SetSimTracksName("SimParticles");
   out_converter->SetPFSimpleTask(pf_task);
-  out_converter->SetInputBranchNames({"SimParticles", tracks_name, "SimEventHeader", "RecEventHeader"});
   out_converter->SetDecay(decay);
   //   out_converter->SetPidMode(pid_mode);
   out_converter->SetOutFilename(outfilename);

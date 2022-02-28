@@ -18,12 +18,7 @@ class Cuts;
 class ConverterIn : public AnalysisTree::Task {
 
  public:
-  explicit ConverterIn() {
-    rec_event_header_name_ = "RecEventHeader";
-    sim_event_header_name_ = "SimEventHeader";
-    kf_tracks_name_ = "VtxTracks";
-    sim_tracks_name_ = "SimParticles";
-  }
+  explicit ConverterIn() {}
   ~ConverterIn() override = default;
 
   void Init() override;
@@ -40,6 +35,11 @@ class ConverterIn : public AnalysisTree::Task {
                                                    /// 2 = rec pid provided by Pid framework
                                                    /// 3 = rec pid with max. purity & purity > min. requested purity;
                                                    /// 4 = rec pid with purity > min. requested purity, pdg-specific purity is possible
+                                                   
+  void SetRecEventHeaderName(const std::string& name) { rec_event_header_name_ = name; }
+  void SetRecTracksName(const std::string& name) { kf_tracks_name_ = name; }
+  void SetSimTracksName(const std::string& name) { sim_tracks_name_ = name; }
+  
   void UseNoPID() { pid_mode_ = 0; }
   void UseMcPID() { pid_mode_ = 1; }
   void UseRecPID() { pid_mode_ = 2; }
@@ -93,14 +93,12 @@ class ConverterIn : public AnalysisTree::Task {
   AnalysisTree::Branch sim_tracks_;
   AnalysisTree::Matching* kf2sim_tracks_{nullptr};
   AnalysisTree::Branch rec_event_header_;
-  AnalysisTree::Branch sim_event_header_;
   AnalysisTree::Cuts* track_cuts_{nullptr};
   std::vector<int> mother_pdgs_to_be_considered_;
 
   InputContainer container_;
 
   std::string rec_event_header_name_;
-  std::string sim_event_header_name_;
   std::string kf_tracks_name_;
   std::string sim_tracks_name_;
 
