@@ -39,11 +39,11 @@ class ConverterOut : public AnalysisTree::Task {
 
   // input branches
   std::string mc_particles_name_{"SimParticles"};
-  std::string rec_tracks_name_{"VtxTracks"};
+  std::string rec_tracks_name_{"RecParticles"};
   std::string sim_events_name_{"SimEventHeader"};
 
   AnalysisTree::Particles* mc_particles_{nullptr};
-  AnalysisTree::TrackDetector* rec_tracks_{nullptr};
+  AnalysisTree::Particles* rec_tracks_{nullptr};
   AnalysisTree::Matching* rec_to_mc_{nullptr};
   AnalysisTree::EventHeader* sim_events_{nullptr};
   AnalysisTree::Cuts* output_cuts_{nullptr};

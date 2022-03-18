@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
   //**************************************************
 
   // ******* Omega - ************************************
-  Daughter kaon_from_omega(-321, {-321, -2});
+  Daughter kaon_from_omega(-321, {-321});
   Daughter lambda_from_omega(3122);
   Mother omega(3334);
   
@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
   man->SetOutputName("PFSimpleOutput.root");
   
   auto* in_converter = new ConverterIn();
-  in_converter->SetTrackCuts(new AnalysisTree::Cuts("Cut to reproduce KFPF", {AnalysisTree::EqualsCut("VtxTracks.pass_cuts", 1)}));
+  in_converter->SetTrackCuts(new AnalysisTree::Cuts("Cut to reproduce KFPF", {AnalysisTree::EqualsCut("RecParticles.pass_cuts", 1)}));
   in_converter->SetIsShine(false);//TODO maybe change name
   in_converter->SetPidMode(pid_mode);
   
@@ -97,7 +97,7 @@ int main(int argc, char** argv) {
   
   auto* out_converter = new ConverterOut();
   out_converter->SetPFSimpleTask(pf_task);
-  out_converter->SetInputBranchNames({"SimParticles", "VtxTracks", "RecParticles", "SimEventHeader", "RecEventHeader"});
+  out_converter->SetInputBranchNames({"SimParticles", "RecParticles", "SimEventHeader", "RecEventHeader"});
   
 //   AnalysisTree::Cuts* post_cuts = new AnalysisTree::Cuts("post_cuts", {AnalysisTree::RangeCut("Candidates.generation", 0.9, 100)});
 //   AnalysisTree::Cuts* post_cuts = new AnalysisTree::Cuts("post_cuts", {AnalysisTree::EqualsCut("Candidates.generation", 0)});

@@ -21,7 +21,7 @@ class ConverterIn : public AnalysisTree::Task {
   explicit ConverterIn() {
     rec_event_header_name_ = "RecEventHeader";
     sim_event_header_name_ = "SimEventHeader";
-    kf_tracks_name_ = "VtxTracks";
+    kf_tracks_name_ = "RecParticles";
     sim_tracks_name_ = "SimParticles";
   }
   ~ConverterIn() override = default;
