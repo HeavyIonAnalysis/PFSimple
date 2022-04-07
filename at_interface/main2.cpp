@@ -18,73 +18,36 @@ int main(int argc, char** argv) {
   const bool make_plain_tree{false};
 
   const std::string& filename = argv[1];
-
-  //   // ******** optimized cuts ***************
-  //     Daughter proton(2212);
-  //     Daughter pion(-211);
-  //
-  //     proton.SetCutChi2Prim(26);
-  //     proton.SetCutCos(0.99825);
-  //
-  //     pion.SetCutChi2Prim(110);
-  //
-  //     Mother lambda(3122);
-  //     lambda.SetCutChi2Geo(11);
-  //     lambda.SetCutChi2Topo(29);
-  //     lambda.SetCutDistance(0.15);
-  //     lambda.SetCutLdL(4);
-  //   //****************************************
-
-  // ******** default kfpf cuts *************
-  
-//   const int pid_mode = 0;    // no-PID
-//   Daughter proton(2212, {1});
-//   Daughter pion(-211, {-1});
-//   Daughter pion_plus(211, {1});
-//   Daughter pion_minus(-211, {-1});  
-  
   
   const int pid_mode = 1;       // MC-PID
   Daughter proton(2212);
   Daughter pion(-211);
-  Daughter pion_plus(211);
-  Daughter pion_minus(-211);    
-  
-  
-//   const int pid_mode = 2;
-//   Daughter proton(2212, {2212, 2});// for TOF-PID
-//   Daughter pion(-211, {-211, -2});
-//   Daughter pion_plus(211, {211, 2});
-//   Daughter pion_minus(-211, {-211, -2});
 
-
-  proton.SetCutChi2Prim(18.42);
-  pion_plus.SetCutChi2Prim(18.42);
-
-  pion.SetCutChi2Prim(18.42);
-  pion_minus.SetCutChi2Prim(18.42);
+  proton.SetCutChi2Prim(2);
+  pion.SetCutChi2Prim(2);
 
   Mother lambda(3122);
   lambda.SetCutChi2Geo(3);
   lambda.SetCutDistance(1);
   lambda.SetCutLdL(5);
 
+//  proton.CancelCuts();
+//  pion.CancelCuts();
+//  lambda.CancelCuts();
+
+  Decay lambda_pi_p("lambda", lambda, {pion, proton});
+
+
+  Daughter pion_plus(211);
+  Daughter pion_minus(-211);
+  pion_plus.SetCutChi2Prim(2);
+  pion_minus.SetCutChi2Prim(2);
+
   Mother kshort(310);
   kshort.SetCutChi2Geo(3);
   kshort.SetCutDistance(1);
   kshort.SetCutLdL(5);
-  // ***************************************
 
-  //   // ******** no cuts **********************
-  //   Daughter proton(2212);
-  //   Daughter pion(-211);
-  //   Mother lambda(3122);
-  //   proton.CancelCuts();
-  //   pion.CancelCuts();
-  //   lambda.CancelCuts();
-  //   // ***************************************
-
-  Decay lambda_pi_p("lambda", lambda, {pion, proton});
   Decay kshort_pi_pi("kshort", kshort, {pion_minus, pion_plus});
 
   auto* man = TaskManager::GetInstance();
@@ -106,15 +69,6 @@ int main(int argc, char** argv) {
   in_converter->SetRecTracksName(rec_tracks_name);
   in_converter->SetSimTracksName("SimParticles");
   
-
-  //   SimpleCut kfpf_cut = EqualsCut("VtxTracks.pass_cuts", 1);
-  //   SimpleCut mother_cut = EqualsCut("VtxTracks.mother_pdg", 3122);
-  //   SimpleCut several_mother_cut = SimpleCut({"VtxTracks.mother_pdg"}, []( std::vector<double>& var ) { return std::fabs(var.at(0)-3122)<0.1 || std::fabs(var.at(0)-3312)<0.1; });
-  //   Cuts* cuts = new Cuts("cuts", {kfpf_cut, several_mother_cut});
-  //   in_converter->SetTrackCuts(cuts);
-
-  //   in_converter->SetMotherPdgsToBeConsidered({3122});
-
   in_converter->SetTrackCuts(new Cuts("Cut to reproduce KFPF", {EqualsCut((rec_tracks_name + ".pass_cuts").c_str(), 1)}));
   in_converter->SetIsShine(false);//TODO maybe change name
   in_converter->SetPidMode(pid_mode);
