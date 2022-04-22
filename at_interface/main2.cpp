@@ -152,14 +152,13 @@ int main(int argc, char** argv) {
     filelist << "PFSimpleOutput.root\n";
     filelist.close();
 
-    man->SetOutputName("PFSimplePlainTree.root", "plain_tree");
-
     //    auto* tree_task_events = new PlainTreeFiller();
     //    std::string branchname_events = "Events";
     //    tree_task_events->SetInputBranchNames({branchname_events});
     //    tree_task_events->AddBranch(branchname_events);
 
     auto* tree_task = new PlainTreeFiller();
+    tree_task->SetOutputName("PFSimplePlainTree.root", "plain_tree");
     std::string branchname_rec = "Candidates";
     tree_task->SetInputBranchNames({branchname_rec});
     tree_task->AddBranch(branchname_rec);
