@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.14)
 project(PFSimple CXX)
 set(PROJECT_VERSION 1.0)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
 if(NOT DEFINED CMAKE_CXX_STANDARD)
     set(CMAKE_CXX_STANDARD 17)
 endif()
@@ -57,7 +59,7 @@ if(KFParticle_FOUND)
     include_directories(${KFParticle_INCLUDE_DIR} ${Vc_INCLUDE_DIR})
 else()
     Message("KFParticle is not found. It will be installed as external package")
-    include(cmake_modules/KFParticle.cmake)
+    include(KFParticle)
     include_directories(${CMAKE_SOURCE_DIR} ${ROOT_INCLUDE_DIRS} ${PROJECT_INCLUDE_DIRECTORIES} ${Vc_INCLUDE_DIR})
 endIf()
 message(STATUS "PROJECT_INCLUDE_DIRECTORIES ${PROJECT_INCLUDE_DIRECTORIES}")
@@ -66,7 +68,7 @@ message(STATUS "Using ROOT: ${ROOT_VERSION} <${ROOT_CONFIG}>")
 include_directories(${CMAKE_SOURCE_DIR} ${ROOT_INCLUDE_DIRS})
 include(${ROOT_USE_FILE})
 
-include(cmake_modules/AnalysisTree.cmake)
+include(AnalysisTree)
 
 if (AnalysisTree_FOUND OR PFSimple_BUNDLED_AT)
     add_subdirectory(at_interface)
@@ -74,6 +76,7 @@ endif ()
 
 add_subdirectory(src)
 add_subdirectory(src/interface)
+include(TestsSetupPFSimple)
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(

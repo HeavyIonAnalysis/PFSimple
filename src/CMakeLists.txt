@@ -20,6 +20,21 @@ target_link_libraries(KFParticleSimple ${ROOT_LIBRARIES} KFParticle KFParticleIn
 
 add_target_property(KFParticleSimple COMPILE_FLAGS "-DDO_TPCCATRACKER_EFF_PERFORMANCE -DNonhomogeneousField -DCBM -DUSE_TIMERS")
 
+if(PFSimple_BUILD_TESTS)
+    enable_testing()
+    include(GoogleTest)
+
+    set(TEST_SOURCES
+                    Daughter.test.cpp
+                    Mother.test.cpp
+                    Decay.test.cpp
+                    )
+
+    add_executable(PFSimple_UnitTests ${TEST_SOURCES})
+    target_link_libraries(PFSimple_UnitTests  PRIVATE KFParticleSimple gtest_main)
+    gtest_discover_tests(PFSimple_UnitTests TEST_PREFIX PFSimple_)
+endif()
+
 set(PCM_FILE_NAME libKFParticleSimple)
 install(FILES ${HEADERS} ${NODICT_HEADERS} DESTINATION include)
 #install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}KFParticle.rootmap DESTINATION lib)

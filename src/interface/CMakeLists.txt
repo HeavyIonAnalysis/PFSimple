@@ -20,6 +20,21 @@ target_link_libraries(KFParticleInterface ${ROOT_LIBRARIES} KFParticle ${Vc_LIBR
 
 add_target_property(KFParticleInterface COMPILE_FLAGS "-DDO_TPCCATRACKER_EFF_PERFORMANCE -DNonhomogeneousField -DCBM -DUSE_TIMERS")
 
+if(PFSimple_BUILD_TESTS)
+    enable_testing()
+    include(GoogleTest)
+
+    set(TEST_SOURCES
+                    InputContainer.test.cpp
+                    OutputContainer.test.cpp
+                    )
+
+    add_executable(PFSimpleInterface_UnitTests ${TEST_SOURCES})
+    target_link_libraries(PFSimpleInterface_UnitTests  PRIVATE KFParticleSimple gtest_main)
+    add_target_property(PFSimpleInterface_UnitTests COMPILE_FLAGS "-DDO_TPCCATRACKER_EFF_PERFORMANCE -DNonhomogeneousField -DCBM -DUSE_TIMERS")
+    gtest_discover_tests(PFSimpleInterface_UnitTests TEST_PREFIX PFSimpleInterface_)
+endif()
+
 set(PCM_FILE_NAME libKFParticleInterface)
 install(FILES ${HEADERS} DESTINATION include)
 
