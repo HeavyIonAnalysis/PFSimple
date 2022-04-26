@@ -18,9 +18,6 @@ class Mother {
 
   explicit Mother(Pdg_t pdg) : pdg_(pdg) {}
 
-  //  Mother(float distance, float chi_2_geo, float ldl, float chi_2_topo)
-  //      : distance_(distance), chi2_geo_(chi_2_geo), ldl_(ldl), chi2_topo_(chi_2_topo) {}
-
   void SetCutDistance(float distance) { distance_ = distance; }
   void SetCutDistanceToSV(float distance_sv) { distance_sv_ = distance_sv; }
   void SetCutChi2Geo(float chi_2_geo) { chi2_geo_.at(0) = chi_2_geo; }

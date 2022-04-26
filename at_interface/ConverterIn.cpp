@@ -27,23 +27,22 @@ void ConverterIn::FillParticle(const AnalysisTree::BranchChannel& rec_particle) 
   par.at(kPz) = rec_particle[pz_field_];
 
   const int q = rec_particle[q_field_];
-  const int nhits = rec_particle[nhits_field_];
   const int id = rec_particle.GetId();
 
   int pdg = -999;
   if (pid_mode_ == 0) {
     pdg = q;
-    container_.AddTrack(par, cov_matrix, mf, q, pdg, id, nhits);
+    container_.AddTrack(par, cov_matrix, mf, q, pdg, id);
   } else if (pid_mode_ == 1) {
     pdg = rec_particle[mc_pdg_field_];
-    container_.AddTrack(par, cov_matrix, mf, q, pdg, id, nhits);
+    container_.AddTrack(par, cov_matrix, mf, q, pdg, id);
   } else if (pid_mode_ == 2) {
     pdg = rec_particle[rec_pdg_field_];
-    container_.AddTrack(par, cov_matrix, mf, q, pdg, id, nhits);
+    container_.AddTrack(par, cov_matrix, mf, q, pdg, id);
   } else {
     if ((int) std::abs(rec_particle[rec_pdg_field_]) == 2) {
       pdg = rec_particle[rec_pdg_field_];
-      container_.AddTrack(par, cov_matrix, mf, q, pdg, id, nhits);
+      container_.AddTrack(par, cov_matrix, mf, q, pdg, id);
       return;
     }
 
@@ -60,14 +59,14 @@ void ConverterIn::FillParticle(const AnalysisTree::BranchChannel& rec_particle) 
       auto it_prob = std::max_element(pdg_prob.begin(), pdg_prob.end());
       int ipid = std::distance(pdg_prob.begin(), it_prob);
       pdg = pid_codes_rec[ipid] * q;// Will not work with He3, electrons, muons
-      container_.AddTrack(par, cov_matrix, mf, q, pdg, id, nhits);
+      container_.AddTrack(par, cov_matrix, mf, q, pdg, id);
     }
 
     if (pid_mode_ == 4) {
       for (size_t ipid = 0; ipid < pid_codes_rec.size(); ipid++)
         if (pdg_prob[ipid] >= pid_purity_.at(ipid)) {
           pdg = pid_codes_rec[ipid] * q;// Will not work with He3, electrons, muons
-          container_.AddTrack(par, cov_matrix, mf, q, pdg, id, nhits);
+          container_.AddTrack(par, cov_matrix, mf, q, pdg, id);
         }
     }
   }
@@ -94,7 +93,6 @@ void ConverterIn::Init() {
 
   q_field_ = kf_tracks_.GetField("q");
   mc_pdg_field_ = kf_tracks_.GetField("mc_pdg");
-  nhits_field_ = kf_tracks_.GetField("nhits");
 
   if (pid_mode_ > 1)
     rec_pdg_field_ = kf_tracks_.GetField("pid");

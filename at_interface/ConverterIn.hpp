@@ -115,7 +115,6 @@ class ConverterIn : public AnalysisTree::Task {
 
   AnalysisTree::Field q_field_;
   AnalysisTree::Field mc_pdg_field_;
-  AnalysisTree::Field nhits_field_;
 
   AnalysisTree::Field rec_pdg_field_;
   AnalysisTree::Field prob_p_field_;
