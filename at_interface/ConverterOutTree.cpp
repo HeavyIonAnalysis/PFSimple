@@ -79,7 +79,7 @@ void ConverterOutTree::Exec() {
 }
 
 void ConverterOutTree::Init() {
-  
+
   this->SetInputBranchNames({sim_events_name_, rec_tracks_name_, mc_particles_name_});
 
   auto* man = AnalysisTree::TaskManager::GetInstance();

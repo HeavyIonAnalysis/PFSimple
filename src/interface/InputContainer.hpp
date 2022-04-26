@@ -56,7 +56,6 @@ class InputContainer {
   void Reserve(size_t n);
 
  protected:
-
   KFVertex vtx_;
   std::vector<KFParticle> tracks_{};
 };

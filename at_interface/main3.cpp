@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
   auto* in_converter = new ConverterIn();
   in_converter->SetRecEventHeaderName("RecEventHeader");
   in_converter->SetRecTracksName(tracks_name);
-  in_converter->SetSimTracksName("SimParticles");  
+  in_converter->SetSimTracksName("SimParticles");
   in_converter->SetTrackCuts(new AnalysisTree::Cuts("Cut to reproduce KFPF", {AnalysisTree::EqualsCut(tracks_name + ".pass_cuts", 1)}));
   in_converter->SetIsShine(false);//TODO maybe change name
   in_converter->SetPidMode(pid_mode);

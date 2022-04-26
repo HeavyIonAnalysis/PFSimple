@@ -26,7 +26,7 @@ class ConverterOutTree : public AnalysisTree::Task {
   void SetSimEventHeaderName(const std::string& name) { sim_events_name_ = name; }
   void SetRecTracksName(const std::string& name) { rec_tracks_name_ = name; }
   void SetSimTracksName(const std::string& name) { mc_particles_name_ = name; }
-  
+
  protected:
   void MatchWithMc();
   int GetMothersSimId();

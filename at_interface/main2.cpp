@@ -35,27 +35,24 @@ int main(int argc, char** argv) {
   //   //****************************************
 
   // ******** default kfpf cuts *************
-  
-//   const int pid_mode = 0;    // no-PID
-//   Daughter proton(2212, {1});
-//   Daughter pion(-211, {-1});
-//   Daughter pion_plus(211, {1});
-//   Daughter pion_minus(-211, {-1});  
-  
-  
-  const int pid_mode = 1;       // MC-PID
+
+  //   const int pid_mode = 0;    // no-PID
+  //   Daughter proton(2212, {1});
+  //   Daughter pion(-211, {-1});
+  //   Daughter pion_plus(211, {1});
+  //   Daughter pion_minus(-211, {-1});
+
+  const int pid_mode = 1;// MC-PID
   Daughter proton(2212);
   Daughter pion(-211);
   Daughter pion_plus(211);
-  Daughter pion_minus(-211);    
-  
-  
-//   const int pid_mode = 2;
-//   Daughter proton(2212, {2212, 2});// for TOF-PID
-//   Daughter pion(-211, {-211, -2});
-//   Daughter pion_plus(211, {211, 2});
-//   Daughter pion_minus(-211, {-211, -2});
+  Daughter pion_minus(-211);
 
+  //   const int pid_mode = 2;
+  //   Daughter proton(2212, {2212, 2});// for TOF-PID
+  //   Daughter pion(-211, {-211, -2});
+  //   Daughter pion_plus(211, {211, 2});
+  //   Daughter pion_minus(-211, {-211, -2});
 
   proton.SetCutChi2Prim(18.42);
   pion_plus.SetCutChi2Prim(18.42);
@@ -88,14 +85,13 @@ int main(int argc, char** argv) {
 
   auto* man = TaskManager::GetInstance();
   man->SetOutputName("PFSimpleOutput.root", "pTree");
-  
+
   std::string tree_name;
   std::string rec_tracks_name;
-  if(pid_mode < 2) {
+  if (pid_mode < 2) {
     tree_name = "rTree";
     rec_tracks_name = "VtxTracks";
-  }
-  else {
+  } else {
     tree_name = "aTree";
     rec_tracks_name = "RecParticles";
   }
@@ -104,7 +100,6 @@ int main(int argc, char** argv) {
   in_converter->SetRecEventHeaderName("RecEventHeader");
   in_converter->SetRecTracksName(rec_tracks_name);
   in_converter->SetSimTracksName("SimParticles");
-  
 
   //   SimpleCut kfpf_cut = EqualsCut("VtxTracks.pass_cuts", 1);
   //   SimpleCut mother_cut = EqualsCut("VtxTracks.mother_pdg", 3122);

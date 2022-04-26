@@ -35,11 +35,11 @@ class ConverterIn : public AnalysisTree::Task {
                                                    /// 2 = rec pid provided by Pid framework
                                                    /// 3 = rec pid with max. purity & purity > min. requested purity;
                                                    /// 4 = rec pid with purity > min. requested purity, pdg-specific purity is possible
-                                                   
+
   void SetRecEventHeaderName(const std::string& name) { rec_event_header_name_ = name; }
   void SetRecTracksName(const std::string& name) { kf_tracks_name_ = name; }
   void SetSimTracksName(const std::string& name) { sim_tracks_name_ = name; }
-  
+
   void UseNoPID() { pid_mode_ = 0; }
   void UseMcPID() { pid_mode_ = 1; }
   void UseRecPID() { pid_mode_ = 2; }
