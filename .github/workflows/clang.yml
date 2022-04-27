@@ -1,0 +1,15 @@
+name: Clang Format Checker
+on:
+  push:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  clang-format-checking:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: RafikFarhad/clang-format-github-action@v2.0.0
+        with:
+          sources: "src/*.*pp, src/interface/*.*pp at_interface/*.*pp
+          style: file
