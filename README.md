@@ -4,37 +4,37 @@
 
 The Paticle Finder Simple package is simplified version of the KF Partice package based on its mathematical apparatus. It is developed for the complete reconstruction of short-lived particles with their momentum, energy, mass, lifetime, decaylength, rapidity, etc.
 
-## Pre-requirements
+## Requirements
 
 ### Root
 
-ROOT6 is needed for installation:
+https://root.cern/install/
 
-https://root.cern/install/build_from_source/
+Version 6.20 or newer is recommended. Root with c++17 standard is strongly recommended.
 
-Follow instructions
-    
-### AnalysisTree (optional)
+### AnalysisTree
 
-AnalysisTree is needed for usage the interface based on AnalysisTree. If it is not installed, the PFSimple will be installed without this interface.
+Optional. Needed for building AnalysisTree interface.
 
 https://github.com/HeavyIonAnalysis/AnalysisTree
 
-Follow instructions. Use v2.2.0 tag.
+Both pre-installed AnalysisTree and automatically installed together with PFSimple framework can be used (see chapter Installation)
+
+AnalysisTree with c++17 standard is strongly recommended.
 
 ## Installation
 
 Clone PFSimple
-
-    git clone git@git.cbm.gsi.de:pwg-c2f/analysis/pf_simple.git
     
 Source ROOT
 
     source /path-to-root/install/bin/thisroot.sh
     
-Export AnalysisTree libraries
-
+To use pre-installed AnalysisTree set the environment variable:
     export AnalysisTree_DIR=/path-to-analysistree/install/lib/cmake/AnalysisTree
+To build AnalysisTree automatically together with PFSimple use following cmake keys:
+    -DPFSimple_BUNDLED_AT=ON
+    -DPFSimple_BUNDLED_AT_VERSION=v2.2.7
     
 You need to source root and export AnalysisTree each time when you are compiling project from 0 (perform cmake command) but have no need to do it when just recompiling project (perform just make).
     
