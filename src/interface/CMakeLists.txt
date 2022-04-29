@@ -30,8 +30,9 @@ if(PFSimple_BUILD_TESTS)
                     )
 
     add_executable(PFSimpleInterface_UnitTests ${TEST_SOURCES})
-    target_link_libraries(PFSimpleInterface_UnitTests  PRIVATE KFParticleSimple gtest_main)
+    add_dependencies(PFSimpleInterface_UnitTests KFParticleInterface)
     add_target_property(PFSimpleInterface_UnitTests COMPILE_FLAGS "-DDO_TPCCATRACKER_EFF_PERFORMANCE -DNonhomogeneousField -DCBM -DUSE_TIMERS")
+    target_link_libraries(PFSimpleInterface_UnitTests  PRIVATE KFParticleInterface KFParticle Vc gtest_main)
     gtest_discover_tests(PFSimpleInterface_UnitTests TEST_PREFIX PFSimpleInterface_)
 endif()
 

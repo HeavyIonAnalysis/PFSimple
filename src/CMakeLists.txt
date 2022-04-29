@@ -16,7 +16,7 @@ add_library(KFParticleSimple SHARED ${SOURCES} G__KFParticleSimple.cxx)
 
 ROOT_GENERATE_DICTIONARY(G__KFParticleSimple ${HEADERS} LINKDEF KFSimpleLinkDef.h OPTIONS "-DDO_TPCCATRACKER_EFF_PERFORMANCE" "-DNonhomogeneousField" "-DCBM" "-DUSE_TIMERS")
 add_dependencies(KFParticleSimple KFParticleInterface)
-target_link_libraries(KFParticleSimple ${ROOT_LIBRARIES} KFParticle KFParticleInterface)
+target_link_libraries(KFParticleSimple ${ROOT_LIBRARIES} KFParticle KFParticleInterface Vc)
 
 add_target_property(KFParticleSimple COMPILE_FLAGS "-DDO_TPCCATRACKER_EFF_PERFORMANCE -DNonhomogeneousField -DCBM -DUSE_TIMERS")
 
@@ -31,7 +31,8 @@ if(PFSimple_BUILD_TESTS)
                     )
 
     add_executable(PFSimple_UnitTests ${TEST_SOURCES})
-    target_link_libraries(PFSimple_UnitTests  PRIVATE KFParticleSimple gtest_main)
+    add_dependencies(PFSimple_UnitTests KFParticleSimple)
+    target_link_libraries(PFSimple_UnitTests  PRIVATE KFParticleSimple KFParticleInterface KFParticle Vc gtest_main)
     gtest_discover_tests(PFSimple_UnitTests TEST_PREFIX PFSimple_)
 endif()
 
