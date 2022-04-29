@@ -1,0 +1,7 @@
+<map id="PFSimpleTask" name="PFSimpleTask">
+<area shape="rect" id="node1" title=" " alt="" coords="153,799,291,993"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,79,137,156"/>
+<area shape="rect" id="node3" href="$d0/d65/classConverterIn.html" title=" " alt="" coords="109,292,335,736"/>
+<area shape="rect" id="node4" href="$d8/da4/classInputContainer.html" title="Container with input information about event (vertex and tracks) and cuts used in the certain event." alt="" coords="161,5,293,229"/>
+<area shape="rect" id="node5" href="$d0/d0f/classSimpleFinder.html" title="V0 particle (Lambda) reconstruction algorithm." alt="" coords="359,380,506,648"/>
+</map>
