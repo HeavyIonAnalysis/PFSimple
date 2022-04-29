@@ -47,7 +47,7 @@ Install PFSimple
     
 ## First run
 
-Use AnalysisTreeInterface/main.cxx to configure the reconstruction: select cuts, number of events to analyze etc.
+Use at_interface/main.cpp to configure the reconstruction: select cuts, number of events to analyze etc.
 
 Each time before running the prepared executable you should set the environment variables to let your system know where to find libraries:
 
