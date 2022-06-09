@@ -27,10 +27,10 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE RELEASE)
 endif ()
 
-option(PFSimple_BUNDLED_AT "Build AnalysisTree" OFF)
-option(PFSimple_BUNDLED_AT_VERSION "Version of AnalysisTree to build" "v2.2.7")
-option(PFSimple_BUNDLED_AT_GIT_SHALLOW "Use CMake GIT_SHALLOW option" ON)
-option(PFSimple_BUILD_TESTS "Build tests for the PFSimple" ON)
+set(PFSimple_BUNDLED_AT OFF CACHE BOOL "Build AnalysisTree")
+set(PFSimple_BUNDLED_AT_VERSION "v2.2.7" CACHE STRING "Version of AnalysisTree to build")
+set(PFSimple_BUNDLED_AT_GIT_SHALLOW ON CACHE BOOL "Use CMake GIT_SHALLOW option")
+set(PFSimple_BUILD_TESTS ON CACHE BOOL "Build tests for the PFSimple")
 
 # in DEBUG mode make verbose Makefile
 if (CMAKE_BUILD_TYPE MATCHES DEBUG)
