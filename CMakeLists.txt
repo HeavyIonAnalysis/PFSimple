@@ -29,7 +29,8 @@ endif ()
 
 option(PFSimple_BUNDLED_AT "Build AnalysisTree" OFF)
 option(PFSimple_BUNDLED_AT_VERSION "Version of AnalysisTree to build" "v2.2.7")
-option(PFSimple_BUILD_TESTS "Build tests for the Centrality" ON)
+option(PFSimple_BUNDLED_AT_GIT_SHALLOW "Use CMake GIT_SHALLOW option" ON)
+option(PFSimple_BUILD_TESTS "Build tests for the PFSimple" ON)
 
 # in DEBUG mode make verbose Makefile
 if (CMAKE_BUILD_TYPE MATCHES DEBUG)

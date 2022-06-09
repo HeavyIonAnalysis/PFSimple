@@ -6,7 +6,7 @@ if (PFSimple_BUNDLED_AT)
             AnalysisTree
             GIT_REPOSITORY "https://github.com/HeavyIonAnalysis/AnalysisTree.git"
             GIT_TAG ${PFSimple_BUNDLED_AT_VERSION}
-            GIT_SHALLOW ON
+            GIT_SHALLOW ${PFSimple_BUNDLED_AT_GIT_SHALLOW}
     )
     FetchContent_MakeAvailable(AnalysisTree)
     list(APPEND PROJECT_INCLUDE_DIRECTORIES ${AnalysisTree_BINARY_DIR}/include)
