@@ -77,10 +77,9 @@ void ConverterIn::FillParticle(const AnalysisTree::BranchChannel& rec_particle) 
 void ConverterIn::Init() {
   auto* chain = AnalysisTree::TaskManager::GetInstance()->GetChain();
 
-  if (pid_mode_ > 1) kf_tracks_name_ = "RecParticles";
+  this->SetInputBranchNames({rec_event_header_name_, kf_tracks_name_, sim_tracks_name_});
 
   rec_event_header_ = chain->GetBranch(rec_event_header_name_);
-  sim_event_header_ = chain->GetBranch(sim_event_header_name_);
   kf_tracks_ = chain->GetBranch(kf_tracks_name_);
   sim_tracks_ = chain->GetBranch(sim_tracks_name_);
   kf2sim_tracks_ = chain->GetMatching(kf_tracks_name_, sim_tracks_name_);
