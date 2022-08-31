@@ -1,9 +1,12 @@
-cmake_minimum_required(VERSION 3.0)
-project(KFParticleSimple CXX)
-if(NOT DEFINED CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 11)
-endif()
+cmake_minimum_required(VERSION 3.14)
+project(PFSimple CXX)
 set(PROJECT_VERSION 1.0)
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+if(NOT DEFINED CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 17)
+endif()
 
 include(ExternalProject)
 
@@ -24,6 +27,10 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE RELEASE)
 endif ()
 
+set(PFSimple_BUNDLED_AT OFF CACHE BOOL "Build AnalysisTree")
+set(PFSimple_BUNDLED_AT_VERSION "v2.2.7" CACHE STRING "Version of AnalysisTree to build")
+set(PFSimple_BUNDLED_AT_GIT_SHALLOW ON CACHE BOOL "Use CMake GIT_SHALLOW option")
+
 # in DEBUG mode make verbose Makefile
 if (CMAKE_BUILD_TYPE MATCHES DEBUG)
     set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -41,7 +48,6 @@ set(FIXTARGET TRUE CACHE BOOL "Compile for fix target geometry.")
 
 find_package(ROOT REQUIRED RIO)
 find_package(KFParticle QUIET)
-find_package(AnalysisTree QUIET)
 find_package(Vc QUIET)
 
 set(EXTERNAL_DIR ${CMAKE_BINARY_DIR}/external)
@@ -53,7 +59,7 @@ if(KFParticle_FOUND)
     include_directories(${KFParticle_INCLUDE_DIR} ${Vc_INCLUDE_DIR})
 else()
     Message("KFParticle is not found. It will be installed as external package")
-    include(cmake_modules/KFParticle.cmake)
+    include(KFParticle)
     include_directories(${CMAKE_SOURCE_DIR} ${ROOT_INCLUDE_DIRS} ${PROJECT_INCLUDE_DIRECTORIES} ${Vc_INCLUDE_DIR})
 endIf()
 message(STATUS "PROJECT_INCLUDE_DIRECTORIES ${PROJECT_INCLUDE_DIRECTORIES}")
@@ -62,12 +68,11 @@ message(STATUS "Using ROOT: ${ROOT_VERSION} <${ROOT_CONFIG}>")
 include_directories(${CMAKE_SOURCE_DIR} ${ROOT_INCLUDE_DIRS})
 include(${ROOT_USE_FILE})
 
-if(AnalysisTree_FOUND)
-    Message("AnalysisTree found. Corresponding interface will be compiled")
+include(AnalysisTree)
+
+if (AnalysisTree_FOUND OR PFSimple_BUNDLED_AT)
     add_subdirectory(at_interface)
-Else()
-    Message("AnalysisTree is not found. Corresponding interface will not be compiled")
-EndIf()
+endif ()
 
 add_subdirectory(src)
 add_subdirectory(src/interface)
@@ -110,3 +115,4 @@ install(FILES
         COMPONENT
         Devel
         )
+
