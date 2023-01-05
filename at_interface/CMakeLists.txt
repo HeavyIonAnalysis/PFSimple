@@ -11,7 +11,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_
 
 if(PROJECT_LINK_DIRECTORIES)
     include_directories(${PROJECT_INCLUDE_DIRECTORIES})
-    link_directories(${PROJECT_LINK_DIRECTORIES})
+    link_directories(${PROJECT_LINK_DIRECTORIES} ${Vc_LIB_DIR})
 endif()
 
 add_library(KFMan SHARED ${SOURCES} G__KFMan.cxx)

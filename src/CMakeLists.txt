@@ -10,7 +10,7 @@ string(REPLACE ".cpp" ".hpp" HEADERS "${SOURCES}")
 list(APPEND HEADERS "Constants.hpp")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/interface ${CMAKE_CURRENT_SOURCE_DIR} ${PROJECT_INCLUDE_DIRECTORIES} )
-link_directories(${PROJECT_LINK_DIRECTORIES})
+link_directories(${PROJECT_LINK_DIRECTORIES} ${Vc_LIB_DIR})
 
 add_library(KFParticleSimple SHARED ${SOURCES} G__KFParticleSimple.cxx)
 
