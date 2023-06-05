@@ -61,25 +61,25 @@ int main(int argc, char** argv) {
   xi_pi_lambda.SetIsTransportToPV();
   //**************************************************
 
-//   // ******* Omega - ************************************
-//   Daughter kaon_from_omega(-321, {-321});
-//   Daughter lambda_from_omega(3122);
-//   Mother omega(3334);
-//   
-//   kaon_from_omega.CancelCuts();
-//   lambda_from_omega.CancelCuts();
-//   omega.CancelCuts();
-//   
-//   kaon_from_omega.SetCutChi2Prim(18.42);
-//   omega.SetCutDistance(1.);
-//   omega.SetCutChi2Geo(6.);
-//   omega.SetCutLdL(5.);
-//   omega.SetCutChi2Topo(5.);
-//   
-// //   
-//   Decay omega_K_lambda("omega", omega, {kaon_from_omega, lambda_from_omega});
-//   omega_K_lambda.SetIsTransportToPV();
-//   //**************************************************
+  // ******* Omega - ************************************
+  Daughter kaon_from_omega(-321, {-321});
+  Daughter lambda_from_omega(3122);
+  Mother omega(3334);
+
+  kaon_from_omega.CancelCuts();
+  lambda_from_omega.CancelCuts();
+  omega.CancelCuts();
+
+  kaon_from_omega.SetCutChi2Prim(18.42);
+  omega.SetCutDistance(1.);
+  omega.SetCutChi2Geo(6.);
+  omega.SetCutLdL(5.);
+  omega.SetCutChi2Topo(5.);
+
+//
+  Decay omega_K_lambda("omega", omega, {kaon_from_omega, lambda_from_omega});
+  omega_K_lambda.SetIsTransportToPV();
+  //**************************************************
 
   auto* man = AnalysisTree::TaskManager::GetInstance();
   man->SetOutputName("PFSimpleOutput.root");
@@ -106,7 +106,7 @@ int main(int argc, char** argv) {
 
   auto* pf_task = new PFSimpleTask();
   pf_task->SetInTask(in_converter);
-  pf_task->SetDecays({lambda_pi_p, xi_pi_lambda});  
+  pf_task->SetDecays({lambda_pi_p, xi_pi_lambda, omega_K_lambda});
   
   auto* out_converter = new ConverterOut();
   out_converter->SetPFSimpleTask(pf_task);
@@ -122,7 +122,7 @@ int main(int argc, char** argv) {
   man->AddTask(in_converter);
   man->AddTask(pf_task);
   man->AddTask(out_converter);
-  man->SetVerbosityPeriod(10);
+  man->SetVerbosityPeriod(100);
 
   man->Init({filename}, {tree_name});
   man->Run(-1);// -1 = all events
