@@ -16,33 +16,33 @@ int main(int argc, char** argv) {
 
   const std::string& filename = argv[1];
   
-//   const int pid_mode = 0; // no pid (topo)
+  const int pid_mode = 0; // no pid (topo)
 //   const int pid_mode = 1; // mc pid
-  const int pid_mode = 2; // rec pid
+//   const int pid_mode = 2; // rec pid
 
   // ******** Lambda *********************************
-  Daughter proton(2212, {2212, 2});
-  Daughter pion(-211, {-211, -2});
+  Daughter proton(2212, {2212, 1});
+  Daughter pion(-211, {-211, -1});
   Mother lambda(3122);
   
   proton.CancelCuts();
   pion.CancelCuts();
   lambda.CancelCuts();
   
-  proton.SetCutChi2Prim(18.42);
-  pion.SetCutChi2Prim(18.42);
-  lambda.SetCutDistance(1.);
-  lambda.SetCutChi2Geo(3.);
-  lambda.SetCutLdL(10.);
-  lambda.SetCutChi2TopoLower(5.);
-  lambda.SetCutInvMass(3.);
+//   proton.SetCutChi2Prim(18.42);
+//   pion.SetCutChi2Prim(18.42);
+//   lambda.SetCutDistance(1.);
+//   lambda.SetCutChi2Geo(3.);
+//   lambda.SetCutLdL(10.);
+//   lambda.SetCutChi2TopoLower(5.);
+  lambda.SetCutInvMass(5.);
   
   Decay lambda_pi_p("lambda", lambda, {pion, proton});
   lambda_pi_p.SetIsApplyMassConstraint();
   //**************************************************
   
   // ******* Xi - ************************************
-  Daughter pion_from_xi(-211, {-211, -2});
+  Daughter pion_from_xi(-211, {-211, -1});
   Daughter lambda_from_xi(3122);
   Mother xi(3312);
   
@@ -50,11 +50,11 @@ int main(int argc, char** argv) {
   lambda_from_xi.CancelCuts();
   xi.CancelCuts();
   
-  pion_from_xi.SetCutChi2Prim(18.42);
-  xi.SetCutDistance(1.);
-  xi.SetCutChi2Geo(6.);
-  xi.SetCutLdL(5.);
-  xi.SetCutChi2Topo(5.);
+//   pion_from_xi.SetCutChi2Prim(18.42);
+//   xi.SetCutDistance(1.);
+//   xi.SetCutChi2Geo(6.);
+//   xi.SetCutLdL(5.);
+//   xi.SetCutChi2Topo(5.);
   
 //   
   Decay xi_pi_lambda("xi", xi, {pion_from_xi, lambda_from_xi});
