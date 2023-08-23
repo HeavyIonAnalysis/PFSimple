@@ -1,7 +1,12 @@
 <map id="PFSimpleTask" name="PFSimpleTask">
-<area shape="rect" id="node1" title=" " alt="" coords="153,799,291,993"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,79,137,156"/>
-<area shape="rect" id="node3" href="$d0/d65/classConverterIn.html" title=" " alt="" coords="109,292,335,736"/>
-<area shape="rect" id="node4" href="$d8/da4/classInputContainer.html" title="Container with input information about event (vertex and tracks) and cuts used in the certain event." alt="" coords="161,5,293,229"/>
-<area shape="rect" id="node5" href="$d0/d0f/classSimpleFinder.html" title="V0 particle (Lambda) reconstruction algorithm." alt="" coords="359,380,506,648"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="149,962,277,1187"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,105,128,171"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="62,185,48,311,42,396,40,490,42,591,51,695,68,798,95,898,119,952,152,1000,147,1003,115,954,89,900,63,800,46,696,37,591,34,490,37,395,43,310,57,184"/>
+<area shape="rect" id="Node000003" href="$d0/d65/classConverterIn.html" title=" " alt="" coords="105,334,322,899"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="83,184,129,333,124,335,78,185"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="216,898,216,945,211,945,211,898"/>
+<area shape="rect" id="Node000004" href="$d8/da4/classInputContainer.html" title="Container with input information about event (vertex and tracks) and cuts used in the certain event." alt="" coords="152,5,275,271"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="216,271,216,317,211,317,211,271"/>
+<area shape="rect" id="Node000005" href="$d0/d0f/classSimpleFinder.html" title="V0 particle (Lambda) reconstruction algorithm." alt="" coords="346,454,483,779"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="381,780,362,841,337,900,315,941,289,981,285,978,310,939,332,898,357,839,376,778"/>
 </map>
