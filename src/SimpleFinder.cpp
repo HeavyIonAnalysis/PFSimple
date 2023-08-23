@@ -336,9 +336,26 @@ void SimpleFinder::ReconstructDecay(const Decay& decay) {
     std::array<KFParticle, 3> track;
 
     track.at(0) = GetTrack(index_1);
+    if (std::abs(decay.GetDaughters().at(0).GetPdgHypo()) == 1000020030 || std::abs(decay.GetDaughters().at(0).GetPdgHypo()) == 1000020040) {
+      int charge = (int) track.at(0).Q();
+      charge *= 2;
+      track.at(0).Q() = charge;
+      track.at(0).Px() *= std::abs(charge);
+      track.at(0).Py() *= std::abs(charge);
+      track.at(0).Pz() *= std::abs(charge);
+    }
 
     for (auto index_2 : indexes.at(1)) {
       track.at(1) = GetTrack(index_2);
+      if (std::abs(decay.GetDaughters().at(1).GetPdgHypo()) == 1000020030 || std::abs(decay.GetDaughters().at(1).GetPdgHypo()) == 1000020040) {
+        int charge = (int) track.at(1).Q();
+        charge *= 2;
+        track.at(1).Q() = charge;
+        track.at(1).Px() *= std::abs(charge);
+        track.at(1).Py() *= std::abs(charge);
+        track.at(1).Pz() *= std::abs(charge);
+      }
+
       if (!IsGoodPair(track.at(0), track.at(1), decay)) continue;
 
       KFParticleSIMD kf_mother = ConstructMother({track.at(0), track.at(1)}, pdgs);
@@ -363,6 +380,14 @@ void SimpleFinder::ReconstructDecay(const Decay& decay) {
         for (auto index_3 : indexes.at(2)) {
 
           track.at(2) = GetTrack(index_3);
+          if (std::abs(decay.GetDaughters().at(2).GetPdgHypo()) == 1000020030 || std::abs(decay.GetDaughters().at(2).GetPdgHypo()) == 1000020040) {
+            int charge = (int) track.at(2).Q();
+            charge *= 2;
+            track.at(2).Q() = charge;
+            track.at(2).Px() *= std::abs(charge);
+            track.at(2).Py() *= std::abs(charge);
+            track.at(2).Pz() *= std::abs(charge);
+          }
 
           if (!IsGoodThree(track.at(0), track.at(1), track.at(2), decay)) continue;
 
