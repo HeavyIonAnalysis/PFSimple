@@ -38,6 +38,7 @@ void ConverterIn::FillParticle(const AnalysisTree::BranchChannel& rec_particle) 
     const int sim_id = kf2sim_tracks_->GetMatch(rec_particle.GetId());
     if(sim_id<0) pdg = -1;
     else         pdg = sim_tracks_[sim_id][sim_pdg_field_];
+    if(pdg == 3122) pdg = -1;
     container_.AddTrack(par, cov_matrix, mf, q, pdg, id, nhits);
   }
     else if (pid_mode_ == 2) {
