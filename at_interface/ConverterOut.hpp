@@ -29,12 +29,25 @@ class ConverterOut : public AnalysisTree::Task {
   void SetSimEventHeaderName(const std::string& name) { sim_events_name_ = name; }
   void SetRecTracksName(const std::string& name) { rec_tracks_name_ = name; }
   void SetSimTracksName(const std::string& name) { mc_particles_name_ = name; }
+  void SetIsWriteDetailedBG(bool is=true) { is_detailed_bg_ = is; }
 
  protected:
   void InitIndexes();
   void MatchWithMc(AnalysisTree::Particle& particle);
   int GetMothersSimId(AnalysisTree::Particle& lambdarec);
   int DetermineGeneration(int mother_sim_id);
+
+  // first returned value is:
+  // 1 - reco daughter is unmatched to mc
+  // 2 - reco daughter is matched, but primary
+  // 3 - reco daughter is secondary, produced not in decay from mother with not expected pdg
+  // 4 - reco daughter is secondary, produced not in decay from mother with expected pdg
+  // 5 - reco daughter is secondary, produced in decay from mother with not expected pdg
+  // 6 - reco daughter is secondary, produced in decay from mother with expected pdg
+  // second returned value is mother's sim id (if the first value is >2) or -999 (if mother doesn't exist)
+  std::pair<int, int> DetermineDaughtersMCStatus(int daughter_rec_id);
+
+  int DetermineBGType(AnalysisTree::Particle& particle);
 
   // output branches
   AnalysisTree::EventHeader* events_{nullptr};
@@ -80,6 +93,8 @@ class ConverterOut : public AnalysisTree::Task {
   int chi2geo_sm_field_id_{-1};
   int chi2topo_sm_field_id_{-1};
   int cosine_topo_sm_field_id_{-1};
+
+  bool is_detailed_bg_{false};
 };
 
 #endif//KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_
