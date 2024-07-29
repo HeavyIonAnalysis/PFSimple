@@ -1,9 +1,9 @@
 <map id="PFSimpleTask" name="PFSimpleTask">
 <area shape="rect" id="Node000001" title=" " alt="" coords="149,962,277,1187"/>
 <area shape="rect" id="Node000002" title=" " alt="" coords="5,105,128,171"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="62,185,48,311,42,396,40,490,42,591,51,695,68,798,95,898,119,952,152,1000,147,1003,115,954,89,900,63,800,46,696,37,591,34,490,37,395,43,310,57,184"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="62,186,48,312,42,396,40,491,42,592,51,695,68,799,95,898,119,952,152,1000,147,1003,115,954,89,900,63,800,46,696,37,592,34,491,37,396,42,311,57,185"/>
 <area shape="rect" id="Node000003" href="$d0/d65/classConverterIn.html" title=" " alt="" coords="105,334,322,899"/>
-<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="83,184,129,333,124,335,78,185"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="83,184,129,333,124,335,78,186"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="216,898,216,945,211,945,211,898"/>
 <area shape="rect" id="Node000004" href="$d8/da4/classInputContainer.html" title="Container with input information about event (vertex and tracks) and cuts used in the certain event." alt="" coords="152,5,275,271"/>
 <area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="216,271,216,317,211,317,211,271"/>
