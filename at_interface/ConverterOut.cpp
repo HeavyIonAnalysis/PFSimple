@@ -237,7 +237,7 @@ void ConverterOut::InitIndexes() {
   chi2geo_field_id_ = out_branch_reco.GetFieldId("chi2_geo");
 }
 
-std::pair<int, int> ConverterOut::DetermineDaughtersMCStatus(const int daughter_rec_id) {
+std::pair<int, int> ConverterOut::DetermineDaughtersMCStatus(const int daughter_rec_id, const Pdg_t mother_expected_pdg) const {
   const int daughter_sim_id = rec_to_mc_->GetMatch(daughter_rec_id);
   if(daughter_sim_id < 0) return std::make_pair(1, -999); // no match to MC
 
@@ -251,21 +251,25 @@ std::pair<int, int> ConverterOut::DetermineDaughtersMCStatus(const int daughter_
 
   int daughter_status{-999};
 
-  if(geant_process != 4 && mother_pdg != decay_.GetMother().GetPdg()) daughter_status = 3; // daughter not from decay, mother's pdg unexpected
-  if(geant_process != 4 && mother_pdg == decay_.GetMother().GetPdg()) daughter_status = 4; // daughter not from decay, mother's pdg expected
-  if(geant_process == 4 && mother_pdg != decay_.GetMother().GetPdg()) daughter_status = 5; // daughter from decay, mother's pdg unexpected
-  if(geant_process == 4 && mother_pdg == decay_.GetMother().GetPdg()) daughter_status = 6; // daughter from decay, mother's pdg expected
+  if(geant_process != 4 && mother_pdg != mother_expected_pdg) daughter_status = 3; // daughter not from decay, mother's pdg unexpected
+  if(geant_process != 4 && mother_pdg == mother_expected_pdg) daughter_status = 4; // daughter not from decay, mother's pdg expected
+  if(geant_process == 4 && mother_pdg != mother_expected_pdg) daughter_status = 5; // daughter from decay, mother's pdg unexpected
+  if(geant_process == 4 && mother_pdg == mother_expected_pdg) daughter_status = 6; // daughter from decay, mother's pdg expected
 
   return std::make_pair(daughter_status, mother_sim_id);
 }
 
+int ConverterOut::DetermineMotherMCStatus(const int mid1, const int mid2) {
+  if(mid1 == -999 || mid2 == -999) return 0;
+  if(mid1 == mid2) return 1;
+  else             return 2;
+}
+
 int ConverterOut::DetermineBGType(AnalysisTree::Particle& particle) {
-  bool all_daughters_secondary{true};
   std::vector<std::pair<int, int>> daughters_statuses;
   for (int i = 0; i < decay_.GetNDaughters(); i++) {
     auto daughter_rec_id = particle.GetField<int>(daughter_id_field_id_ + i);
-    daughters_statuses.emplace_back(DetermineDaughtersMCStatus(daughter_rec_id));
-    if(daughters_statuses.back().first < 3) all_daughters_secondary = false;
+    daughters_statuses.emplace_back(DetermineDaughtersMCStatus(daughter_rec_id, particle.GetPid()));
   }
 
   int result{0};
@@ -275,27 +279,12 @@ int ConverterOut::DetermineBGType(AnalysisTree::Particle& particle) {
     decimal *= 10;
   }
 
-  if(!all_daughters_secondary) return -result;
-
   std::vector<int> common_mother_statuses;
-  if(daughters_statuses.at(0).second == daughters_statuses.at(1).second) {
-    common_mother_statuses.emplace_back(1);
-  } else {
-    common_mother_statuses.emplace_back(2);
-  }
+  common_mother_statuses.emplace_back(DetermineMotherMCStatus(daughters_statuses.at(0).second, daughters_statuses.at(1).second));
 
   if(daughters_statuses.size() == 3) {
-    if(daughters_statuses.at(1).second == daughters_statuses.at(2).second) {
-      common_mother_statuses.emplace_back(1);
-    } else {
-      common_mother_statuses.emplace_back(2);
-    }
-
-    if(daughters_statuses.at(0).second == daughters_statuses.at(2).second) {
-      common_mother_statuses.emplace_back(1);
-    } else {
-      common_mother_statuses.emplace_back(2);
-    }
+    common_mother_statuses.emplace_back(DetermineMotherMCStatus(daughters_statuses.at(1).second, daughters_statuses.at(2).second));
+    common_mother_statuses.emplace_back(DetermineMotherMCStatus(daughters_statuses.at(0).second, daughters_statuses.at(2).second));
   }
 
   decimal = 1000;

@@ -45,7 +45,12 @@ class ConverterOut : public AnalysisTree::Task {
   // 5 - reco daughter is secondary, produced in decay from mother with not expected pdg
   // 6 - reco daughter is secondary, produced in decay from mother with expected pdg
   // second returned value is mother's sim id (if the first value is >2) or -999 (if mother doesn't exist)
-  std::pair<int, int> DetermineDaughtersMCStatus(int daughter_rec_id);
+  std::pair<int, int> DetermineDaughtersMCStatus(int daughter_rec_id, Pdg_t mother_expected_pdg) const;
+
+  // 1 - daughters have the same mother
+  // 2 - daughters have different mothers
+  // 0 - at least one daughter does not have mother (e.g. primary)
+  static int DetermineMotherMCStatus(int mid1, int mid2) ;
 
   int DetermineBGType(AnalysisTree::Particle& particle);
 
