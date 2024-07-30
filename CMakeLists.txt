@@ -27,8 +27,9 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE RELEASE)
 endif ()
 
-set(PFSimple_BUNDLED_AT OFF CACHE BOOL "Build AnalysisTree")
-set(PFSimple_BUNDLED_AT_VERSION "v2.2.7" CACHE STRING "Version of AnalysisTree to build")
+set(PFSimple_BUNDLED_AT OFF CACHE BOOL "Get and build AnalysisTree from official repo")
+set(PFSimple_BUNDLED_AT_VERSION "v2.4.0" CACHE STRING "Version of AnalysisTree to build")
+set(PFSimple_BUNDLED_AT_URL "https://github.com/HeavyIonAnalysis/AnalysisTree.git" CACHE STRING "URL of AnalysisTree to build")
 set(PFSimple_BUNDLED_AT_GIT_SHALLOW ON CACHE BOOL "Use CMake GIT_SHALLOW option")
 set(PFSimple_BUILD_TESTS ON CACHE BOOL "Build tests for the PFSimple")
 
@@ -71,13 +72,19 @@ include(${ROOT_USE_FILE})
 
 include(AnalysisTree)
 
-if (AnalysisTree_FOUND OR PFSimple_BUNDLED_AT)
-    add_subdirectory(at_interface)
-endif ()
+add_subdirectory(at_interface)
 
 add_subdirectory(src)
 add_subdirectory(src/interface)
 include(TestsSetupPFSimple)
+
+if(PFSimple_BUNDLED_AT)
+  set(AT_INSTALL_BIN "${CMAKE_INSTALL_PREFIX}/bin")
+else()
+  set(AT_INSTALL_BIN "${AnalysisTree_BINARY_DIR}")
+endif()
+configure_file(cmake/PFSimpleConfig.sh.in ${CMAKE_BINARY_DIR}/PFSimpleConfig.sh)
+
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
@@ -114,6 +121,15 @@ install(FILES
         "${CMAKE_CURRENT_BINARY_DIR}/KFParticleSimple/KFParticleSimpleConfigVersion.cmake"
         DESTINATION
         ${ConfigPackageLocation}
+        COMPONENT
+        Devel
+        )
+
+
+install(FILES
+        ${CMAKE_BINARY_DIR}/PFSimpleConfig.sh
+        DESTINATION
+        bin
         COMPONENT
         Devel
         )
