@@ -14,7 +14,7 @@ struct SelectionValues {
   float distance{-1.f};                                    ///< Distance between daughter tracks in their closest approach
   float distance_sv{-1.f};                                 ///< Distance between daughter track and SV
   float l{-1.f};                                           ///< Lenght of interpolated track from secondary to primary vertex
-  float l_over_dl{-1.f};                                   ///< Distance between primary and secondary vertices divided by error
+  float l_over_dl{-1.f};                                   ///< Lenght of interpolated track from secondary to primary vertex divided by error
   float distance_pv{-1.f};                                 ///< Distance between secondary vertex and primary vertex line
   std::array<float, 4> chi2_geo{{-1.f, -1.f, -1.f, -1.f}}; ///< \f$\chi^2\f$ of daughters' tracks in their closest approach (prim & sec mothers)
   std::array<float, 4> chi2_topo{{-1.f, -1.f, -1.f, -1.f}};///< \f$\chi^2\f$ of the mother's track to the PV (prim & sec mothers)

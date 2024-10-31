@@ -37,7 +37,7 @@ class Daughter {
   Pdg_t pdg_hypo_{-1};       ///< PDG code hypothesis
   std::vector<Pdg_t> pids_{};///< vector of PDG codes to use
   float chi2_prim_{18.4207}; ///< \f$\chi^2\f$ lower value
-  float cos_{0.f};           ///< cosine lower value
+  float cos_{-huge_value};   ///< cosine lower value
   int id_{-1};               ///< daughther number (0, 1, 2)
 };
 

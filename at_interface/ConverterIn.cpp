@@ -35,7 +35,7 @@ void ConverterIn::FillParticle(const AnalysisTree::BranchChannel& rec_particle) 
     container_.AddTrack(par, cov_matrix, mf, q, pdg, id);
   } else if (pid_mode_ == 1) {
     const int sim_id = kf2sim_tracks_->GetMatch(rec_particle.GetId());
-    if(sim_id<0) pdg = -1;
+    if(sim_id<0) pdg = q;
     else         pdg = sim_tracks_[sim_id][sim_pdg_field_];
     container_.AddTrack(par, cov_matrix, mf, q, pdg, id);
   } else if (pid_mode_ == 2) {
@@ -97,7 +97,7 @@ void ConverterIn::Init() {
 
   if (pid_mode_ > 1)
     rec_pdg_field_ = kf_tracks_.GetField("pid");
-
+  
   if (pid_mode_ > 2) {
     prob_p_field_ = kf_tracks_.GetField("prob_p");
     prob_pi_field_ = kf_tracks_.GetField("prob_pi");
