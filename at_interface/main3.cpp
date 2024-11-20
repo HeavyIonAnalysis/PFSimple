@@ -213,7 +213,6 @@ int main(int argc, char** argv) {
   in_converter->SetRecTracksName(rec_tracks_name);
   in_converter->SetSimTracksName("SimParticles");
   in_converter->SetTrackCuts(new Cuts("Cut to reproduce KFPF", {EqualsCut((rec_tracks_name + ".pass_cuts").c_str(), 1)}));
-  in_converter->SetIsShine(false);//TODO maybe change name
 
   in_converter->SetPidMode(pid_mode);
   if (pid_purity       != -1) in_converter->SetPidPurity(pid_purity);

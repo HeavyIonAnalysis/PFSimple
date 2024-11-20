@@ -26,7 +26,6 @@ class ConverterIn : public AnalysisTree::Task {
   void Finish() override{};
 
   const InputContainer& GetInputContainer() const { return container_; }
-  void SetIsShine(bool is = true) { is_shine_ = is; }
   void SetTrackCuts(AnalysisTree::Cuts* const cuts) { track_cuts_ = cuts; };
   void SetMotherPdgsToBeConsidered(std::vector<int>&& pdgs) { mother_pdgs_to_be_considered_ = pdgs; };
   void SetPidMode(int value) { pid_mode_ = value; }/// selection mode for pid:
@@ -84,7 +83,6 @@ class ConverterIn : public AnalysisTree::Task {
 
  protected:
   std::vector<float> GetCovMatrixCbm(const AnalysisTree::BranchChannel&) const;
-  std::vector<float> GetCovMatrixShine(const AnalysisTree::BranchChannel&) const;
   void FillParticle(const AnalysisTree::BranchChannel&);
   bool IsGoodTrack(const AnalysisTree::BranchChannel& rec_track) const;
   bool CheckMotherPdgs(const AnalysisTree::BranchChannel& rec_track) const;
@@ -137,7 +135,6 @@ class ConverterIn : public AnalysisTree::Task {
 
   int pid_mode_{1};
   std::array<float, NumberOfPids> pid_purity_{0.5, 0.5, 0.5, 0.5, 0.5};
-  bool is_shine_{false};
 };
 
 #endif//KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTERIN_H_
