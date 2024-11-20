@@ -43,7 +43,7 @@ class SimpleFinder {
   void Init(std::vector<KFParticle>&& tracks, const KFVertex& pv);///< Initialize SimpleFinder object with PV and set of tracks of the current event
   void Init(const InputContainer& input);
 
-  void InitIndexesMap();
+  void InitTrackIndexesMap();
 
   void FindParticles() {
     for (const auto& decay : decays_) {
@@ -75,7 +75,7 @@ class SimpleFinder {
   * @param cuts daughter particle cuts container
   * @return vector of indexes
   */
-  std::vector<int> GetIndexes(const Daughter& cuts);
+  std::vector<int> GetGoodDaughtersIndexes(const Daughter& cuts);
 
   bool IsGoodDaughter(const KFParticle& track, const Daughter& cuts);
   bool IsGoodPair(const KFParticle& track1, const KFParticle& track2, const Decay& decay);
@@ -83,17 +83,17 @@ class SimpleFinder {
   bool IsGoodMother(const KFParticleSIMD& mother, const Mother& cuts, int id_mother);
   bool IsMotherFromPV(const KFParticleSIMD& mother, const Mother& cuts, int id_mother);
   bool IsGoodDecayLength(const KFParticleSIMD& mother, const Mother& cuts);
-  bool IsGoodCos(const KFParticleSIMD& mother, const Parameters_t& daughter_pars, const Decay& decay);
+  bool IsGoodCos(const KFParticleSIMD& mother, const Decay& decay);
 
   KFParticleSIMD ConstructMother(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs);
   void CalculateSecondaryVertex();
 
   void CalculateParamsInPCA(const KFParticle& track1, int pid1, const KFParticle& track2, int pid2);
-  void CalculateParamsInSV(const KFParticle& track, int pid, int id);
+  void CalculateParamsInSV(const KFParticle& track, int pid);
   float CalculateChiToPrimaryVertex(const KFParticle& track, Pdg_t pid) const;
   float CalculateCosTopo(const KFParticleSIMD& mother) const;
-  static float CalculateDistanceBetweenParticles(const Parameters_t& parameters);
-  float CalculateDistanceToSV(int id) const;
+  float CalculateDistanceBetweenParticles();
+  float CalculateDistanceToSV() const;
 
   void FillDaughtersInfo(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs);
   void SaveParticle(KFParticleSIMD& particle_simd, const Decay& decay);
