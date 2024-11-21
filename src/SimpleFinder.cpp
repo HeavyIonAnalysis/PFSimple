@@ -167,7 +167,7 @@ KFPTrack SimpleFinder::ToKFPTrack(const KFParticle& particle) {
   track.SetPy(particle.GetPy());
   track.SetPz(particle.GetPz());
 
-  for (Int_t iC = 0; iC < 21; iC++) {
+  for (Int_t iC = 0; iC < NumberOfCovElements; iC++) {
     track.SetCovariance(iC, particle.GetCovariance(iC));
   }
   for (Int_t iF = 0; iF < 10; iF++) {
