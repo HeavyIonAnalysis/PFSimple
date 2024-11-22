@@ -225,9 +225,7 @@ bool SimpleFinder::IsGoodThree(const KFParticle& track1,
   }
 
   std::vector<float> cos_tmp;
-  for (int i = 1; i < 4; i++) {
-    cos_tmp.push_back(values_.cos_open[i]);
-  }
+  for (int i = 1; i < 4; i++) { cos_tmp.push_back(values_.cos_open[i]); }
   
   values_.cos_open[0] = *std::min_element(cos_tmp.begin(), cos_tmp.end());
   if (values_.cos_open[0] < decay.GetMother().GetCutCosOpen()[0] || std::isnan(values_.cos_open[0])) { return false; }
