@@ -219,13 +219,13 @@ bool SimpleFinder::IsGoodThree(const KFParticle& track1,
   values_.distance_sv = CalculateDistanceToSV();
   if (values_.distance_sv > decay.GetMother().GetCutDistanceToSV() || std::isnan(values_.distance_sv)) { return false; }
 
-  for (int i = 0; i < 2; i ++) { // cos between daugher 1 & 2 and daughter 1 & 2
+  for (int i = 0; i < 2; i++) { // cos between daugher 1 & 2 and daughter 1 & 2
     values_.cos_open[i+2] = CalculateCosOpen(i, 2);
     if (values_.cos_open[i+2] < decay.GetMother().GetCutCosOpen()[i+2] || std::isnan(values_.cos_open[i+2])) { return false; }
   }
   
   std::vector<float> cos_tmp; // cos between 2 daughters with max angle
-  for (int i = 1; i < 4; i ++)
+  for (int i = 1; i < 4; i++)
     cos_tmp.push_back(values_.cos_open[i]);
   
   values_.cos_open[0] = *std::min_element(cos_tmp.begin(), cos_tmp.end());
