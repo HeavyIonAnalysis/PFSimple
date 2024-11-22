@@ -375,8 +375,8 @@ void SimpleFinder::ReconstructDecay(const Decay& decay) {
         if (!IsGoodMother(kf_mother, decay.GetMother(), id_mother)) continue;
         if (IsMotherFromPV(kf_mother, decay.GetMother(), id_mother)) continue;
 
-        for (auto index_3 : indexes.at(2)) {
-	  
+        for (auto index_3 : indexes.at(2)) { 
+		
 	  track.at(2) = GetTrack(index_3);
 	  if (std::abs(decay.GetDaughters().at(2).GetPdgHypo()) == 1000020030 || std::abs(decay.GetDaughters().at(2).GetPdgHypo()) == 1000020040) {
 	    int charge = (int) track.at(2).Q();
