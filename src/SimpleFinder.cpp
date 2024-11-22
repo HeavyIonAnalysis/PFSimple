@@ -385,8 +385,8 @@ void SimpleFinder::ReconstructDecay(const Decay& decay) {
             track.at(2).Px() *= std::abs(charge);
             track.at(2).Py() *= std::abs(charge);
             track.at(2).Pz() *= std::abs(charge);
-          }
-
+	  }
+	  
 	  CalculateParamsInSV(track.at(2), decay.GetDaughters().at(0).GetPdgHypo());  
           if (!IsGoodThree(track.at(0), track.at(1), track.at(2), decay)) continue;
 
