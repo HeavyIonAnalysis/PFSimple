@@ -199,7 +199,7 @@ bool SimpleFinder::IsGoodPair(const KFParticle& track1,
   values_.distance = CalculateDistanceBetweenParticles();
 
   if (values_.distance > decay.GetMother().GetCutDistance() || std::isnan(values_.distance)) { return false; }
-  
+
   const int id_mother = decay.GetNDaughters() == 2 ? 0 : 1;
   values_.cos_open[id_mother] = CalculateCosOpen(0, 1);
   if (values_.cos_open[id_mother] < decay.GetMother().GetCutCosOpen()[id_mother] || std::isnan(values_.cos_open[id_mother])) { return false; }
