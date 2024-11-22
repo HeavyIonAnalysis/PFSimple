@@ -387,7 +387,7 @@ void SimpleFinder::ReconstructDecay(const Decay& decay) {
             track.at(2).Pz() *= std::abs(charge);
 	  }
 	  
-	  CalculateParamsInSV(track.at(2), decay.GetDaughters().at(0).GetPdgHypo());  
+	  CalculateParamsInSV(track.at(2), decay.GetDaughters().at(0).GetPdgHypo());
           if (!IsGoodThree(track.at(0), track.at(1), track.at(2), decay)) continue;
 
           kf_mother = ConstructMother({track.at(0), track.at(2)}, {pdgs.at(0), pdgs.at(2)});
