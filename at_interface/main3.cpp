@@ -29,9 +29,9 @@ int main(int argc, char** argv) {
   char name_mother [5];
   Int_t pdg_mother;
   std::array<Int_t, 3> pdg_1, pdg_2, pdg_3;
-  std::array<Float_t, ndaughters> chi2prim, cosprim;
-  Float_t dist, distSV, chi2geo, chi2topo, costopo, LdL, decaylength, distPVline;
-  std::array<Float_t, ndaughters>  chi2geoSM, chi2topoSM, costopoSM;
+  std::array<Float_t, ndaughters> chi2prim, cos;
+  Float_t dist, distSV, chi2geo, cosopen, chi2topo, costopo, LdL, decaylength, distPVline;
+  std::array<Float_t, ndaughters>  chi2geoSM, cosopenSM, chi2topoSM, costopoSM;
   Int_t pid_mode;
   Float_t pid_purity;
   std::array<Float_t, npdgs> purity_pdg;
@@ -65,9 +65,9 @@ int main(int argc, char** argv) {
     fscanf(inputInfo, "%f %*[^\n]%*c", &chi2prim.at(0));
     fscanf(inputInfo, "%f %*[^\n]%*c", &chi2prim.at(1));
     fscanf(inputInfo, "%f %*[^\n]%*c", &chi2prim.at(2));
-    fscanf(inputInfo, "%f %*[^\n]%*c", &cosprim.at(0));
-    fscanf(inputInfo, "%f %*[^\n]%*c", &cosprim.at(1));
-    fscanf(inputInfo, "%f %*[^\n]%*c", &cosprim.at(2));
+    fscanf(inputInfo, "%f %*[^\n]%*c", &cos.at(0));
+    fscanf(inputInfo, "%f %*[^\n]%*c", &cos.at(1));
+    fscanf(inputInfo, "%f %*[^\n]%*c", &cos.at(2));
     fscanf(inputInfo, "%*[^\n]%*c");
     fscanf(inputInfo, "%*[^\n]%*c");
   
@@ -77,6 +77,10 @@ int main(int argc, char** argv) {
     fscanf(inputInfo, "%f %*[^\n]%*c", &chi2geoSM.at(1));
     fscanf(inputInfo, "%f %*[^\n]%*c", &chi2geoSM.at(2));
     fscanf(inputInfo, "%f %*[^\n]%*c", &chi2geo);
+    fscanf(inputInfo, "%f %*[^\n]%*c", &cosopenSM.at(0));
+    fscanf(inputInfo, "%f %*[^\n]%*c", &cosopenSM.at(1));
+    fscanf(inputInfo, "%f %*[^\n]%*c", &cosopenSM.at(2));
+    fscanf(inputInfo, "%f %*[^\n]%*c", &cosopen);
     fscanf(inputInfo, "%*[^\n]%*c");
     fscanf(inputInfo, "%*[^\n]%*c");
 
@@ -163,7 +167,7 @@ int main(int argc, char** argv) {
     for (size_t idaughter = 0; idaughter < daughters.size(); ++idaughter) {
       daughters.at(idaughter).CancelCuts();
       if (chi2prim.at(idaughter) != -1) daughters.at(idaughter).SetCutChi2Prim(chi2prim.at(idaughter));
-      if (cosprim.at(idaughter)  != -1) daughters.at(idaughter).SetCutCos(cosprim.at(idaughter));
+      if (cos.at(idaughter)  != -1) daughters.at(idaughter).SetCutCos(cos.at(idaughter));
     }
     Mother mother(pdg_mother);
     mother.CancelCuts();
@@ -172,6 +176,7 @@ int main(int argc, char** argv) {
     if (dist        != -1) mother.SetCutDistance(dist);
     if (distSV      != -1) mother.SetCutDistanceToSV(distSV);
     if (chi2geo     != -1) mother.SetCutChi2Geo(chi2geo);
+    if (cosopen     != -1) mother.SetCutCosOpen(cosopen);
     if (chi2topo    != -1) mother.SetCutChi2Topo(chi2topo);
     if (costopo     != -1) mother.SetCutCosTopo(costopo);
     if (LdL         != -1) mother.SetCutLdL(LdL);
@@ -185,6 +190,14 @@ int main(int argc, char** argv) {
       else break;
     if (chi2geoSM_vec.size() > 0)
       mother.SetCutChi2GeoSM({chi2geoSM_vec});
+
+    std::vector<Float_t> cosopenSM_vec;
+    for (int i = 0; i < ndaughters; i++)
+      if (cosopenSM.at(i) != -1)
+	cosopenSM_vec.push_back(cosopenSM.at(i));
+      else break;
+    if (cosopenSM_vec.size() > 0)
+      mother.SetCutCosOpenSM({cosopenSM_vec});
 
     std::vector<Float_t> chi2topoSM_vec;
     for (int i = 0; i < ndaughters; i++)

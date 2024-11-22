@@ -91,8 +91,8 @@ int main(int argc, char** argv) {
   char name_mother [5];
   Int_t pdg_mother;
   std::array<Int_t, 3> pdg_1, pdg_2;
-  std::array<Float_t, ndaughters> chi2prim, cosprim;
-  Float_t dist, distSV, chi2geo, chi2topo, costopo, LdL, decaylength, distPVline;
+  std::array<Float_t, ndaughters> chi2prim, cos;
+  Float_t dist, distSV, chi2geo, cosopen, chi2topo, costopo, LdL, decaylength, distPVline;
   Int_t pid_mode;
   Float_t pid_purity;
   std::array<Float_t, npdgs> purity_pdg;
@@ -122,13 +122,14 @@ int main(int argc, char** argv) {
 
     fscanf(inputInfo, "%f %*[^\n]%*c", &chi2prim.at(0));
     fscanf(inputInfo, "%f %*[^\n]%*c", &chi2prim.at(1));
-    fscanf(inputInfo, "%f %*[^\n]%*c", &cosprim.at(0));
-    fscanf(inputInfo, "%f %*[^\n]%*c", &cosprim.at(1));
+    fscanf(inputInfo, "%f %*[^\n]%*c", &cos.at(0));
+    fscanf(inputInfo, "%f %*[^\n]%*c", &cos.at(1));
     fscanf(inputInfo, "%*[^\n]%*c");
     fscanf(inputInfo, "%*[^\n]%*c");
 
     fscanf(inputInfo, "%f %*[^\n]%*c", &dist);
     fscanf(inputInfo, "%f %*[^\n]%*c", &chi2geo);
+    fscanf(inputInfo, "%f %*[^\n]%*c", &cosopen);
     fscanf(inputInfo, "%*[^\n]%*c");
     fscanf(inputInfo, "%*[^\n]%*c");
 
@@ -193,7 +194,7 @@ int main(int argc, char** argv) {
     for (size_t idaughter = 0; idaughter < daughters.size(); ++idaughter) {
       daughters.at(idaughter).CancelCuts();
       if (chi2prim.at(idaughter) != -1) daughters.at(idaughter).SetCutChi2Prim(chi2prim.at(idaughter));
-      if (cosprim.at(idaughter)  != -1) daughters.at(idaughter).SetCutCos(cosprim.at(idaughter));
+      if (cos.at(idaughter)  != -1) daughters.at(idaughter).SetCutCos(cos.at(idaughter));
     }
 
     Mother mother(pdg_mother);
@@ -202,6 +203,7 @@ int main(int argc, char** argv) {
     // Set cut values
     if (dist        != -1) mother.SetCutDistance(dist);
     if (chi2geo     != -1) mother.SetCutChi2Geo(chi2geo);
+    if (cosopen     != -1) mother.SetCutCosOpen(cosopen);
     if (chi2topo    != -1) mother.SetCutChi2Topo(chi2topo);
     if (costopo     != -1) mother.SetCutCosTopo(costopo);
     if (LdL         != -1) mother.SetCutLdL(LdL);

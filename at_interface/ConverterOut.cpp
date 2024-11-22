@@ -38,16 +38,18 @@ void ConverterOut::CopyParticle(const OutputContainer& kf_particle, AnalysisTree
     particle.SetField(kf_particle.GetDistanceToSV(), distance_field_id_ + 1);
     for (int i = 0; i < decay_.GetNDaughters(); ++i) {
       particle.SetField(kf_particle.GetChi2Geo(i + 1), chi2geo_sm_field_id_ + i);
+      particle.SetField(kf_particle.GetCosOpen(i + 1), cosopen_sm_field_id_ + i);
       particle.SetField(kf_particle.GetChi2Topo(i + 1), chi2topo_sm_field_id_ + i);
       particle.SetField(kf_particle.GetCosineTopo(i + 1), cosine_topo_sm_field_id_ + i);
     }
   }
 
   particle.SetField(kf_particle.GetChi2Geo(0), chi2geo_field_id_);
-  particle.SetField(kf_particle.GetL(), chi2geo_field_id_ + 1);
-  particle.SetField(kf_particle.GetLdL(), chi2geo_field_id_ + 2);
-  particle.SetField(kf_particle.GetChi2Topo(0), chi2geo_field_id_ + 3);
-  particle.SetField(kf_particle.GetCosineTopo(0), chi2geo_field_id_ + 4);
+  particle.SetField(kf_particle.GetCosOpen(0), chi2geo_field_id_ + 1);
+  particle.SetField(kf_particle.GetL(), chi2geo_field_id_ + 2);
+  particle.SetField(kf_particle.GetLdL(), chi2geo_field_id_ + 3);
+  particle.SetField(kf_particle.GetChi2Topo(0), chi2geo_field_id_ + 4);
+  particle.SetField(kf_particle.GetCosineTopo(0), chi2geo_field_id_ + 5);
 }
 
 void ConverterOut::Exec() {
@@ -116,6 +118,7 @@ void ConverterOut::Init() {
     out_particles.AddFields<float>({"distance", "distance_sv"}, "Distance between the particles, cm");
     out_particles.AddFields<float>({"cosine_first", "cosine_second", "cosine_third"}, "Cos between mother and daughter particle");
     out_particles.AddFields<float>({"chi2_geo_sm1", "chi2_geo_sm2", "chi2_geo_sm3"}, "");
+    out_particles.AddFields<float>({"cosopen_sm1", "cosopen_sm2", "cosopen_sm3"}, "");
     out_particles.AddFields<float>({"chi2_topo_sm1", "chi2_topo_sm2", "chi2_topo_sm3"}, "");
     out_particles.AddFields<float>({"cosine_topo_sm1", "cosine_topo_sm2", "cosine_topo_sm3"}, "");
   } else if (decay_.GetNDaughters() == 2) {
@@ -125,7 +128,7 @@ void ConverterOut::Init() {
     out_particles.AddFields<float>({"cosine_first", "cosine_second"}, "Cos between mother and daughter particle");
   }
 
-  out_particles.AddFields<float>({"chi2_geo", "l", "l_over_dl", "chi2_topo", "cosine_topo"}, "");
+  out_particles.AddFields<float>({"chi2_geo", "cosopen", "l", "l_over_dl", "chi2_topo", "cosine_topo"}, "");
 
   AnalysisTree::BranchConfig LambdaSimBranch(out_branch_sim, AnalysisTree::DetType::kParticle);
 

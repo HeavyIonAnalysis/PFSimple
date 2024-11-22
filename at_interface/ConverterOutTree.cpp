@@ -45,16 +45,20 @@ void ConverterOutTree::CopyParticle(const OutputContainer& kf_particle) {
 
   if (decay_.GetNDaughters() == 3) {
     chi2geo_sm_1_ = kf_particle.GetChi2Geo(1);
+    cosopen_sm_1_ = kf_particle.GetCosOpen(1);
     chi2topo_sm_1_ = kf_particle.GetChi2Topo(1);
     costopo_sm_1_ = kf_particle.GetCosineTopo(1);
     chi2geo_sm_2_ = kf_particle.GetChi2Geo(2);
+    cosopen_sm_2_ = kf_particle.GetCosOpen(2);
     chi2topo_sm_2_ = kf_particle.GetChi2Topo(2);
     costopo_sm_2_ = kf_particle.GetCosineTopo(2);
     chi2geo_sm_3_ = kf_particle.GetChi2Geo(3);
+    cosopen_sm_3_ = kf_particle.GetCosOpen(3);
     chi2topo_sm_3_ = kf_particle.GetChi2Topo(3);
     costopo_sm_3_ = kf_particle.GetCosineTopo(3);
   }
   chi2geo_ = kf_particle.GetChi2Geo(0);
+  cosopen_ = kf_particle.GetCosOpen(0);
   chi2topo_ = kf_particle.GetChi2Topo(0);
   costopo_ = kf_particle.GetCosineTopo(0);
   L_ = kf_particle.GetL();
@@ -131,6 +135,9 @@ void ConverterOutTree::Init() {
     out_reco_->Branch("chi2geo_sm_1", &chi2geo_sm_1_, "chi2geo_sm_1_/F");
     out_reco_->Branch("chi2geo_sm_2", &chi2geo_sm_2_, "chi2geo_sm_2_/F");
     out_reco_->Branch("chi2geo_sm_3", &chi2geo_sm_3_, "chi2geo_sm_3_/F");
+    out_reco_->Branch("cosopen_sm_1", &cosopen_sm_1_, "cosopen_sm_1_/F");
+    out_reco_->Branch("cosopen_sm_2", &cosopen_sm_2_, "cosopen_sm_2_/F");
+    out_reco_->Branch("cosopen_sm_3", &cosopen_sm_3_, "cosopen_sm_3_/F");
     out_reco_->Branch("chi2topo_sm_1", &chi2topo_sm_1_, "chi2topo_sm_1_/F");
     out_reco_->Branch("chi2topo_sm_2", &chi2topo_sm_2_, "chi2topo_sm_2_/F");
     out_reco_->Branch("chi2topo_sm_3", &chi2topo_sm_3_, "chi2topo_sm_3_/F");
@@ -139,6 +146,7 @@ void ConverterOutTree::Init() {
     out_reco_->Branch("costopo_sm_3", &costopo_sm_3_, "costopo_sm_3_/F");
   }
   out_reco_->Branch("chi2geo", &chi2geo_, "chi2geo_/F");
+  out_reco_->Branch("cosopen", &cosopen_, "cosopen_/F");
   out_reco_->Branch("chi2topo", &chi2topo_, "chi2topo_/F");
   out_reco_->Branch("costopo", &costopo_, "costopo_/F");
   out_reco_->Branch("L", &L_, "L_/F");
@@ -165,7 +173,6 @@ void ConverterOutTree::Init() {
     mother_id_field_id_ = config_->GetBranchConfig(mc_particles_name_).GetFieldId("mother_id");
     g4process_field_id_ = config_->GetBranchConfig(mc_particles_name_).GetFieldId("geant_process_id");
   }
-  std::cout << "finish init out" << std::endl;
 }
 
 int ConverterOutTree::GetMothersSimId() {

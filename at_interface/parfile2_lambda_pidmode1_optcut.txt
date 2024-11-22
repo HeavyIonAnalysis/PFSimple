@@ -17,6 +17,7 @@ Lambda              pdg name
 ## Geometrical cuts for combinations of daughters
 0.15,                 cut distance daughter 1 & 2
 11.0,                 cut chi2geo
+-1,                    cut cosopen
 --------------------------------------------------------------------------
 ## Geometrical cuts for mother
 29.0,                 cut chi2topo

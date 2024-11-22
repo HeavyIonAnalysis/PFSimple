@@ -79,9 +79,11 @@ class ConverterOutTree : public AnalysisTree::Task {
   float cos_1_{-1.f}, cos_2_{-1.f}, cos_3_{-1.f};
   float distance_{-1.f}, distance_sv_{-1.f};
   float chi2geo_sm_1_{-1.f}, chi2geo_sm_2_{-1.f}, chi2geo_sm_3_{-1.f};
+  float cosopen_sm_1_{-1.f}, cosopen_sm_2_{-1.f}, cosopen_sm_3_{-1.f};
   float chi2topo_sm_1_{-1.f}, chi2topo_sm_2_{-1.f}, chi2topo_sm_3_{-1.f};
   float costopo_sm_1_{-1.f}, costopo_sm_2_{-1.f}, costopo_sm_3_{-1.f};
   float chi2geo_{-1.f};
+  float cosopen_{-1.f};
   float chi2topo_{-1.f};
   float costopo_{-1.f};
   float L_{-1.f}, LdL_{-1.f}, distance_pv_line_{-1.f};

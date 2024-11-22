@@ -35,7 +35,11 @@ class Mother {
   void SetCutCosTopoSM(std::vector<float> cos_topo_sm) {
     for (std::size_t i = 1; i < cos_topo_sm.size() + 1; ++i) cos_topo_.at(i) = cos_topo_sm.at(i - 1);
   }
-
+  void SetCutCosOpen(float cos_open) { cos_topo_.at(0) = cos_open; }
+  void SetCutCosOpenSM(std::vector<float> cos_open_sm) {
+    for (std::size_t i = 1; i < cos_open_sm.size() + 1; ++i) cos_open_.at(i) = cos_open_sm.at(i - 1);
+  }
+  
   void CancelCutDistance() { this->SetCutDistance(huge_value); }
   void CancelCutDistanceToSV() { this->SetCutDistanceToSV(huge_value); }
   void CancelCutChi2Geo() { this->SetCutChi2Geo(huge_value); }
@@ -47,12 +51,15 @@ class Mother {
   void CancelCutChi2TopoSM() { this->SetCutChi2TopoSM({-huge_value, -huge_value, -huge_value}); }
   void CancelCutCosTopo() { this->SetCutCosTopo(-huge_value); }
   void CancelCutCosTopoSM() { this->SetCutCosTopoSM({huge_value, huge_value, huge_value}); }
+  void CancelCutCosOpen() { this->SetCutCosOpen(-huge_value); }
+  void CancelCutCosOpenSM() { this->SetCutCosOpenSM({-huge_value, -huge_value, -huge_value}); }
   void CancelCuts();
 
   Pdg_t GetPdg() const { return pdg_; }
   float GetCutDistance() const { return distance_; }
   float GetCutDistanceToSV() const { return distance_sv_; }
   std::array<float, 4> GetCutChi2Geo() const { return chi2_geo_; }
+  std::array<float, 4> GetCutCosOpen() const { return cos_open_; }
   float GetCutLdL() const { return ldl_; }
   float GetCutDecayLength() const { return l_; }
   float GetCutDistancePVLine() const { return distance_pv_; }
@@ -70,6 +77,7 @@ class Mother {
   float distance_pv_{-huge_value};
   std::array<float, 4> chi2_topo_{{huge_value, -huge_value, -huge_value, -huge_value}};///< lower value
   std::array<float, 4> cos_topo_{{-huge_value, huge_value, huge_value, huge_value}};
+  std::array<float, 4> cos_open_{{-huge_value, -huge_value, -huge_value, -huge_value}};
 };
 
 #endif//KFPARTICLESIMPLE_KFSIMPLE_MOTHERCUTS_HPP_
