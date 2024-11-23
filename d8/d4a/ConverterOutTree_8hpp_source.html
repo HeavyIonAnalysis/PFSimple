@@ -173,22 +173,24 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>  <span class="keywordtype">float</span> cos_1_{-1.f}, cos_2_{-1.f}, cos_3_{-1.f};</div>
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>  <span class="keywordtype">float</span> distance_{-1.f}, distance_sv_{-1.f};</div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>  <span class="keywordtype">float</span> chi2geo_sm_1_{-1.f}, chi2geo_sm_2_{-1.f}, chi2geo_sm_3_{-1.f};</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>  <span class="keywordtype">float</span> chi2topo_sm_1_{-1.f}, chi2topo_sm_2_{-1.f}, chi2topo_sm_3_{-1.f};</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>  <span class="keywordtype">float</span> costopo_sm_1_{-1.f}, costopo_sm_2_{-1.f}, costopo_sm_3_{-1.f};</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>  <span class="keywordtype">float</span> chi2geo_{-1.f};</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>  <span class="keywordtype">float</span> chi2topo_{-1.f};</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>  <span class="keywordtype">float</span> costopo_{-1.f};</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>  <span class="keywordtype">float</span> L_{-1.f}, LdL_{-1.f}, distance_pv_line_{-1.f};</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>  <span class="keywordtype">float</span> mass_mc_, px_mc_, py_mc_, pz_mc_;</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>  <span class="keywordtype">int</span> generation_{-1};</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>  <span class="keywordtype">int</span> g4process_{-1};</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>  <span class="keywordtype">int</span> is_mc_{0};</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>  <span class="keywordtype">int</span> id_mc_{-1};</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>};</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>  <span class="keywordtype">float</span> cosopen_sm_1_{-1.f}, cosopen_sm_2_{-1.f}, cosopen_sm_3_{-1.f};</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>  <span class="keywordtype">float</span> chi2topo_sm_1_{-1.f}, chi2topo_sm_2_{-1.f}, chi2topo_sm_3_{-1.f};</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>  <span class="keywordtype">float</span> costopo_sm_1_{-1.f}, costopo_sm_2_{-1.f}, costopo_sm_3_{-1.f};</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>  <span class="keywordtype">float</span> chi2geo_{-1.f};</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>  <span class="keywordtype">float</span> cosopen_{-1.f};</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>  <span class="keywordtype">float</span> chi2topo_{-1.f};</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>  <span class="keywordtype">float</span> costopo_{-1.f};</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>  <span class="keywordtype">float</span> L_{-1.f}, LdL_{-1.f}, distance_pv_line_{-1.f};</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>  <span class="keywordtype">float</span> mass_mc_, px_mc_, py_mc_, pz_mc_;</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>  <span class="keywordtype">int</span> generation_{-1};</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>  <span class="keywordtype">int</span> g4process_{-1};</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>  <span class="keywordtype">int</span> is_mc_{0};</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>  <span class="keywordtype">int</span> id_mc_{-1};</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>};</div>
 </div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="preprocessor">#endif</span><span class="comment">//KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUTTREE_H_</span></div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span><span class="preprocessor">#endif</span><span class="comment">//KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUTTREE_H_</span></div>
 <div class="ttc" id="aclassConverterOutTree_html"><div class="ttname"><a href="../../d8/d14/classConverterOutTree.html">ConverterOutTree</a></div><div class="ttdef"><b>Definition</b> ConverterOutTree.hpp:13</div></div>
 <div class="ttc" id="aclassDecay_html"><div class="ttname"><a href="../../d9/df4/classDecay.html">Decay</a></div><div class="ttdef"><b>Definition</b> Decay.hpp:12</div></div>
 <div class="ttc" id="aclassOutputContainer_html"><div class="ttname"><a href="../../db/d1e/classOutputContainer.html">OutputContainer</a></div><div class="ttdoc">Container with output information about reconstructed particles and geometrical decay parameters (qua...</div><div class="ttdef"><b>Definition</b> OutputContainer.hpp:20</div></div>

@@ -8,5 +8,6 @@ var searchData=
   ['chi2_5ftopo_5f_5',['chi2_topo_',['../d1/ddc/classMother.html#a8a7f0106ce2af96fa64774cbf5cb9f6c',1,'Mother']]],
   ['cos_6',['cos',['../de/d87/structSelectionValues.html#a0b52b71f7728ff7881b122baf9deb2b3',1,'SelectionValues']]],
   ['cos_5f_7',['cos_',['../df/d41/classDaughter.html#a948d8675a218767f74842798f64791d9',1,'Daughter']]],
-  ['cos_5ftopo_8',['cos_topo',['../de/d87/structSelectionValues.html#afce044fc0cde7002b3e21cf597d74faa',1,'SelectionValues']]]
+  ['cos_5fopen_8',['cos_open',['../de/d87/structSelectionValues.html#a4261d1a66b707dad4ab566ae88750073',1,'SelectionValues']]],
+  ['cos_5ftopo_9',['cos_topo',['../de/d87/structSelectionValues.html#afce044fc0cde7002b3e21cf597d74faa',1,'SelectionValues']]]
 ];

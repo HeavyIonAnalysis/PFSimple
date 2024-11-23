@@ -1,7 +1,7 @@
 <map id="ConverterIn" name="ConverterIn">
-<area shape="rect" id="Node000001" title=" " alt="" coords="31,334,249,899"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="31,334,249,879"/>
 <area shape="rect" id="Node000002" title=" " alt="" coords="5,105,128,171"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="76,185,99,333,94,334,71,186"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="77,185,100,334,95,334,71,186"/>
 <area shape="rect" id="Node000003" href="$d8/da4/classInputContainer.html" title="Container with input information about event (vertex and tracks) and cuts used in the certain event." alt="" coords="152,5,275,271"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="196,271,189,317,183,317,190,270"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="195,271,188,317,183,317,190,270"/>
 </map>
