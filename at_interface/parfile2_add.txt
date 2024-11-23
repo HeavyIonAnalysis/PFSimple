@@ -17,6 +17,7 @@ Kshort              pdg name
 ## Geometrical cuts for combinations of daughters
 1.0,                   cut distance daughter 1 & 2
 3.0,                   cut chi2geo
+-1,                    cut cosopen
 --------------------------------------------------------------------------
 ## Geometrical cuts for mother
 -1,                    cut chi2topo

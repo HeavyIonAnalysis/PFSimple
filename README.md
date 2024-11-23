@@ -45,7 +45,7 @@ Install PFSimple
     cmake -DCMAKE_INSTALL_PREFIX=/path-to-install-pfsimple /path-to-source-pfsimple
     make -j install
     
-## First run
+## Configuration of decay settings
 
 The reconstruction will be executed with at_interface/main2.cpp for
 2-body decays and at_interface/main3.cpp for 3-body decays.
@@ -119,6 +119,8 @@ that test the mother against the PV, e.g. chi2topo, are inverted for
 the SM to exclude SMs that come from the PV.
 
 Several example parameter files can be found in the folder at_interface.
+
+## First run
 
 Each time before running the prepared executable you should set the environment variables to let your system know where to find libraries:
 

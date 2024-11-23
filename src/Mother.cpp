@@ -12,4 +12,6 @@ void Mother::CancelCuts() {
   this->CancelCutChi2TopoSM();
   this->CancelCutCosTopo();
   this->CancelCutCosTopoSM();
+  this->CancelCutCosOpen();
+  this->CancelCutCosOpenSM();
 }

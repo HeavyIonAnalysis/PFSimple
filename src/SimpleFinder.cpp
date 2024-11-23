@@ -4,7 +4,7 @@
 void SimpleFinder::Init(std::vector<KFParticle>&& tracks, const KFVertex& pv) {
   tracks_ = tracks;
   prim_vx_ = pv;
-  InitIndexesMap();
+  InitTrackIndexesMap();
 }
 
 void SimpleFinder::Init(const InputContainer& input) {// TODO know how to de-const without time lose for copying by value
@@ -12,10 +12,10 @@ void SimpleFinder::Init(const InputContainer& input) {// TODO know how to de-con
   Init(std::move(tracks), input.GetVertex());
 }
 
-float SimpleFinder::CalculateDistanceBetweenParticles(const Parameters_t& parameters) {
-  const float dx = parameters.at(0).at(kX) - parameters.at(1).at(kX);
-  const float dy = parameters.at(0).at(kY) - parameters.at(1).at(kY);
-  const float dz = parameters.at(0).at(kZ) - parameters.at(1).at(kZ);
+float SimpleFinder::CalculateDistanceBetweenParticles() {
+  const float dx = params_.at(0).at(kX) - params_.at(1).at(kX);
+  const float dy = params_.at(0).at(kY) - params_.at(1).at(kY);
+  const float dz = params_.at(0).at(kZ) - params_.at(1).at(kZ);
   return std::sqrt(dx * dx + dy * dy + dz * dz);
 }
 
@@ -41,7 +41,10 @@ void SimpleFinder::CalculateParamsInPCA(const KFParticle& track1, int pid1, cons
   }
 }
 
-void SimpleFinder::CalculateParamsInSV(const KFParticle& track, int pid, const int id_daughter) {
+void SimpleFinder::CalculateParamsInSV(const KFParticle& track, int pid) {
+
+  CalculateSecondaryVertex();
+
   params_.resize(3);
 
   KFParticle particle(track);
@@ -60,13 +63,13 @@ void SimpleFinder::CalculateParamsInSV(const KFParticle& track, int pid, const i
   particleSIMD.TransportFast(dS, params);
 
   for (int i = 0; i < 8; i++)
-    params_.at(id_daughter).at(i) = params[i][0];
+    params_.at(2).at(i) = params[i][0];
 }
 
-float SimpleFinder::CalculateDistanceToSV(const int id_daughter) const {
-  const float dx = params_.at(id_daughter).at(0) - sec_vx_.at(0);
-  const float dy = params_.at(id_daughter).at(1) - sec_vx_.at(1);
-  const float dz = params_.at(id_daughter).at(2) - sec_vx_.at(2);
+float SimpleFinder::CalculateDistanceToSV() const {
+  const float dx = params_.at(2).at(0) - sec_vx_.at(0);
+  const float dy = params_.at(2).at(1) - sec_vx_.at(1);
+  const float dz = params_.at(2).at(2) - sec_vx_.at(2);
   const float dr = sqrt(dx * dx + dy * dy + dz * dz);
   return dr;
 }
@@ -126,7 +129,7 @@ float SimpleFinder::CalculateChiToPrimaryVertex(const KFParticle& track, Pdg_t p
   return chi2vec[0];
 }
 
-std::vector<int> SimpleFinder::GetIndexes(const Daughter& daughter) {
+std::vector<int> SimpleFinder::GetGoodDaughtersIndexes(const Daughter& daughter) {
   std::vector<int> result{};
   for (auto pid : daughter.GetPids()) {
     auto it = indexes_.find(pid);
@@ -142,7 +145,7 @@ std::vector<int> SimpleFinder::GetIndexes(const Daughter& daughter) {
   return result;
 }
 
-void SimpleFinder::InitIndexesMap() {
+void SimpleFinder::InitTrackIndexesMap() {
   for (size_t i = 0; i < tracks_.size(); i++) {
     auto pdg = tracks_.at(i).GetPDG();
     auto it = indexes_.find(pdg);
@@ -164,7 +167,7 @@ KFPTrack SimpleFinder::ToKFPTrack(const KFParticle& particle) {
   track.SetPy(particle.GetPy());
   track.SetPz(particle.GetPz());
 
-  for (Int_t iC = 0; iC < 21; iC++) {
+  for (Int_t iC = 0; iC < NumberOfCovElements; iC++) {
     track.SetCovariance(iC, particle.GetCovariance(iC));
   }
   for (Int_t iF = 0; iF < 10; iF++) {
@@ -193,11 +196,14 @@ bool SimpleFinder::IsGoodPair(const KFParticle& track1,
                               const Decay& decay) {
   if (track1.Id() == track2.Id()) { return false; }
 
-  const auto& daughters = decay.GetDaughters();
-  CalculateParamsInPCA(track1, daughters[0].GetPdgHypo(), track2, daughters[1].GetPdgHypo());
-  values_.distance = CalculateDistanceBetweenParticles(params_);
+  values_.distance = CalculateDistanceBetweenParticles();
 
   if (values_.distance > decay.GetMother().GetCutDistance() || std::isnan(values_.distance)) { return false; }
+
+  const int id_mother = decay.GetNDaughters() == 2 ? 0 : 1;
+  values_.cos_open[id_mother] = CalculateCosOpen(0, 1);
+  if (values_.cos_open[id_mother] < decay.GetMother().GetCutCosOpen()[id_mother] || std::isnan(values_.cos_open[id_mother])) { return false; }
+
   return true;
 }
 
@@ -210,12 +216,21 @@ bool SimpleFinder::IsGoodThree(const KFParticle& track1,
   if (track1.Id() == track3.Id()) { return false; }
   if (track2.Id() == track3.Id()) { return false; }
 
-  const auto& daughters = decay.GetDaughters();
-
-  CalculateSecondaryVertex();
-  CalculateParamsInSV(track3, daughters[2].GetPdgHypo(), daughters[2].GetId());
-  values_.distance_sv = CalculateDistanceToSV(daughters[2].GetId());
+  values_.distance_sv = CalculateDistanceToSV();
   if (values_.distance_sv > decay.GetMother().GetCutDistanceToSV() || std::isnan(values_.distance_sv)) { return false; }
+
+  for (int i = 0; i < 2; i++) {
+    values_.cos_open[i + 2] = CalculateCosOpen(i, 2);
+    if (values_.cos_open[i + 2] < decay.GetMother().GetCutCosOpen()[i + 2] || std::isnan(values_.cos_open[i + 2])) { return false; }
+  }
+
+  std::vector<float> cos_tmp;
+  for (int i = 1; i < 4; i++) 
+    cos_tmp.push_back(values_.cos_open[i]);
+  
+  values_.cos_open[0] = *std::min_element(cos_tmp.begin(), cos_tmp.end());
+  if (values_.cos_open[0] < decay.GetMother().GetCutCosOpen()[0] || std::isnan(values_.cos_open[0])) { return false; }
+
   return true;
 }
 
@@ -301,10 +316,10 @@ float SimpleFinder::CalculateCosTopo(const KFParticleSIMD& mother) const {
   return sp / norm;
 }
 
-bool SimpleFinder::IsGoodCos(const KFParticleSIMD& mother, const SimpleFinder::Parameters_t& daughter_pars, const Decay& decay) {
+bool SimpleFinder::IsGoodCos(const KFParticleSIMD& mother, const Decay& decay) {
   for (int i = 0; i < decay.GetNDaughters(); ++i) {
     const auto cut = decay.GetDaughters()[i].GetCutCos();
-    const auto& par = daughter_pars.at(i);
+    const auto& par = params_.at(i);
     const float norm = mother.GetP()[0] * std::sqrt(par[kPx] * par[kPx] + par[kPy] * par[kPy] + par[kPz] * par[kPz]);
     values_.cos[i] = (mother.GetPx()[0] * par[kPx] + mother.GetPy()[0] * par[kPy] + mother.GetPz()[0] * par[kPz]) / norm;
     if (values_.cos[i] < cut || std::isnan(values_.cos[i])) {
@@ -312,6 +327,15 @@ bool SimpleFinder::IsGoodCos(const KFParticleSIMD& mother, const SimpleFinder::P
     }
   }
   return true;
+}
+
+float SimpleFinder::CalculateCosOpen(const int id_daughter_1, const int id_daughter_2) const {
+  const auto& par1 = params_.at(id_daughter_1);
+  const auto& par2 = params_.at(id_daughter_2);
+  const float sp   = par1[kPx] * par2[kPx] + par1[kPy] * par2[kPy] + par1[kPz] * par2[kPz];
+  const float norm = std::sqrt(par1[kPx] * par1[kPx] + par1[kPy] * par1[kPy] + par1[kPz] * par1[kPz]) * std::sqrt(par2[kPx] * par2[kPx] + par2[kPy] * par2[kPy] + par2[kPz] * par2[kPz]);
+
+  return sp / norm;
 }
 
 void SimpleFinder::CalculateSecondaryVertex() {
@@ -327,7 +351,7 @@ void SimpleFinder::ReconstructDecay(const Decay& decay) {
   std::vector<std::vector<int>> indexes{};
   std::vector<Pdg_t> pdgs{};
   for (const auto& daughter : decay.GetDaughters()) {
-    indexes.emplace_back(GetIndexes(daughter));
+    indexes.emplace_back(GetGoodDaughtersIndexes(daughter));
     pdgs.emplace_back(daughter.GetPdgHypo());
   }
 
@@ -356,6 +380,7 @@ void SimpleFinder::ReconstructDecay(const Decay& decay) {
         track.at(1).Pz() *= std::abs(charge);
       }
 
+      CalculateParamsInPCA(track.at(0), decay.GetDaughters().at(0).GetPdgHypo(), track.at(1), decay.GetDaughters().at(1).GetPdgHypo()); 
       if (!IsGoodPair(track.at(0), track.at(1), decay)) continue;
 
       KFParticleSIMD kf_mother = ConstructMother({track.at(0), track.at(1)}, pdgs);
@@ -365,7 +390,7 @@ void SimpleFinder::ReconstructDecay(const Decay& decay) {
         if (!IsGoodMother(kf_mother, decay.GetMother(), id_mother)) continue;
         if (!IsMotherFromPV(kf_mother, decay.GetMother(), id_mother)) continue;
         if (!IsGoodDecayLength(kf_mother, decay.GetMother())) continue;
-        if (!IsGoodCos(kf_mother, params_, decay)) continue;
+        if (!IsGoodCos(kf_mother, decay)) continue;
 
         FillDaughtersInfo({track.at(0), track.at(1)}, pdgs);
         SaveParticle(kf_mother, decay);
@@ -389,6 +414,7 @@ void SimpleFinder::ReconstructDecay(const Decay& decay) {
             track.at(2).Pz() *= std::abs(charge);
           }
 
+	  CalculateParamsInSV(track.at(2), decay.GetDaughters().at(0).GetPdgHypo());  
           if (!IsGoodThree(track.at(0), track.at(1), track.at(2), decay)) continue;
 
           kf_mother = ConstructMother({track.at(0), track.at(2)}, {pdgs.at(0), pdgs.at(2)});
@@ -406,7 +432,7 @@ void SimpleFinder::ReconstructDecay(const Decay& decay) {
           if (!IsGoodMother(kf_mother, decay.GetMother(), id_mother)) continue;
           if (!IsMotherFromPV(kf_mother, decay.GetMother(), id_mother)) continue;
           if (!IsGoodDecayLength(kf_mother, decay.GetMother())) continue;
-          if (!IsGoodCos(kf_mother, params_, decay)) continue;
+          if (!IsGoodCos(kf_mother, decay)) continue;
 
           FillDaughtersInfo({track.at(0), track.at(1), track.at(2)}, pdgs);
 

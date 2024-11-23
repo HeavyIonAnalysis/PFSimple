@@ -33,7 +33,7 @@ void InputContainer::AddTrack(const std::vector<float>& par,
   particle.Py() = par[kPy];
   particle.Pz() = par[kPz];
 
-  for (int i = 0; i < 21; i++)
+  for (int i = 0; i < NumberOfCovElements; i++)
     particle.Covariance(i) = cov[i];
 
   for (int i = 0; i < NumberOfFieldPars; i++)

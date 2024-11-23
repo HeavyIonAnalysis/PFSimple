@@ -15,9 +15,8 @@ void ConverterIn::FillParticle(const AnalysisTree::BranchChannel& rec_particle) 
   std::vector<float> mf(NumberOfFieldPars, 0.f);
   for (int i = 0; i < NumberOfFieldPars; i++)
     mf.at(i) = rec_particle[mf_field_.at(i)];
-
-  auto cov_matrix = is_shine_ ? GetCovMatrixShine(rec_particle) : GetCovMatrixCbm(rec_particle);
-
+  
+  auto cov_matrix = GetCovMatrixCbm(rec_particle);
   std::vector<float> par(kNumberOfTrackPars, 0.f);
   par.at(kX) = rec_particle[x_field_];
   par.at(kY) = rec_particle[y_field_];
@@ -28,7 +27,6 @@ void ConverterIn::FillParticle(const AnalysisTree::BranchChannel& rec_particle) 
 
   const int q = rec_particle[q_field_];
   const int id = rec_particle.GetId();
-
   int pdg = -999;
   if (pid_mode_ == 0) {
     pdg = q;
@@ -114,7 +112,7 @@ void ConverterIn::Init() {
   ty_field_ = kf_tracks_.GetField("ty");
   qp_field_ = kf_tracks_.GetField("qp");
 
-  int Ncov = is_shine_ ? 21 : 15;
+  int Ncov = 15;
 
   for (int i = 0; i < Ncov; i++)
     cov_field_.push_back(kf_tracks_.GetField(("cov" + std::to_string(i + 1)).c_str()));
@@ -183,7 +181,7 @@ std::vector<float> ConverterIn::GetCovMatrixCbm(const AnalysisTree::BranchChanne
     }
   }
 
-  std::vector<float> cov(21, 0);
+  std::vector<float> cov(NumberOfCovElements, 0);
   for (int i = 0, l = 0; i < kNumberOfTrackPars; i++) {
     for (int j = 0; j <= i; j++, l++) {
       cov.at(l) = 0;
@@ -191,14 +189,6 @@ std::vector<float> ConverterIn::GetCovMatrixCbm(const AnalysisTree::BranchChanne
         cov.at(l) += F[i][k] * VFT[k][j];
       }
     }
-  }
-  return cov;
-}
-
-std::vector<float> ConverterIn::GetCovMatrixShine(const AnalysisTree::BranchChannel& particle) const {
-  std::vector<float> cov(21, 0.);
-  for (int iCov = 0; iCov < 21; ++iCov) {
-    cov[iCov] = particle[cov_field_.at(iCov)];
   }
   return cov;
 }
