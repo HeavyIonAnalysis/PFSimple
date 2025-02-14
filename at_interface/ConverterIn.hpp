@@ -27,7 +27,7 @@ class ConverterIn : public AnalysisTree::Task {
 
   const InputContainer& GetInputContainer() const { return container_; }
   void SetTrackCuts(AnalysisTree::Cuts* const cuts) { track_cuts_ = cuts; };
-  void SetMotherPdgsToBeConsidered(std::vector<int>&& pdgs) { mother_pdgs_to_be_considered_ = pdgs; };
+  void SetAncestorMotherPdgsToBeConsidered(std::vector<int>&& pdgs) { ancestor_pdgs_to_be_considered_ = pdgs; };
   void SetPidMode(int value) { pid_mode_ = value; }/// selection mode for pid:
                                                    /// 0 = no pid
                                                    /// 1 = mc pid
@@ -46,37 +46,37 @@ class ConverterIn : public AnalysisTree::Task {
   void UseRecPIDPurityMin() { pid_mode_ = 4; }
   void SetPidPurity(const float pid_purity) {
     if (pid_mode_ != 3 && pid_mode_ != 4)
-      throw std::runtime_error("Pdg purity can only be set in pidmode 3 or 4");
+      throw std::runtime_error("Pdg purity can only be set in pidmode 3 or 4. Set purity to -1 or change pidmode.");
     for (int ipid = 0; ipid < pid_purity_.size(); ipid++)
       pid_purity_.at(ipid) = pid_purity;
   }
   void SetPidPurityProton(const float pid_purity) {
     if (pid_mode_ != 4) {
-      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 4");
+      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 4. Set purity to -1 or change pidmode.");
     } else
       pid_purity_.at(0) = pid_purity;
   };
   void SetPidPurityPion(const float pid_purity) {
     if (pid_mode_ != 4) {
-      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 4");
+      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 4. Set purity to -1 or change pidmode.");
     } else
       pid_purity_.at(1) = pid_purity;
   };
   void SetPidPurityKaon(const float pid_purity) {
     if (pid_mode_ != 4) {
-      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 4");
+      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 4. Set purity to -1 or change pidmode.");
     } else
       pid_purity_.at(2) = pid_purity;
   };
   void SetPidPurityDeuteron(const float pid_purity) {
     if (pid_mode_ != 4) {
-      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 4");
+      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 4. Set purity to -1 or change pidmode.");
     } else
       pid_purity_.at(3) = pid_purity;
   };
   void SetPidPurityBG(const float pid_purity) {
     if (pid_mode_ != 4) {
-      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 4");
+      throw std::runtime_error("Pdg-specific purity can only be set in pidmode 4. Set purity to -1 or change pidmode.");
     } else
       pid_purity_.at(4) = pid_purity;
   };
@@ -85,14 +85,14 @@ class ConverterIn : public AnalysisTree::Task {
   std::vector<float> GetCovMatrixCbm(const AnalysisTree::BranchChannel&) const;
   void FillParticle(const AnalysisTree::BranchChannel&);
   bool IsGoodTrack(const AnalysisTree::BranchChannel& rec_track) const;
-  bool CheckMotherPdgs(const AnalysisTree::BranchChannel& rec_track) const;
+  bool CheckAncestorPdgs(const AnalysisTree::BranchChannel& rec_track) const;
 
   AnalysisTree::Branch kf_tracks_;
   AnalysisTree::Branch sim_tracks_;
   AnalysisTree::Matching* kf2sim_tracks_{nullptr};
   AnalysisTree::Branch rec_event_header_;
   AnalysisTree::Cuts* track_cuts_{nullptr};
-  std::vector<int> mother_pdgs_to_be_considered_;
+  std::vector<int> ancestor_pdgs_to_be_considered_;
 
   InputContainer container_;
 

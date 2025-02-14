@@ -1,6 +1,9 @@
 ## Decay
 3122,                 pdg mother
-Lambda              pdg name
+Lambda              name mother
+-1,                     mass mother: = -1: pdg mass taken from KFParticleDatabase
+-1,                     mass sigma mother: = -1: pdg mass sigma taken from KFParticleDatabase
+2,		          number of daughters
 -211,                 pdg daughter 1
 0,                       optional: additional pdg to be considered for daughter 1 (=0: no additional pdg)
 0,                       optional: additional pdg to be considered for daughter 1 (=0: no additional pdg)
@@ -25,6 +28,11 @@ Lambda              pdg name
 5.0,                   cut LdL
 -1,                    cut decaylength L
 -1,                    cut distance to PV line
+-1,                    cut invariant mass discrepancy in terms of expected width
+--------------------------------------------------------------------------
+## Options for the saving of the reconstructed mother
+0,                     apply nonlinear mass constraint
+0,                     transport mother to PV
 --------------------------------------------------------------------------
 ## Pid method
 1,                       pid mode: =0: no pid; =1: mc pid; =2: rec pid (default); =3: rec pid (max. purity & purity > min. purity); =4 (purity > min. purity)
@@ -42,4 +50,3 @@ rTree                  treename in input analysistree
 VtxTracks          branchname for reconstructed tracks in input analysistree
 -1,                     number of events to be processed (-1 = all events)
 1,                       make plain tree: =1; make no plain tree: =0
-0,                       make root-tree: =1 (no analysistree is written); make no root-tree: =0

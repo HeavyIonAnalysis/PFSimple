@@ -22,8 +22,8 @@ class ConverterOut : public AnalysisTree::Task {
 
   void SetPFSimpleTask(PFSimpleTask* pfsimple_task) { pfsimple_task_ = pfsimple_task; }
 
-  void CopyParticle(const OutputContainer& kf_particle, AnalysisTree::Particle& particle) const;
-  void SetDecay(const Decay& decay) { decay_ = decay; }
+  void CopyParticle(const OutputContainer& kf_particle, AnalysisTree::Particle& particle, int const Ndaughters) const;
+  void SetDecays(const std::vector<Decay>& decays) { decays_ = decays; }
   void SetOutputCuts(AnalysisTree::Cuts* output_cuts) { output_cuts_ = output_cuts; }
 
   void SetSimEventHeaderName(const std::string& name) { sim_events_name_ = name; }
@@ -33,9 +33,9 @@ class ConverterOut : public AnalysisTree::Task {
 
  protected:
   void InitIndexes();
-  void MatchWithMc(AnalysisTree::Particle& particle);
-  int GetMothersSimId(AnalysisTree::Particle& lambdarec);
-  int DetermineGeneration(int mother_sim_id);
+  void MatchWithMc(const OutputContainer& candidate, AnalysisTree::Particle& particle, int const Ndaughters);
+  int GetMothersSimId(const OutputContainer& candidate, AnalysisTree::Particle& particlerec, const int Ndaughters) const;
+  int DetermineGeneration(int mother_sim_id) const;
 
   // first returned value is:
   // 1 - reco daughter is unmatched to mc
@@ -52,13 +52,13 @@ class ConverterOut : public AnalysisTree::Task {
   // 0 - at least one daughter does not have mother (e.g. primary)
   static int DetermineMotherMCStatus(int mid1, int mid2) ;
 
-  int DetermineBGType(AnalysisTree::Particle& particle);
+  int DetermineBGType(AnalysisTree::Particle& particle, int const Ndaughters);
 
   // output branches
   AnalysisTree::EventHeader* events_{nullptr};
-  AnalysisTree::Particles* lambda_reco_{nullptr};
-  AnalysisTree::Particles* lambda_sim_{nullptr};
-  AnalysisTree::Matching* lambda_reco2sim_{nullptr};
+  AnalysisTree::Particles* particle_reco_{nullptr};
+  AnalysisTree::Particles* particle_sim_{nullptr};
+  AnalysisTree::Matching* particle_reco2sim_{nullptr};
 
   // input branches
   std::string mc_particles_name_{"SimParticles"};
@@ -70,25 +70,33 @@ class ConverterOut : public AnalysisTree::Task {
   AnalysisTree::Matching* rec_to_mc_{nullptr};
   AnalysisTree::EventHeader* sim_events_{nullptr};
   AnalysisTree::Cuts* output_cuts_{nullptr};
-  Decay decay_{};
-  //   int pid_mode_{0};
+  std::vector<Decay> decays_{};
 
   std::vector<OutputContainer> candidates_;
 
+  std::map<int, long unsigned int> rec2sim_daughters_;
+
   PFSimpleTask* pfsimple_task_{nullptr};
 
+  int Ndaughters_max_{0};
+  
   // field ids of simulated events
   int b_field_id_{-1};
 
   // field ids of input simulated mother
   int mother_id_field_id_{-1};
+  //int x_sim_field_id_{-1};
 
   int x_field_id_{-1};
+  int particle_id_field_id_{-1};
   int daughter_id_field_id_{-1};
   int generation_field_id_{-1};
   int g4process_field_id_{-1};
   int g4process_field_id_w_{-1};
+
   int pt_err_field_id_{-1};
+
+  int mother_id_field_id_w_{-1};
 
   int chi2prim_field_id_{-1};
   int distance_field_id_{-1};
@@ -99,6 +107,9 @@ class ConverterOut : public AnalysisTree::Task {
   int cosopen_sm_field_id_{-1};
   int chi2topo_sm_field_id_{-1};
   int cosine_topo_sm_field_id_{-1};
+
+  int chi2prim_mother_field_id_{-1};
+  int invmass_discr_field_id_{-1};
 
   bool is_detailed_bg_{false};
 };

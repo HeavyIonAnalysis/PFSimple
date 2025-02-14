@@ -18,14 +18,17 @@ class Daughter {
                                                            pids_(pids) {
     if (pids.empty())
       pids_ = {pdg_hypo};
+    generation_ = 0;
   }
 
   Pdg_t GetPdgHypo() const { return pdg_hypo_; }
   const std::vector<Pdg_t>& GetPids() const { return pids_; }
+  int GetGeneration() const { return generation_; }
   float GetCutChi2Prim() const { return chi2_prim_; }
   float GetCutCos() const { return cos_; }
   int GetId() const { return id_; }
-
+  
+  void SetGeneration(int generation) { generation_ = generation; }
   void SetCutChi2Prim(float value) { chi2_prim_ = value; }
   void SetCutCos(float value) { cos_ = value; }
   void CancelCutChi2Prim() { this->SetCutChi2Prim(-huge_value); }
@@ -36,6 +39,7 @@ class Daughter {
  protected:
   Pdg_t pdg_hypo_{-1};       ///< PDG code hypothesis
   std::vector<Pdg_t> pids_{};///< vector of PDG codes to use
+  int generation_{0};        ///< generation of daughter particle
   float chi2_prim_{18.4207}; ///< \f$\chi^2\f$ lower value
   float cos_{-huge_value};   ///< cosine lower value
   int id_{-1};               ///< daughther number (0, 1, 2)
