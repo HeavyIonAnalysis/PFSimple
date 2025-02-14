@@ -54,9 +54,9 @@ at_interface/parfile2.txt for 2-body decays and at_interface/parfile3.txt for 3-
 
 The user can select:
 1) Decay: mother and daughters
-
-	Pdg mass and pdg mass sigma for mother: if set to "-1" values from
-	KFParticleDatabase are taken
+   
+   If pdg mass and sigma mass for mother are set to "-1", values from KFParticleDatabase are 
+   taken.
    
    Option for daughters: alternative pdgs can be used in addition
    for the reconstruction
