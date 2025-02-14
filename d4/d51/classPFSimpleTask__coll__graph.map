@@ -1,12 +1,12 @@
 <map id="PFSimpleTask" name="PFSimpleTask">
-<area shape="rect" id="Node000001" title=" " alt="" coords="149,942,277,1167"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,105,128,171"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="62,186,48,309,41,483,43,581,52,681,69,782,95,878,119,932,152,980,147,983,115,934,89,880,63,783,47,682,38,581,36,483,43,308,57,185"/>
-<area shape="rect" id="Node000003" href="$d0/d65/classConverterIn.html" title=" " alt="" coords="105,334,322,879"/>
-<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="84,184,131,333,125,335,79,186"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="216,878,216,925,211,925,211,878"/>
-<area shape="rect" id="Node000004" href="$d8/da4/classInputContainer.html" title="Container with input information about event (vertex and tracks) and cuts used in the certain event." alt="" coords="152,5,275,271"/>
-<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="216,270,216,316,211,316,211,270"/>
-<area shape="rect" id="Node000005" href="$d0/d0f/classSimpleFinder.html" title="V0 particle (Lambda) reconstruction algorithm." alt="" coords="347,444,499,769"/>
-<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="381,770,361,826,337,880,289,960,285,957,332,878,356,824,376,768"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="137,985,266,1214"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,107,126,173"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="62,189,48,318,41,501,43,605,52,712,68,819,94,922,113,970,140,1015,135,1017,109,972,88,923,63,820,47,712,38,605,36,501,43,317,56,188"/>
+<area shape="rect" id="Node000003" href="$d0/d65/classConverterIn.html" title=" " alt="" coords="103,338,300,922"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="81,187,123,338,118,339,76,188"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="204,922,204,968,199,968,199,922"/>
+<area shape="rect" id="Node000004" href="$d8/da4/classInputContainer.html" title="Container with input information about event (vertex and tracks) and cuts used in the certain event." alt="" coords="150,5,272,275"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="211,275,210,321,205,321,206,275"/>
+<area shape="rect" id="Node000005" href="$d0/d0f/classSimpleFinder.html" title="V0 particle (Lambda) reconstruction algorithm." alt="" coords="324,465,477,796"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="362,796,340,861,315,923,277,993,273,991,310,921,335,859,357,795"/>
 </map>

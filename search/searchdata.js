@@ -1,9 +1,9 @@
 var indexSectionsWithContent =
 {
-  0: "cdilmnops",
+  0: "cdgilmnops",
   1: "cdimnops",
-  2: "is",
-  3: "cdilmnp",
+  2: "gis",
+  3: "cdgilmnp",
   4: "p"
 };
 

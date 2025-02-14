@@ -1,19 +1,15 @@
 <map id="ConverterOut" name="ConverterOut">
-<area shape="rect" id="Node000001" title=" " alt="" coords="109,1330,317,1976"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,105,128,171"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="61,186,51,256,43,334,32,487,26,607,29,726,43,879,58,993,79,1109,127,1330,122,1331,73,1110,53,994,37,879,24,726,21,607,27,487,37,333,45,255,56,185"/>
-<area shape="rect" id="Node000005" href="$da/d57/classPFSimpleTask.html" title=" " alt="" coords="149,992,277,1217"/>
-<area shape="poly" id="edge5_Node000005_Node000002" title=" " alt="" coords="64,186,53,308,49,481,51,579,59,680,73,781,95,878,119,945,152,1007,147,1010,114,947,89,880,68,781,54,680,46,579,43,481,48,308,58,185"/>
-<area shape="rect" id="Node000006" href="$d0/d65/classConverterIn.html" title=" " alt="" coords="105,334,322,879"/>
-<area shape="poly" id="edge7_Node000006_Node000002" title=" " alt="" coords="84,184,131,333,125,335,79,186"/>
-<area shape="rect" id="Node000003" href="$d9/df4/classDecay.html" title=" " alt="" coords="421,942,542,1267"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="423,1231,327,1426,322,1424,418,1228"/>
-<area shape="rect" id="Node000004" href="$d1/ddc/classMother.html" title=" " alt="" coords="523,384,679,829"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="550,829,527,926,522,925,545,828"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="216,1217,216,1313,211,1313,211,1217"/>
-<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="216,879,216,975,211,975,211,879"/>
-<area shape="rect" id="Node000007" href="$d8/da4/classInputContainer.html" title="Container with input information about event (vertex and tracks) and cuts used in the certain event." alt="" coords="152,5,275,271"/>
-<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="216,270,216,316,211,316,211,270"/>
-<area shape="rect" id="Node000008" href="$d0/d0f/classSimpleFinder.html" title="V0 particle (Lambda) reconstruction algorithm." alt="" coords="347,444,499,769"/>
-<area shape="poly" id="edge9_Node000005_Node000008" title=" " alt="" coords="378,770,337,880,288,981,283,978,332,878,373,768"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,1277,213,1933"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="73,107,194,173"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="131,188,121,299,120,338,113,832,112,1277,106,1277,108,831,115,338,116,299,126,187"/>
+<area shape="rect" id="Node000003" href="$da/d57/classPFSimpleTask.html" title=" " alt="" coords="168,985,296,1214"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="133,188,127,316,125,499,129,602,136,709,149,817,167,922,185,985,180,986,161,923,143,818,131,710,124,602,120,499,121,316,127,188"/>
+<area shape="rect" id="Node000004" href="$d0/d65/classConverterIn.html" title=" " alt="" coords="176,338,373,922"/>
+<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="149,187,193,338,188,339,144,188"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="207,1215,196,1262,190,1260,202,1213"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="251,922,247,969,241,968,245,922"/>
+<area shape="rect" id="Node000005" href="$d8/da4/classInputContainer.html" title="Container with input information about event (vertex and tracks) and cuts used in the certain event." alt="" coords="217,5,340,275"/>
+<area shape="poly" id="edge6_Node000004_Node000005" title=" " alt="" coords="280,275,280,321,275,321,275,275"/>
+<area shape="rect" id="Node000006" href="$d0/d0f/classSimpleFinder.html" title="V0 particle (Lambda) reconstruction algorithm." alt="" coords="397,465,550,796"/>
+<area shape="poly" id="edge7_Node000003_Node000006" title=" " alt="" coords="439,796,417,861,388,924,351,978,310,1027,306,1024,347,975,383,921,412,859,434,794"/>
 </map>

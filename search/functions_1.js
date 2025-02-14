@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['setreceventheadername_0',['SetRecEventHeaderName',['../d0/d65/classConverterIn.html#a3d2946a3ca7d62adf11cd9aa64cb23ed',1,'ConverterIn']]]
+  ['init_0',['Init',['../d0/d0f/classSimpleFinder.html#ace5f0e26a69c096ce1d0724b3aa47179',1,'SimpleFinder']]]
 ];
