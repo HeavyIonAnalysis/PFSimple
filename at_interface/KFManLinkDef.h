@@ -7,6 +7,5 @@
 #pragma link C++ class PFSimpleTask + ;
 #pragma link C++ class ConverterIn + ;
 #pragma link C++ class ConverterOut + ;
-#pragma link C++ class ConverterOutTree + ;
 
 #endif

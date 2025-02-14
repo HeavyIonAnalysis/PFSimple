@@ -28,14 +28,14 @@ Lambda              name mother
 5.0,                   cut LdL
 -1,                    cut decaylength L
 -1,                    cut distance to PV line
--1,                    cut invariant mass discrepancy in terms of expected width
+3.0,                   cut invariant mass discrepancy in terms of expected width
 --------------------------------------------------------------------------
 ## Options for the saving of the reconstructed mother
-0,                     apply nonlinear mass constraint
+1,                     apply nonlinear mass constraint
 0,                     transport mother to PV 
 --------------------------------------------------------------------------
 ## Pid method
-0,                       pid mode: =0: no pid; =1: mc pid; =2: rec pid (default); =3: rec pid (max. purity & purity > min. purity); =4 (purity > min. purity)
+1,                       pid mode: =0: no pid; =1: mc pid; =2: rec pid (default); =3: rec pid (max. purity & purity > min. purity); =4 (purity > min. purity)
 --------------------------------------------------------------------------
 ## Minimum required purities for TOF pid for pid mode = 3 & 4
 -1,                    purity tof for all daughter species (will be overwritten by specific purity, if specific purity != -1) 

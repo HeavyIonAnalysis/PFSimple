@@ -17,8 +17,6 @@
  ** charge - its charge;\n
  ** pdg - PID hypothesis for the track;\n
  ** id - its unique number (conserves through all the algorithm);\n
- ** nhits - number of hits in the tracking system which belong to the track. Is not used in the
- ** current version of KFPSimple, so default value 4 can be used;\n
  ** passcuts - flag variable which shows whether track satisfies pre-selection criteria. By default
  ** passcuts=1 should be used. \n
  ** In order to store tracks the vector of KFParticle objects is used.\n
@@ -30,9 +28,6 @@
 
 #include "KFParticle.h"
 #include "KFVertex.h"
-// #include "KFParticleTopoReconstructor.h"
-//#include "CutsContainer.h"
-//#include "DecayContainer.h"
 
 class InputContainer {
  public:

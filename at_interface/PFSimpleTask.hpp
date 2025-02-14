@@ -14,9 +14,9 @@ class PFSimpleTask : public AnalysisTree::Task {
   PFSimpleTask() = default;
   ~PFSimpleTask() override = default;
 
-  void Init() override{};
+  void Init() override;
   void Exec() override;
-  void Finish() override{};
+  void Finish() override;
   void SetInTask(ConverterIn* in_task) { in_task_ = in_task; }
   SimpleFinder* GetSimpleFinder() { return pf_simple_; }
   void SetDecays(const std::vector<Decay>& decays) { decays_ = decays; }

@@ -47,15 +47,17 @@ Install PFSimple
     
 ## Configuration of decay settings
 
-The reconstruction will be executed with at_interface/main2.cpp for
-2-body decays and at_interface/main3.cpp for 3-body decays.
+The reconstruction will be executed with at_interface/main.cpp.
 
-The reconstruction can be configured with the parameter-file
+The reconstruction can be configured with the parameter-files
 at_interface/parfile2.txt for 2-body decays and at_interface/parfile3.txt for 3-body decays.
 
 The user can select:
 1) Decay: mother and daughters
 
+	Pdg mass and pdg mass sigma for mother: if set to "-1" values from
+	KFParticleDatabase are taken
+   
    Option for daughters: alternative pdgs can be used in addition
    for the reconstruction
    - for background: set to "1" / "-1" for pos / neg daughters
@@ -74,7 +76,15 @@ The user can select:
 
    For more information on specific cuts see " Constants.hpp".
 
-3) Pid-method:
+3)  Options for the saving of the reconstructed mother
+
+    A nonlinear mass constraint can be applied on the mother particle
+    which modifies the mother's state vector and covariance matrix to
+    assure the 4-momentum is consitent with the pdg mass. 
+
+    The mother can be transported to the PV.
+
+4) Pid-method:
    
    - 0: no pid (only charge information is used ! optional daughers must
    be set to "1" / "-1" for pos / neg pdgs !)
@@ -90,33 +100,38 @@ The user can select:
    for 2-4: Pid-framework needs to be applied first to
    include TOF-pid & probabilities into the analysistree input-file
 
-4) Minium purities for pid-mode 3 & 4:
+5) Minium purities for pid-mode 3 & 4:
    - for pid-mode 3: minimum purity is set for all pdgs (pdg-spefic purities
    need to be set to "-1")
    - for pid-mode 4: minimum purity can be set for all pdgs or specifically
    for every pdg (general purity will be overwritten, if pdg-specific
    purity is not set to "-1")
 
-5) Input/Output information:
+6) Input/Output information:
    - treename in input aTree, default names: "rTree" for standard aTree,
    "aTree" after running Pid-framework
    - branchname of reconstructed tracks in input analysistree, default names: "VtxTracks"
      for standard analyistree, "RecParticles" after running Pid-framework
    - number of events to be processed (-1 = all events)
    - Output format: default output is analysistree format
-      options:
-       - plain tree: contains information about the candidates (is produced in addition to analysistree)
-	   - root tree: contains information about candidates, matched mc-particles and events (no analyistree is written)
-
-If more than one decay should be reconstructed in the same run, additional
-parfiles at_interface/parfile2_add.txt etc. can be added where 1.) & 2.) can be
-selected. 3.) - 5.) can not be changed in the same run.
+      optional: plain tree: output is a simple root tree containing the candidates
 
 For 3-body decays, the list of available cuts is extended, amoung others, to cuts
 on the secondary mothers (SM) of combinations of 2 daughters. E.g. for
 H3L->p + pi + d, cuts on the SM of p-pi can be applied. The cuts
 that test the mother against the PV, e.g. chi2topo, are inverted for
 the SM to exclude SMs that come from the PV.
+
+If more than one decay should be reconstructed in the same run, additional
+parfiles at_interface/parfile2_add.txt or at_interface/parfile3_add.txt can be added
+where 1.) - 3.) can be selected. 4.) - 6.) can not be changed in the same run. The 
+decays can be independent or build a cascade decay. Multiple additional
+parfiles can be added.
+
+The reconstruction of a cascade decay works the same way as adding an additional decay
+to the run as described above. The order of the parfiles need to be from last generation to
+first generation. Cascade decays with multiple stages as well as combinations of
+2- and 3-body-decays can get reconstructed.
 
 Several example parameter files can be found in the folder at_interface.
 
@@ -131,11 +146,11 @@ Each time before running the prepared executable you should set the environment 
  
 Then run the executable:
 
-    ./main2 filelist.txt dataset parfile2.txt (parfile2_add.txt)
+    ./main filelist.txt dataset parfile2.txt (parfile2_add.txt parfile3_add.txt)
 
 or
 
-    ./main3 filelist.txt dataset parfile3.txt (parfile3_add.txt)
+    ./main filelist.txt dataset parfile3.txt (parfile2_add.txt parfile3_add.txt)
 	
 where filelist.txt must be a text file with names (including paths) to
 files which you want to analyze with PFSimple. Each file name should
@@ -146,5 +161,4 @@ PFSimple (filelist_example.txt)
 and where [dataset] specifies the names of the outputfiles:
 - analyistree: [dataset].PFSimpleOutput.root
 - plain tree: [dataset].PFSimplePlainTree.root
-- root tree: [dataset].PFSimpleTree.root
 
