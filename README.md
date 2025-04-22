@@ -113,29 +113,29 @@ The user can select:
    "aTree" after running Pid-framework
    - branchname of reconstructed tracks in input analysistree, default names: "VtxTracks"
      for standard analyistree, "RecParticles" after running Pid-framework
-   - optional detailed background information in output variable "generation":__
-	  format for bg for 2-body-decay: -m12 0 d2 d1__
-	  format for bg for 3-body-decay: -m13 m23 m12 d3 d2 d1__ 
-      with m12: mother of daughter 1 & 2 etc.__
-	  code for daughters (d):__
-	    1 - reco daughter is unmatched to mc__
-        2 - reco daughter is matched, but primary__
-        3 - reco daughter is secondary, produced not in decay from mother with not expected pdg__
-        4 - reco daughter is secondary, produced not in decay from mother with expected pdg__
-        5 - reco daughter is secondary, produced in decay from mother with not expected pdg__
-        6 - reco daughter is secondary, produced in decay from mother with expected pdg__
-	  code for mothers (m):__
-	    1 - daughters have the same mother__
-        2 - daughters have different mothers__
-        0 - at least one daughter does not have mother (e.g. primary)__
+   - optional detailed background information in output variable "generation":  
+	  format for bg for 2-body-decay: -m12 0 d2 d1  
+	  format for bg for 3-body-decay: -m13 m23 m12 d3 d2 d1  
+      with m12: mother of daughter 1 & 2 etc.  
+	  code for daughters (d):  
+	    1 - reco daughter is unmatched to mc  
+        2 - reco daughter is matched, but primary  
+        3 - reco daughter is secondary, produced not in decay from mother with not expected pdg  
+        4 - reco daughter is secondary, produced not in decay from mother with expected pdg  
+        5 - reco daughter is secondary, produced in decay from mother with not expected pdg  
+        6 - reco daughter is secondary, produced in decay from mother with expected pdg  
+	  code for mothers (m):  
+	    1 - daughters have the same mother  
+        2 - daughters have different mothers  
+        0 - at least one daughter does not have mother (e.g. primary)  
 
-       If detailed background is not selected or if mc match for mother is found, value of variable "generation" is:__
-        0 - no mc match for mother__
-        1 - mother is primary particle__
-        2 - mother is second generation etc.__
+       If detailed background is not selected or if mc match for mother is found, value of variable "generation" is:  
+        0 - no mc match for mother  
+        1 - mother is primary particle  
+        2 - mother is second generation etc.  
 		 
    - number of events to be processed (-1 = all events)
-   - Output format: default output is analysistree format__
+   - Output format: default output is analysistree format  
       optional: plain tree: output is a simple root tree containing the candidates
 
 For 3-body decays, the list of available cuts is extended, amoung others, to cuts
