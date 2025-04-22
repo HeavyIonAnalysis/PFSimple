@@ -34,7 +34,7 @@ To use pre-installed AnalysisTree set the environment variable:
     export AnalysisTree_DIR=/path-to-analysistree/install/lib/cmake/AnalysisTree
 To build AnalysisTree automatically together with PFSimple use following cmake keys:
     -DPFSimple_BUNDLED_AT=ON
-    -DPFSimple_BUNDLED_AT_VERSION=v2.2.7
+    -DPFSimple_BUNDLED_AT_VERSION=v2.3.4
     
 You need to source root and export AnalysisTree each time when you are compiling project from 0 (perform cmake command) but have no need to do it when just recompiling project (perform just make).
     
@@ -54,9 +54,9 @@ at_interface/parfile2.txt for 2-body decays and at_interface/parfile3.txt for 3-
 
 The user can select:
 1) Decay: mother and daughters
-   
-   If pdg mass and sigma mass for mother are set to "-1", values from KFParticleDatabase are 
-   taken.
+
+	Pdg mass and pdg mass sigma for mother: if set to "-1" values from
+	KFParticleDatabase are taken
    
    Option for daughters: alternative pdgs can be used in addition
    for the reconstruction
@@ -78,12 +78,14 @@ The user can select:
 
 3)  Options for the saving of the reconstructed mother
 
-    A nonlinear mass constraint can be applied on the mother particle
-    which modifies the mother's state vector and covariance matrix to
+    - A nonlinear mass constraint can be applied on the mother particle which modifies the mother's state vector and covariance matrix to
     assure the 4-momentum is consitent with the pdg mass. 
 
-    The mother can be transported to the PV.
+    - The mother can be transported to the PV.
 
+    - The writing out of the mother into the output-file (e.g. the lower-level mother in cascade decays) can get surpressed. But
+	if this option is selected, it is not possible to peform the MC-matching for the upper-level mother.
+	
 4) Pid-method:
    
    - 0: no pid (only charge information is used ! optional daughers must
@@ -97,8 +99,7 @@ The user can select:
    
    - 4: reconstructed TOF pid - pdg is selected, if pdg-purity > min. purity (pdg-specfic purities are possible)
 
-   for 2-4: Pid-framework needs to be applied first to
-   include TOF-pid & probabilities into the analysistree input-file
+   for 2-4: Pid-framework needs to be applied first to include TOF-pid & probabilities into the analysistree input-file
 
 5) Minium purities for pid-mode 3 & 4:
    - for pid-mode 3: minimum purity is set for all pdgs (pdg-spefic purities
@@ -112,8 +113,29 @@ The user can select:
    "aTree" after running Pid-framework
    - branchname of reconstructed tracks in input analysistree, default names: "VtxTracks"
      for standard analyistree, "RecParticles" after running Pid-framework
+   - optional detailed background information in output variable "generation":  
+	  format for bg for 2-body-decay: -m12 0 d2 d1  
+	  format for bg for 3-body-decay: -m13 m23 m12 d3 d2 d1  
+      with m12: mother of daughter 1 & 2 etc.  
+	  code for daughters (d):  
+	    1 - reco daughter is unmatched to mc  
+        2 - reco daughter is matched, but primary  
+        3 - reco daughter is secondary, produced not in decay from mother with not expected pdg  
+        4 - reco daughter is secondary, produced not in decay from mother with expected pdg  
+        5 - reco daughter is secondary, produced in decay from mother with not expected pdg  
+        6 - reco daughter is secondary, produced in decay from mother with expected pdg  
+	  code for mothers (m):  
+	    1 - daughters have the same mother  
+        2 - daughters have different mothers  
+        0 - at least one daughter does not have mother (e.g. primary)  
+
+       If detailed background is not selected or if mc match for mother is found, value of variable "generation" is:  
+        0 - no mc match for mother  
+        1 - mother is primary particle  
+        2 - mother is second generation etc.  
+		 
    - number of events to be processed (-1 = all events)
-   - Output format: default output is analysistree format
+   - Output format: default output is analysistree format  
       optional: plain tree: output is a simple root tree containing the candidates
 
 For 3-body decays, the list of available cuts is extended, amoung others, to cuts
@@ -133,7 +155,7 @@ to the run as described above. The order of the parfiles need to be from last ge
 first generation. Cascade decays with multiple stages as well as combinations of
 2- and 3-body-decays can get reconstructed.
 
-Several example parameter files can be found in the folder at_interface.
+Several example parameter files can be found in the folder at_interface/example_parfiles.
 
 ## First run
 

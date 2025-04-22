@@ -1,11 +1,11 @@
 ## Decay
-3334,                 pdg mother
-Omega               name mother
+3312,                 pdg mother
+Xi                      name mother
 -1,                     mass mother: = -1: pdg mass taken from KFParticleDatabase
 -1,                     sigma mother: = -1: pdg mass sigma taken from KFParticleDatabase
 2,			  number of daughters
--321,                 pdg daughter 1
-0,                       optional: additional pdg to be considered for daughter 1  (=0: no additional pdg)
+-211,                 pdg daughter 1
+-1,                     optional: additional pdg to be considered for daughter 1  (=0: no additional pdg)
 0,                       optional: additional pdg to be considered for daughter 1  (=0: no additional pdg)
 3122,                 pdg daughter 2
 0,                       optional: additional pdg to be considered for daughter 2  (=0: no additional pdg)
@@ -32,4 +32,5 @@ Omega               name mother
 --------------------------------------------------------------------------
 ## Options for the saving of the reconstructed mother
 0,                     apply nonlinear mass constraint
-1,                     transport mother to PV 
+1,                     transport mother to PV
+0,                     do not write mother into output analysistree / plain tree

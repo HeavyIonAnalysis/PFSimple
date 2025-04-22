@@ -3,7 +3,7 @@
 H3L                    name mother
 -1,                     mass mother: = -1: pdg mass taken from KFParticleDatabase
 -1,                     mass sigma mother: = -1: pdg mass sigma taken from KFParticleDatabase
-3,			  number of daughters
+3,                       number of daughters
 2212,                 pdg daughter 1
 0,		      	  optional: additional pdg to be considered for daughter 1 (=0: no additional pdg)
 0,                       optional: additional pdg to be considered for daughter 1 (=0: no additional pdg)
@@ -56,19 +56,19 @@ H3L                    name mother
 0,                     do not write mother into output analysistree / plain tree
 --------------------------------------------------------------------------
 ## Pid method (for pid mode 2, 3 & 4 analyistree from pid-framework is needed)
-1,                       pid mode: =0: no pid; =1: mc pid; =2: rec pid (default); =3: rec pid (max. purity & purity > min. purity); =4 (purity > min. purity)
+4,                       pid mode: =0: no pid; =1: mc pid; =2: rec pid (default); =3: rec pid (max. purity & purity > min. purity); =4 (purity > min. purity)
 --------------------------------------------------------------------------
 ## Minimum required purities for TOF pid for pid mode = 3 & 4
--1,                    purity tof for all daughter species (will be overwritten by specific purity, if specific purity != -1) 
--1,                    specific purity tof for protons (optional, if = -1: purity for all species will be used)
--1,                    specific purity tof for pions (optional, if = -1: purity for all species will be used)
--1,                    specific purity tof for kaons (optional, if = -1: purity for all species will be used)
--1,                    specific purity tof for deuterons (optional, if = -1: purity for all species will be used)
--1,                    specific purity tof for background (optional, if = -1: purity for all species will be used)
+0.5,                    purity tof for all daughter species (will be overwritten by specific purity, if specific purity != -1) 
+0.7,                    specific purity tof for protons (optional, if = -1: purity for all species will be used)
+0.7,                    specific purity tof for pions (optional, if = -1: purity for all species will be used)
+0.7,                    specific purity tof for kaons (optional, if = -1: purity for all species will be used)
+0.2,                    specific purity tof for deuterons (optional, if = -1: purity for all species will be used)
+0.7,                    specific purity tof for background (optional, if = -1: purity for all species will be used)
 --------------------------------------------------------------------------
 ## Input / Output information
-rTree                  treename in input analysistree
-VtxTracks              branchname for reconstructed tracks in input analysistree
-1,                     write detailed BG information
--1,                    number of events to be processed (-1 = all events)
-1,                     make plain tree: =1; make no plain tree: =0
+pTree                  treename in input analysistree
+RecTracks          branchname for reconstructed tracks in input analysistree
+0,                       write detailed BG information
+-1,                     number of events to be processed (-1 = all events)
+1,                       make plain tree: =1; make no plain tree: =0

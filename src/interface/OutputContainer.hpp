@@ -33,7 +33,8 @@ class OutputContainer {
                                                          z_(particle.GetZ()),
                                                          x_error_(particle.GetErrX()),
                                                          y_error_(particle.GetErrY()),
-                                                         z_error_(particle.GetErrZ()) {
+                                                         z_error_(particle.GetErrZ()),
+                                                         charge_(int(particle.GetQ())) {
     particle.GetMass(mass_, mass_error_);
     for (int i = 0; i < GetDaughterIds().size(); i++)
       generation_.push_back(0);
@@ -52,6 +53,7 @@ class OutputContainer {
   [[nodiscard]] float GetEtaError() const { return eta_error_; }
   [[nodiscard]] float GetMassError() const { return mass_error_; }
   [[nodiscard]] Pdg_t GetPdg() const { return pdg_; }
+  [[nodiscard]] int   GetCharge() const { return charge_; }
 
   [[nodiscard]] float GetChi2Prim(int i) const { return values_.chi2_prim[i]; }
   [[nodiscard]] float GetCos(int i) const { return values_.cos[i]; }
@@ -79,7 +81,7 @@ class OutputContainer {
 
   void SetId(int id) { id_ = id; }
   void SetDaughterGenerations(std::vector<int> generation) { generation_ = generation; }
-
+  
   void SetSelectionValues(const SelectionValues& v) { values_ = v; }
 
  protected:
@@ -92,6 +94,7 @@ class OutputContainer {
   float pz_{-1.};
   float mass_{-1.};
   Pdg_t pdg_{-1};
+  int   charge_{-1000};
 
   float pt_error_{-1.};
   float phi_error_{-1.};

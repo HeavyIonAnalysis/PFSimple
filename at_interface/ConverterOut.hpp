@@ -45,14 +45,14 @@ class ConverterOut : public AnalysisTree::Task {
   // 5 - reco daughter is secondary, produced in decay from mother with not expected pdg
   // 6 - reco daughter is secondary, produced in decay from mother with expected pdg
   // second returned value is mother's sim id (if the first value is >2) or -999 (if mother doesn't exist)
-  std::pair<int, int> DetermineDaughtersMCStatus(int daughter_rec_id, Pdg_t mother_expected_pdg) const;
+  std::pair<int, int> DetermineDaughtersMCStatus(int daughter_rec_id, Pdg_t mother_expected_pdg, int daughter_gen) const;
 
   // 1 - daughters have the same mother
   // 2 - daughters have different mothers
   // 0 - at least one daughter does not have mother (e.g. primary)
   static int DetermineMotherMCStatus(int mid1, int mid2) ;
 
-  int DetermineBGType(AnalysisTree::Particle& particle, int const Ndaughters);
+  int DetermineBGType(const OutputContainer& candidate, AnalysisTree::Particle& particle, int const Ndaughters);
 
   // output branches
   AnalysisTree::EventHeader* events_{nullptr};
@@ -93,6 +93,7 @@ class ConverterOut : public AnalysisTree::Task {
   int generation_field_id_{-1};
   int g4process_field_id_{-1};
   int g4process_field_id_w_{-1};
+  int mc_id_field_id_{-1};
 
   int pt_err_field_id_{-1};
 
@@ -112,6 +113,7 @@ class ConverterOut : public AnalysisTree::Task {
   int invmass_discr_field_id_{-1};
 
   bool is_detailed_bg_{false};
+  bool is_write_mc_{true};
 };
 
 #endif//KFPARTICLESIMPLE_ANALYSISTREEINTERFACE_CONVERTEROUT_H_

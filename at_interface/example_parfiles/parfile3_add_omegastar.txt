@@ -53,3 +53,4 @@ Omega*-          name mother
 ## Options for the saving of the reconstructed mother
 0,                     apply nonlinear mass constraint
 0,                     transport mother to PV
+0,                     do not write mother into output analysistree / plain tree

@@ -32,14 +32,14 @@ int main(int argc, char** argv) {
   std::array<Float_t, ndaughters_max> chi2prim, cos;
   Float_t dist, distSV, chi2geo, cosopen, chi2topo, costopo, LdL, decaylength, distPVline, invmass;
   std::array<Float_t, ndaughters_max>  chi2geoSM, cosopenSM, chi2topoSM, costopoSM;
-  Int_t applyMassConstr, transportToPV;
+  Int_t apply_mass_constr, transport_to_pv, do_not_write_mother;
   Int_t pid_mode;
   Float_t pid_purity;
   std::array<Float_t, npdgs> purity_pdg;
   char atree_name_c [7]; char rec_tracks_name_c [11];
   std::string atree_name, rec_tracks_name;
   Int_t nevents;
-  Int_t make_plain_tree;
+  Int_t write_detailed_bg, make_plain_tree;
 
   std::vector<Decay> decays;
     
@@ -118,8 +118,9 @@ int main(int argc, char** argv) {
     fscanf(inputInfo, "%*[^\n]%*c");
     fscanf(inputInfo, "%*[^\n]%*c");
 
-    fscanf(inputInfo, "%i %*[^\n]%*c", &applyMassConstr);
-    fscanf(inputInfo, "%i %*[^\n]%*c", &transportToPV);
+    fscanf(inputInfo, "%i %*[^\n]%*c", &apply_mass_constr);
+    fscanf(inputInfo, "%i %*[^\n]%*c", &transport_to_pv);
+    fscanf(inputInfo, "%i %*[^\n]%*c", &do_not_write_mother);
     fscanf(inputInfo, "%*[^\n]%*c");
     fscanf(inputInfo, "%*[^\n]%*c");
 
@@ -140,6 +141,7 @@ int main(int argc, char** argv) {
 
       fscanf(inputInfo, "%s %*[^\n]%*c", atree_name_c);
       fscanf(inputInfo, "%s %*[^\n]%*c", rec_tracks_name_c);
+      fscanf(inputInfo, "%i %*[^\n]%*c", &write_detailed_bg);
       fscanf(inputInfo, "%i %*[^\n]%*c", &nevents);
       fscanf(inputInfo, "%i %*[^\n]%*c", &make_plain_tree);
 	
@@ -245,8 +247,9 @@ int main(int argc, char** argv) {
     }
     
     Decay decay(name_mother, mother, {daughters});
-    if (applyMassConstr == 1) decay.SetIsApplyMassConstraint();
-    if (transportToPV   == 1) decay.SetIsTransportToPV();
+    if (apply_mass_constr   == 1) decay.SetIsApplyMassConstraint();
+    if (transport_to_pv     == 1) decay.SetIsTransportToPV();
+    if (do_not_write_mother == 1) decay.SetIsDoNotWriteMother();
     
     decays.push_back(decay);
   }
@@ -278,6 +281,7 @@ int main(int argc, char** argv) {
   out_converter->SetSimTracksName("SimParticles");
   out_converter->SetPFSimpleTask(pf_task);
   out_converter->SetDecays(decays);
+  out_converter->SetIsWriteDetailedBG(write_detailed_bg);
   
   man->AddTask(in_converter);
   man->AddTask(pf_task);
@@ -301,6 +305,7 @@ int main(int argc, char** argv) {
     std::string branchname_rec = "Candidates";
     tree_task->SetInputBranchNames({branchname_rec});
     tree_task->AddBranch(branchname_rec);
+    //tree_task->SetIsPrependLeavesWithBranchName(false); //Uncomment when most recent AnalysisTree is installed in cbmroot
 
     man->AddTask(tree_task);
 
