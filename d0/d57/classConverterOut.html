@@ -173,12 +173,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>MatchWithMc</b> (cons
 <tr class="memitem:ae04033f4eb65f60bb621bc3417659bd9" id="r_ae04033f4eb65f60bb621bc3417659bd9"><td class="memItemLeft" align="right" valign="top"><a id="ae04033f4eb65f60bb621bc3417659bd9" name="ae04033f4eb65f60bb621bc3417659bd9"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>DetermineGeneration</b> (int mother_sim_id) const</td></tr>
 <tr class="separator:ae04033f4eb65f60bb621bc3417659bd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a17de4d6faed9b9fd2df5ef764203d415" id="r_a17de4d6faed9b9fd2df5ef764203d415"><td class="memItemLeft" align="right" valign="top"><a id="a17de4d6faed9b9fd2df5ef764203d415" name="a17de4d6faed9b9fd2df5ef764203d415"></a>
-std::pair&lt; int, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>DetermineDaughtersMCStatus</b> (int daughter_rec_id, Pdg_t mother_expected_pdg) const</td></tr>
-<tr class="separator:a17de4d6faed9b9fd2df5ef764203d415"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c581f1e06044c8b159593e1f1b2adfe" id="r_a8c581f1e06044c8b159593e1f1b2adfe"><td class="memItemLeft" align="right" valign="top"><a id="a8c581f1e06044c8b159593e1f1b2adfe" name="a8c581f1e06044c8b159593e1f1b2adfe"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>DetermineBGType</b> (AnalysisTree::Particle &amp;particle, int const Ndaughters)</td></tr>
-<tr class="separator:a8c581f1e06044c8b159593e1f1b2adfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97186ce2d30551ba1a3cdeca378e9959" id="r_a97186ce2d30551ba1a3cdeca378e9959"><td class="memItemLeft" align="right" valign="top"><a id="a97186ce2d30551ba1a3cdeca378e9959" name="a97186ce2d30551ba1a3cdeca378e9959"></a>
+std::pair&lt; int, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>DetermineDaughtersMCStatus</b> (int daughter_rec_id, Pdg_t mother_expected_pdg, int daughter_gen) const</td></tr>
+<tr class="separator:a97186ce2d30551ba1a3cdeca378e9959"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62c34dfd8fe993bcb351dfe60998c4e4" id="r_a62c34dfd8fe993bcb351dfe60998c4e4"><td class="memItemLeft" align="right" valign="top"><a id="a62c34dfd8fe993bcb351dfe60998c4e4" name="a62c34dfd8fe993bcb351dfe60998c4e4"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>DetermineBGType</b> (const <a class="el" href="../../db/d1e/classOutputContainer.html">OutputContainer</a> &amp;candidate, AnalysisTree::Particle &amp;particle, int const Ndaughters)</td></tr>
+<tr class="separator:a62c34dfd8fe993bcb351dfe60998c4e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-static-methods" name="pro-static-methods"></a>
 Static Protected Member Functions</h2></td></tr>
@@ -263,6 +263,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>g4process_field_id_</b
 <tr class="memitem:a7423a8dca766ee062b076b56ac8f079e" id="r_a7423a8dca766ee062b076b56ac8f079e"><td class="memItemLeft" align="right" valign="top"><a id="a7423a8dca766ee062b076b56ac8f079e" name="a7423a8dca766ee062b076b56ac8f079e"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>g4process_field_id_w_</b> {-1}</td></tr>
 <tr class="separator:a7423a8dca766ee062b076b56ac8f079e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8be73de70b68ea4ea6c512001fc52156" id="r_a8be73de70b68ea4ea6c512001fc52156"><td class="memItemLeft" align="right" valign="top"><a id="a8be73de70b68ea4ea6c512001fc52156" name="a8be73de70b68ea4ea6c512001fc52156"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>mc_id_field_id_</b> {-1}</td></tr>
+<tr class="separator:a8be73de70b68ea4ea6c512001fc52156"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e99449515dc571476e0d8af889e06c3" id="r_a2e99449515dc571476e0d8af889e06c3"><td class="memItemLeft" align="right" valign="top"><a id="a2e99449515dc571476e0d8af889e06c3" name="a2e99449515dc571476e0d8af889e06c3"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>pt_err_field_id_</b> {-1}</td></tr>
 <tr class="separator:a2e99449515dc571476e0d8af889e06c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -302,6 +305,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>invmass_discr_field_id
 <tr class="memitem:a96d17af1906aa71807aa1935c68a176e" id="r_a96d17af1906aa71807aa1935c68a176e"><td class="memItemLeft" align="right" valign="top"><a id="a96d17af1906aa71807aa1935c68a176e" name="a96d17af1906aa71807aa1935c68a176e"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_detailed_bg_</b> {false}</td></tr>
 <tr class="separator:a96d17af1906aa71807aa1935c68a176e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a216e5d1f7f34c127085c6d935f9df64a" id="r_a216e5d1f7f34c127085c6d935f9df64a"><td class="memItemLeft" align="right" valign="top"><a id="a216e5d1f7f34c127085c6d935f9df64a" name="a216e5d1f7f34c127085c6d935f9df64a"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_write_mc_</b> {true}</td></tr>
+<tr class="separator:a216e5d1f7f34c127085c6d935f9df64a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="a8cbfadacd25165c32bfb661dc91b168c" name="a8cbfadacd25165c32bfb661dc91b168c"></a>

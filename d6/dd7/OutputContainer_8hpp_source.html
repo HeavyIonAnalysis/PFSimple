@@ -117,83 +117,86 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>                                                         z_(particle.GetZ()),</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>                                                         x_error_(particle.GetErrX()),</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>                                                         y_error_(particle.GetErrY()),</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>                                                         z_error_(particle.GetErrZ()) {</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    particle.GetMass(mass_, mass_error_);</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; GetDaughterIds().size(); i++)</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>      generation_.push_back(0);</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>                                                         }</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  <span class="keyword">virtual</span> ~OutputContainer() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>  [[nodiscard]] <span class="keyword">const</span> std::vector&lt;int&gt;&amp; GetDaughterIds()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> daughter_ids_; }</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  [[nodiscard]] <span class="keyword">const</span> std::vector&lt;int&gt;&amp; GetDaughterGenerations()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> generation_; }</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  [[nodiscard]] <span class="keywordtype">float</span> GetPx()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> px_; }</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  [[nodiscard]] <span class="keywordtype">float</span> GetPy()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> py_; }</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  [[nodiscard]] <span class="keywordtype">float</span> GetPz()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> pz_; }</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  [[nodiscard]] <span class="keywordtype">float</span> GetMass()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> mass_; }</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  [[nodiscard]] <span class="keywordtype">float</span> GetPtError()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> pt_error_; }</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  [[nodiscard]] <span class="keywordtype">float</span> GetPhiError()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> phi_error_; }</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  [[nodiscard]] <span class="keywordtype">float</span> GetEtaError()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> eta_error_; }</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  [[nodiscard]] <span class="keywordtype">float</span> GetMassError()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> mass_error_; }</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  [[nodiscard]] Pdg_t GetPdg()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> pdg_; }</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  [[nodiscard]] <span class="keywordtype">float</span> GetChi2Prim(<span class="keywordtype">int</span> i)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.chi2_prim[i]; }</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  [[nodiscard]] <span class="keywordtype">float</span> GetCos(<span class="keywordtype">int</span> i)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.cos[i]; }</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  [[nodiscard]] <span class="keywordtype">float</span> GetInvMassDiscr()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.invmassdisc; }</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  [[nodiscard]] <span class="keywordtype">float</span> GetChi2Geo(<span class="keywordtype">int</span> i)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.chi2_geo[i]; }</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  [[nodiscard]] <span class="keywordtype">float</span> GetCosOpen(<span class="keywordtype">int</span> i)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.cos_open[i]; }</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  [[nodiscard]] <span class="keywordtype">float</span> GetChi2Topo(<span class="keywordtype">int</span> i)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.chi2_topo[i]; }</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  [[nodiscard]] <span class="keywordtype">float</span> GetDistance()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.distance; }</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  [[nodiscard]] <span class="keywordtype">float</span> GetDistanceToSV()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.distance_sv; }</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  [[nodiscard]] <span class="keywordtype">float</span> GetL()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.l; }</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  [[nodiscard]] <span class="keywordtype">float</span> GetLdL()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.l_over_dl; }</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  [[nodiscard]] <span class="keywordtype">float</span> GetDistanceToPVLine()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.distance_pv; }</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>  [[nodiscard]] <span class="keywordtype">float</span> GetCosineTopo(<span class="keywordtype">int</span> i)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.cos_topo[i]; }</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>  [[nodiscard]] <span class="keywordtype">float</span> GetChi2PrimMother()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.chi2_prim_mother; }</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  [[nodiscard]] <span class="keywordtype">float</span> GetX()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> x_; }</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  [[nodiscard]] <span class="keywordtype">float</span> GetY()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> y_; }</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  [[nodiscard]] <span class="keywordtype">float</span> GetZ()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> z_; }</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>  [[nodiscard]] <span class="keywordtype">float</span> GetXError()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> x_error_; }</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>  [[nodiscard]] <span class="keywordtype">float</span> GetYError()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> y_error_; }</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>  [[nodiscard]] <span class="keywordtype">float</span> GetZError()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> z_error_; }</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>  [[nodiscard]] <span class="keywordtype">int</span> GetId()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> id_; }</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>  [[nodiscard]] <span class="keywordtype">bool</span> IsFromPV()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.is_from_PV; }</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>  <span class="keywordtype">void</span> SetId(<span class="keywordtype">int</span> <span class="keywordtype">id</span>) { id_ = id; }</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>  <span class="keywordtype">void</span> SetDaughterGenerations(std::vector&lt;int&gt; generation) { generation_ = generation; }</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>  <span class="keywordtype">void</span> SetSelectionValues(<span class="keyword">const</span> <a class="code hl_struct" href="../../de/d87/structSelectionValues.html">SelectionValues</a>&amp; v) { values_ = v; }</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> <span class="keyword">protected</span>:</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>  <span class="keywordtype">int</span> id_{-1};</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>  std::vector&lt;int&gt; daughter_ids_{};</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>  std::vector&lt;int&gt; generation_{};</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>  <span class="keywordtype">float</span> px_{-1.};</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>  <span class="keywordtype">float</span> py_{-1.};</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>  <span class="keywordtype">float</span> pz_{-1.};</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>  <span class="keywordtype">float</span> mass_{-1.};</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>  Pdg_t pdg_{-1};</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>  <span class="keywordtype">float</span> pt_error_{-1.};</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>  <span class="keywordtype">float</span> phi_error_{-1.};</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>  <span class="keywordtype">float</span> eta_error_{-1.};</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  <span class="keywordtype">float</span> mass_error_{-1.};</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>  <span class="keywordtype">float</span> x_{-1.};</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>  <span class="keywordtype">float</span> y_{-1.};</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>  <span class="keywordtype">float</span> z_{-1.};</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>  <span class="keywordtype">float</span> x_error_{-1.};</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>  <span class="keywordtype">float</span> y_error_{-1.};</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>  <span class="keywordtype">float</span> z_error_{-1.};</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>  <a class="code hl_struct" href="../../de/d87/structSelectionValues.html">SelectionValues</a> values_{};</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>};</div>
-</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>                                                         z_error_(particle.GetErrZ()),</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>                                                         charge_(<span class="keywordtype">int</span>(particle.GetQ())) {</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    particle.GetMass(mass_, mass_error_);</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; GetDaughterIds().size(); i++)</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>      generation_.push_back(0);</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>                                                         }</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  <span class="keyword">virtual</span> ~OutputContainer() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  [[nodiscard]] <span class="keyword">const</span> std::vector&lt;int&gt;&amp; GetDaughterIds()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> daughter_ids_; }</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  [[nodiscard]] <span class="keyword">const</span> std::vector&lt;int&gt;&amp; GetDaughterGenerations()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> generation_; }</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  [[nodiscard]] <span class="keywordtype">float</span> GetPx()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> px_; }</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  [[nodiscard]] <span class="keywordtype">float</span> GetPy()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> py_; }</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  [[nodiscard]] <span class="keywordtype">float</span> GetPz()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> pz_; }</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  [[nodiscard]] <span class="keywordtype">float</span> GetMass()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> mass_; }</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  [[nodiscard]] <span class="keywordtype">float</span> GetPtError()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> pt_error_; }</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  [[nodiscard]] <span class="keywordtype">float</span> GetPhiError()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> phi_error_; }</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  [[nodiscard]] <span class="keywordtype">float</span> GetEtaError()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> eta_error_; }</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  [[nodiscard]] <span class="keywordtype">float</span> GetMassError()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> mass_error_; }</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  [[nodiscard]] Pdg_t GetPdg()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> pdg_; }</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  [[nodiscard]] <span class="keywordtype">int</span>   GetCharge()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> charge_; }</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  [[nodiscard]] <span class="keywordtype">float</span> GetChi2Prim(<span class="keywordtype">int</span> i)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.chi2_prim[i]; }</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  [[nodiscard]] <span class="keywordtype">float</span> GetCos(<span class="keywordtype">int</span> i)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.cos[i]; }</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  [[nodiscard]] <span class="keywordtype">float</span> GetInvMassDiscr()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.invmassdisc; }</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  [[nodiscard]] <span class="keywordtype">float</span> GetChi2Geo(<span class="keywordtype">int</span> i)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.chi2_geo[i]; }</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  [[nodiscard]] <span class="keywordtype">float</span> GetCosOpen(<span class="keywordtype">int</span> i)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.cos_open[i]; }</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  [[nodiscard]] <span class="keywordtype">float</span> GetChi2Topo(<span class="keywordtype">int</span> i)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.chi2_topo[i]; }</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  [[nodiscard]] <span class="keywordtype">float</span> GetDistance()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.distance; }</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  [[nodiscard]] <span class="keywordtype">float</span> GetDistanceToSV()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.distance_sv; }</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  [[nodiscard]] <span class="keywordtype">float</span> GetL()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.l; }</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>  [[nodiscard]] <span class="keywordtype">float</span> GetLdL()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.l_over_dl; }</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>  [[nodiscard]] <span class="keywordtype">float</span> GetDistanceToPVLine()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.distance_pv; }</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  [[nodiscard]] <span class="keywordtype">float</span> GetCosineTopo(<span class="keywordtype">int</span> i)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.cos_topo[i]; }</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  [[nodiscard]] <span class="keywordtype">float</span> GetChi2PrimMother()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.chi2_prim_mother; }</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  [[nodiscard]] <span class="keywordtype">float</span> GetX()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> x_; }</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>  [[nodiscard]] <span class="keywordtype">float</span> GetY()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> y_; }</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>  [[nodiscard]] <span class="keywordtype">float</span> GetZ()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> z_; }</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>  [[nodiscard]] <span class="keywordtype">float</span> GetXError()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> x_error_; }</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>  [[nodiscard]] <span class="keywordtype">float</span> GetYError()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> y_error_; }</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>  [[nodiscard]] <span class="keywordtype">float</span> GetZError()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> z_error_; }</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>  [[nodiscard]] <span class="keywordtype">int</span> GetId()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> id_; }</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>  [[nodiscard]] <span class="keywordtype">bool</span> IsFromPV()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> values_.is_from_PV; }</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>  <span class="keywordtype">void</span> SetId(<span class="keywordtype">int</span> <span class="keywordtype">id</span>) { id_ = id; }</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>  <span class="keywordtype">void</span> SetDaughterGenerations(std::vector&lt;int&gt; generation) { generation_ = generation; }</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>  </div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>  <span class="keywordtype">void</span> SetSelectionValues(<span class="keyword">const</span> <a class="code hl_struct" href="../../de/d87/structSelectionValues.html">SelectionValues</a>&amp; v) { values_ = v; }</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> <span class="keyword">protected</span>:</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>  <span class="keywordtype">int</span> id_{-1};</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>  std::vector&lt;int&gt; daughter_ids_{};</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>  std::vector&lt;int&gt; generation_{};</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>  <span class="keywordtype">float</span> px_{-1.};</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>  <span class="keywordtype">float</span> py_{-1.};</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>  <span class="keywordtype">float</span> pz_{-1.};</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>  <span class="keywordtype">float</span> mass_{-1.};</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>  Pdg_t pdg_{-1};</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>  <span class="keywordtype">int</span>   charge_{-1000};</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  <span class="keywordtype">float</span> pt_error_{-1.};</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  <span class="keywordtype">float</span> phi_error_{-1.};</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>  <span class="keywordtype">float</span> eta_error_{-1.};</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>  <span class="keywordtype">float</span> mass_error_{-1.};</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>  <span class="keywordtype">float</span> x_{-1.};</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>  <span class="keywordtype">float</span> y_{-1.};</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>  <span class="keywordtype">float</span> z_{-1.};</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>  <span class="keywordtype">float</span> x_error_{-1.};</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>  <span class="keywordtype">float</span> y_error_{-1.};</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>  <span class="keywordtype">float</span> z_error_{-1.};</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span><span class="preprocessor">#endif</span><span class="comment">// OutputContainer_H</span></div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>  <a class="code hl_struct" href="../../de/d87/structSelectionValues.html">SelectionValues</a> values_{};</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>};</div>
+</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span><span class="preprocessor">#endif</span><span class="comment">// OutputContainer_H</span></div>
 <div class="ttc" id="astructSelectionValues_html"><div class="ttname"><a href="../../de/d87/structSelectionValues.html">SelectionValues</a></div><div class="ttdef"><b>Definition</b> Constants.hpp:9</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

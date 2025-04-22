@@ -102,7 +102,7 @@ $(function(){ initResizable(false); });
 <h1>Installation</h1>
 <p>Clone PFSimple</p>
 <p>Source ROOT </p><pre class="fragment">source /path-to-root/install/bin/thisroot.sh
-</pre><p>To use pre-installed AnalysisTree set the environment variable: export AnalysisTree_DIR=/path-to-analysistree/install/lib/cmake/AnalysisTree To build AnalysisTree automatically together with PFSimple use following cmake keys: -DPFSimple_BUNDLED_AT=ON -DPFSimple_BUNDLED_AT_VERSION=v2.2.7</p>
+</pre><p>To use pre-installed AnalysisTree set the environment variable: export AnalysisTree_DIR=/path-to-analysistree/install/lib/cmake/AnalysisTree To build AnalysisTree automatically together with PFSimple use following cmake keys: -DPFSimple_BUNDLED_AT=ON -DPFSimple_BUNDLED_AT_VERSION=v2.3.4</p>
 <p>You need to source root and export AnalysisTree each time when you are compiling project from 0 (perform cmake command) but have no need to do it when just recompiling project (perform just make).</p>
 <p>Install PFSimple </p><pre class="fragment">mkdir build
 cd build
@@ -111,9 +111,9 @@ make -j install
 </pre><h1>Configuration of decay settings</h1>
 <p>The reconstruction will be executed with at_interface/main.cpp.</p>
 <p>The reconstruction can be configured with the parameter-files at_interface/parfile2.txt for 2-body decays and at_interface/parfile3.txt for 3-body decays.</p>
-<p>The user can select: 1) <a class="el" href="d9/df4/classDecay.html">Decay</a>: mother and daughters</p>
-<p>If pdg mass and sigma mass for mother are set to "-1", values from KFParticleDatabase are taken.</p>
-<p>Option for daughters: alternative pdgs can be used in addition for the reconstruction</p><ul>
+<p>The user can select: 1) <a class="el" href="d9/df4/classDecay.html">Decay</a>: mother and daughters </p><pre class="fragment">Pdg mass and pdg mass sigma for mother: if set to "-1" values from
+KFParticleDatabase are taken
+</pre><p>Option for daughters: alternative pdgs can be used in addition for the reconstruction</p><ul>
 <li>for background: set to "1" / "-1" for pos / neg daughters</li>
 <li>for tracks without TOF id: set to "2" / "-2" for pos / neg daughters (in pid-mode 2, 3, 4)</li>
 <li>In pid-mode 0 optional daughers "1" / "-1" for pos / neg pdgs must be added.</li>
@@ -123,11 +123,13 @@ make -j install
 <p>2) Geometrical cuts to be applied and cut-values</p>
 <p>If a cut should not be used, set to "-1".</p>
 <p>For more information on specific cuts see " Constants.hpp".</p>
-<p>3) Options for the saving of the reconstructed mother </p><pre class="fragment">A nonlinear mass constraint can be applied on the mother particle
-which modifies the mother's state vector and covariance matrix to
+<p>3) Options for the saving of the reconstructed mother </p><pre class="fragment">- A nonlinear mass constraint can be applied on the mother particle which modifies the mother's state vector and covariance matrix to
 assure the 4-momentum is consitent with the pdg mass. 
 
-The mother can be transported to the PV.
+- The mother can be transported to the PV.
+
+- The writing out of the mother into the output-file (e.g. the lower-level mother in cascade decays) can get surpressed. But
+if this option is selected, it is not possible to peform the MC-matching for the upper-level mother.
 </pre><p>4) Pid-method:</p>
 <ul>
 <li>0: no pid (only charge information is used ! optional daughers must be set to "1" / "-1" for pos / neg pdgs !)</li>
@@ -144,13 +146,36 @@ The mother can be transported to the PV.
 <p>6) Input/Output information:</p><ul>
 <li>treename in input aTree, default names: "rTree" for standard aTree, "aTree" after running Pid-framework</li>
 <li>branchname of reconstructed tracks in input analysistree, default names: "VtxTracks" for standard analyistree, "RecParticles" after running Pid-framework</li>
+<li><p class="startli">optional detailed background information in output variable "generation": <br  />
+ format for bg for 2-body-decay: -m12 0 d2 d1 <br  />
+ format for bg for 3-body-decay: -m13 m23 m12 d3 d2 d1 <br  />
+ with m12: mother of daughter 1 &amp; 2 etc. <br  />
+ code for daughters (d): <br  />
+ 1 - reco daughter is unmatched to mc <br  />
+ 2 - reco daughter is matched, but primary <br  />
+ 3 - reco daughter is secondary, produced not in decay from mother with not expected pdg <br  />
+ 4 - reco daughter is secondary, produced not in decay from mother with expected pdg <br  />
+ 5 - reco daughter is secondary, produced in decay from mother with not expected pdg <br  />
+ 6 - reco daughter is secondary, produced in decay from mother with expected pdg <br  />
+ code for mothers (m): <br  />
+ 1 - daughters have the same mother <br  />
+ 2 - daughters have different mothers <br  />
+ 0 - at least one daughter does not have mother (e.g. primary) <br  />
+</p>
+<p class="startli">If detailed background is not selected or if mc match for mother is found, value of variable "generation" is: <br  />
+ 0 - no mc match for mother <br  />
+ 1 - mother is primary particle <br  />
+ 2 - mother is second generation etc. <br  />
+</p>
+</li>
 <li>number of events to be processed (-1 = all events)</li>
-<li>Output format: default output is analysistree format optional: plain tree: output is a simple root tree containing the candidates</li>
+<li>Output format: default output is analysistree format <br  />
+ optional: plain tree: output is a simple root tree containing the candidates</li>
 </ul>
 <p>For 3-body decays, the list of available cuts is extended, amoung others, to cuts on the secondary mothers (SM) of combinations of 2 daughters. E.g. for H3L-&gt;p + pi + d, cuts on the SM of p-pi can be applied. The cuts that test the mother against the PV, e.g. chi2topo, are inverted for the SM to exclude SMs that come from the PV.</p>
 <p>If more than one decay should be reconstructed in the same run, additional parfiles at_interface/parfile2_add.txt or at_interface/parfile3_add.txt can be added where 1.) - 3.) can be selected. 4.) - 6.) can not be changed in the same run. The decays can be independent or build a cascade decay. Multiple additional parfiles can be added.</p>
 <p>The reconstruction of a cascade decay works the same way as adding an additional decay to the run as described above. The order of the parfiles need to be from last generation to first generation. Cascade decays with multiple stages as well as combinations of 2- and 3-body-decays can get reconstructed.</p>
-<p>Several example parameter files can be found in the folder at_interface.</p>
+<p>Several example parameter files can be found in the folder at_interface/example_parfiles.</p>
 <h1>First run</h1>
 <p>Each time before running the prepared executable you should set the environment variables to let your system know where to find libraries: </p><pre class="fragment">source /path-to-root/install/bin/thisroot.sh
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path-to-pfsimple-installation/lib/
