@@ -1,8 +1,8 @@
 ## Decay
 3312,                 pdg mother
-Xi                      name mother
+Xi-                   name mother
 -1,                     mass mother: = -1: pdg mass taken from KFParticleDatabase
--1,                     sigma mother: = -1: pdg mass sigma taken from KFParticleDatabase
+-1,                     mass sigma mother: = -1: pdg mass sigma taken from KFParticleDatabase
 2,			  number of daughters
 -211,                 pdg daughter 1
 -1,                     optional: additional pdg to be considered for daughter 1  (=0: no additional pdg)
