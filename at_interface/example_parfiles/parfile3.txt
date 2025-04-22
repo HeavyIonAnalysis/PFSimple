@@ -1,40 +1,61 @@
 ## Decay
-3122,                 pdg mother
-Lambda              name mother
+3004,                 pdg mother
+H3L                    name mother
 -1,                     mass mother: = -1: pdg mass taken from KFParticleDatabase
 -1,                     mass sigma mother: = -1: pdg mass sigma taken from KFParticleDatabase
-2,                       number of daughters
--211,                 pdg daughter 1
+3,			  number of daughters
+2212,                 pdg daughter 1
+0,		      	  optional: additional pdg to be considered for daughter 1 (=0: no additional pdg)
 0,                       optional: additional pdg to be considered for daughter 1 (=0: no additional pdg)
-0,                       optional: additional pdg to be considered for daughter 1 (=0: no additional pdg)
-2212,                 pdg daughter 2
+-211,                 pdg daughter 2
 0,                       optional: additional pdg to be considered for daughter 2 (=0: no additional pdg)
 0,                       optional: additional pdg to be considered for daughter 2 (=0: no additional pdg)
+1000010020,     pdg daughter 3
+0,                       optional: additional pdg to be considered for daughter 3 (=0: no additional pdg)
+0,                       optional: additional pdg to be considered for daughter 3 (=0: no additional pdg)
 --------------------------------------------------------------------------
 ## Geometrical cuts for daughters
-110.00,             cut chi2 to PV 1
-26.00,               cut chi2 to PV 2
--1,                    cut cos to PV 1
-0.99825,           cut cos to PV 2
+18.42,                cut chi2 to PV 1
+18.42,                cut chi2 to PV 2
+10.0,                  cut chi2 to PV 3
+-1,                     cut cos to PV 1
+-1,                     cut cos to PV 2
+-1,                     cut cos to PV 3
 --------------------------------------------------------------------------
 ## Geometrical cuts for combinations of daughters
-0.15,                 cut distance daughter 1 & 2
-11.0,                 cut chi2geo
--1,                    cut cosopen
+0.2,                    cut distance daughter 1 & 2
+0.2,                    cut distance SV (distance between daughter 3 and SV)
+3.0,                    cut chi2geo SM 1 (dauther 1 & 2)
+-1,                     cut chi2geo SM 2 (dauther 1 & 3)
+-1,                     cut chi2geo SM 3 (dauther 2 & 3)
+-1,                     cut chi2geo (daughter 1, 2 & 3)
+-1,                     cut cosopen SM 1 (dauther 1 & 2)
+-1,                     cut cosopen SM 2 (dauther 1 & 3)
+-1,                     cut cosopen SM 3 (dauther 2 & 3)
+-1,                     cut cosopen (2 daughters with max angle)
+--------------------------------------------------------------------------
+## Geometrical cuts for secondary mothers (of daugher 1&2, 1&3, 2&3)
+2.0,                    cut chi2topo SM 1 (dauther 1 & 2)
+-1,                     cut chi2topo SM 2 (dauther 1 & 3)
+-1,                     cut chi2topo SM 3 (dauther 2 & 3)
+-1,                     cut costopo SM 1 (dauther 1 & 2)
+-1,                     cut costopo SM 2 (dauther 1 & 3)
+-1,                     cut costopo SM 3 (dauther 2 & 3)
 --------------------------------------------------------------------------
 ## Geometrical cuts for mother
-29.0,                 cut chi2topo
--1,                    cut costopo
-4.0,                   cut LdL
--1,                    cut decaylength L
--1,                    cut distance to PV line
--1,                    cut invariant mass discrepancy in terms of expected width
+-1,                     cut chi2topo
+-1,                     cut costopo
+10.0,                  cut LdL
+-1,                     cut decaylength L
+-1,                     cut distance to PV line
+-1,                     cut invariant mass discrepancy in terms of expected width
 --------------------------------------------------------------------------
 ## Options for the saving of the reconstructed mother
 0,                     apply nonlinear mass constraint
-0,                     transport mother to PV 
+0,                     transport mother to PV
+0,                     do not write mother into output analysistree / plain tree
 --------------------------------------------------------------------------
-## Pid method
+## Pid method (for pid mode 2, 3 & 4 analyistree from pid-framework is needed)
 1,                       pid mode: =0: no pid; =1: mc pid; =2: rec pid (default); =3: rec pid (max. purity & purity > min. purity); =4 (purity > min. purity)
 --------------------------------------------------------------------------
 ## Minimum required purities for TOF pid for pid mode = 3 & 4
@@ -48,5 +69,6 @@ Lambda              name mother
 ## Input / Output information
 rTree                  treename in input analysistree
 VtxTracks          branchname for reconstructed tracks in input analysistree
+0,                       write detailed BG information
 -1,                     number of events to be processed (-1 = all events)
 1,                       make plain tree: =1; make no plain tree: =0

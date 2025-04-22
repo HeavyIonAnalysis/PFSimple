@@ -33,8 +33,9 @@ Lambda              name mother
 ## Options for the saving of the reconstructed mother
 0,                     apply nonlinear mass constraint
 0,                     transport mother to PV
+0,                     do not write mother into output analysistree / plain tree
 --------------------------------------------------------------------------
-## Pid method
+## Pid method (for pid mode 2, 3 & 4 analyistree from pid-framework is needed)
 1,                       pid mode: =0: no pid; =1: mc pid; =2: rec pid (default); =3: rec pid (max. purity & purity > min. purity); =4 (purity > min. purity)
 --------------------------------------------------------------------------
 ## Minimum required purities for TOF pid for pid mode = 3 & 4
@@ -47,6 +48,7 @@ Lambda              name mother
 --------------------------------------------------------------------------
 ## Input / Output information
 rTree                  treename in input analysistree
-VtxTracks          branchname for reconstructed tracks in input analysistree
--1,                     number of events to be processed (-1 = all events)
-1,                       make plain tree: =1; make no plain tree: =0
+VtxTracks              branchname for reconstructed tracks in input analysistree
+1,                     write detailed BG information
+-1,                    number of events to be processed (-1 = all events)
+1,                     make plain tree: =1; make no plain tree: =0

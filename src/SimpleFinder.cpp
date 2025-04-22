@@ -7,8 +7,11 @@ using std::to_string;
 void SimpleFinder::Init(std::vector<KFParticle>&& tracks, const KFVertex& pv) {
   output_.clear();
   current_candidate_id_ = 0;
-
-  last_track_id_ = tracks.at(tracks.size() - 1).Id();
+  
+  if (!tracks.empty())
+    last_track_id_ = tracks.at(tracks.size() - 1).Id();
+  else 
+    last_track_id_ = 0;
   
   tracks_ = tracks;
   prim_vx_ = pv;
@@ -411,6 +414,12 @@ void SimpleFinder::SaveParticle(KFParticleSIMD& particle_simd, const Decay& deca
 
   int track_id = last_track_id_ + current_candidate_id_ + 1;
 
+  particle.SetId(track_id);
+  tracks_.emplace_back(particle);
+  current_candidate_id_++;
+  
+  if (decay.GetIsDoNotWriteMother() == true) return;
+
   OutputContainer mother(particle);
   mother.SetSelectionValues(values_);
   mother.SetId(track_id);
@@ -424,10 +433,6 @@ void SimpleFinder::SaveParticle(KFParticleSIMD& particle_simd, const Decay& deca
   mother.SetDaughterGenerations(daughters_generation);
 
   output_.emplace_back(mother);
-
-  particle.SetId(track_id);
-  tracks_.emplace_back(particle);
-  current_candidate_id_++;
 }
 
 float SimpleFinder::CalculateCosTopo(const KFParticleSIMD& mother) const {

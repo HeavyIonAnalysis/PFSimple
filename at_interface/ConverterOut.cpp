@@ -9,8 +9,12 @@
 #include <algorithm>
 
 void ConverterOut::CopyParticle(const OutputContainer& kf_particle, AnalysisTree::Particle& particle, const int Ndaughters) const {
+  
+  //particle.SetIsAllowedSetMassAndChargeExplicitly(true); //Uncomment when most recent AnalysisTree is installed in cbmroot
+  
   particle.SetMomentum(kf_particle.GetPx(), kf_particle.GetPy(), kf_particle.GetPz());
   particle.SetMass(kf_particle.GetMass());
+  //particle.SetCharge(kf_particle.GetCharge());  //Uncomment when most recent AnalysisTree is installed in cbmroot
   particle.SetPid(kf_particle.GetPdg());
   particle.SetField(kf_particle.GetId(), particle_id_field_id_);
   
@@ -75,9 +79,12 @@ void ConverterOut::Exec() {
   candidates_ = pfsimple_task_->GetSimpleFinder()->GetCandidates();
 
   particle_reco_->ClearChannels();
-  particle_sim_->ClearChannels();
-  particle_reco2sim_->Clear();
 
+  if (is_write_mc_ == true) {
+    particle_sim_->ClearChannels();
+    particle_reco2sim_->Clear();
+  }
+  
   rec2sim_daughters_.clear();
 
   auto out_config = AnalysisTree::TaskManager::GetInstance()->GetConfig();
@@ -92,7 +99,7 @@ void ConverterOut::Exec() {
 
     AnalysisTree::Particle particle(particle_reco_->GetNumberOfChannels(), br_conf);
     CopyParticle(candidate, particle, Ndaughters);
-    if (mc_particles_) {
+    if (is_write_mc_ == true) {
       MatchWithMc(candidate, particle, Ndaughters);
     }
     
@@ -159,20 +166,33 @@ void ConverterOut::Init() {
   out_particles.AddField<float>("chi2_prim_mother", "chi2 of the mother to the primary vertex (PV)");
   out_particles.AddField<float>("invmass_discr", "Discrepancy in mass of the V0 candidate invariant mass from the PDG value in terms of characteristic sigma");                
 
+  
   AnalysisTree::BranchConfig out_particles_sim(out_branch_sim, AnalysisTree::DetType::kParticle);
 
-  if (mc_particles_) {
+  if (!mc_particles_)
+     is_write_mc_ = false;
+
+  for (const auto& decay : decays_) 
+    if (decay.GetIsDoNotWriteMother() == true) {
+      is_write_mc_ = false;
+      break;
+    }
+    
+  if (is_write_mc_ == true) {
     out_particles.AddField<int>("generation", "");
     out_particles_sim.AddField<int>("geant_process_id", "");
+    out_particles_sim.AddField<int>("mother_id", "particle mother's id in SimParticles branch");   // particle mother's id in SimParticles branch
+    out_particles_sim.AddField<int>("mc_id", "");
   }
 
-  out_particles_sim.AddField<int>("mother_id", "particle mother's id in SimParticles branch");   // particle mother's id in SimParticles branch
-  
   man->AddBranch(events_, EventBranch);
   man->AddBranch(particle_reco_, out_particles);
-  man->AddBranch(particle_sim_, out_particles_sim);
-  man->AddMatching(out_branch, out_branch_sim, particle_reco2sim_);
-
+  
+  if (is_write_mc_ == true) {
+    man->AddBranch(particle_sim_, out_particles_sim);
+    man->AddMatching(out_branch, out_branch_sim, particle_reco2sim_);
+  }
+  
   if (output_cuts_)
     output_cuts_->Init(*out_config);
 
@@ -187,13 +207,14 @@ int ConverterOut::GetMothersSimId(const OutputContainer& candidate, AnalysisTree
    ** 3) mother has PDG code as expected according to decay reconstruction hypothesis
    **/
   std::vector<int> daughter_sim_id;
-
   for (int i = 0; i < Ndaughters; i++) {
     if (candidate.GetDaughterGenerations().at(i) == 0)
       daughter_sim_id.push_back(rec_to_mc_->GetMatch(particlerec.GetField<int>(daughter_id_field_id_ + i)));
     else {
-      if (rec2sim_daughters_.find(particlerec.GetField<int>(daughter_id_field_id_+ i)) != rec2sim_daughters_.end())
-	daughter_sim_id.push_back(rec2sim_daughters_.find(particlerec.GetField<int>(daughter_id_field_id_ + i))->second);
+      if (rec2sim_daughters_.find(particlerec.GetField<int>(daughter_id_field_id_+ i)) != rec2sim_daughters_.end()) {
+	int daughter_sim_id_pf = rec2sim_daughters_.find(particlerec.GetField<int>(daughter_id_field_id_ + i))->second;
+	daughter_sim_id.push_back(particle_sim_->GetChannel(daughter_sim_id_pf).GetField<int>(mc_id_field_id_));
+      }
       else
 	return -1;
     }
@@ -203,11 +224,8 @@ int ConverterOut::GetMothersSimId(const OutputContainer& candidate, AnalysisTree
     return -1;
   
   std::vector<int> mother_sim_id;
-  for (int i = 0; i < Ndaughters; i++)
-    if (candidate.GetDaughterGenerations().at(i) == 0)
+  for (int i = 0; i < Ndaughters; i++) 
       mother_sim_id.push_back(mc_particles_->GetChannel(daughter_sim_id.at(i)).GetField<int>(mother_id_field_id_));
-    else
-      mother_sim_id.push_back(particle_sim_->GetChannel(daughter_sim_id.at(i)).GetField<int>(mother_id_field_id_w_));
     
   if (*std::min_element(mother_sim_id.begin(), mother_sim_id.end()) != *std::max_element(mother_sim_id.begin(), mother_sim_id.end()))// daughters belong to not the same mother
 	return -1;
@@ -239,7 +257,7 @@ void ConverterOut::MatchWithMc(const OutputContainer& candidate, AnalysisTree::P
 
   int mother_id = GetMothersSimId(candidate, particlerec, Ndaughters);
   int generation = DetermineGeneration(mother_id);
-  if(is_detailed_bg_ && generation==0) generation = DetermineBGType(particlerec, Ndaughters);
+  if(is_detailed_bg_ && generation==0) generation = DetermineBGType(candidate, particlerec, Ndaughters);
   particlerec.SetField(generation, generation_field_id_);
  
   if (generation < 1) return;
@@ -247,11 +265,15 @@ void ConverterOut::MatchWithMc(const OutputContainer& candidate, AnalysisTree::P
   const AnalysisTree::Particle& simtrackmother = mc_particles_->GetChannel(mother_id);
 
   auto& particlesim = particle_sim_->AddChannel(out_config->GetBranchConfig(particle_sim_->GetId()));
+  //particlesim.SetIsAllowedSetMassAndChargeExplicitly(true); //Uncomment when most recent AnalysisTree is installed in cbmroot
   particlesim.SetMomentum(simtrackmother.GetPx(), simtrackmother.GetPy(), simtrackmother.GetPz());
   particlesim.SetMass(simtrackmother.GetMass());
+  //particlesim.SetCharge(simtrackmother.GetCharge());  //Uncomment when most recent AnalysisTree is installed in cbmroot
   particlesim.SetPid(simtrackmother.GetPid());
   particlesim.SetField(simtrackmother.GetField<int>(mother_id_field_id_), mother_id_field_id_w_);
   particlesim.SetField(simtrackmother.GetField<int>(g4process_field_id_), g4process_field_id_w_);
+  int id = simtrackmother.GetId();
+  particlesim.SetField(id, mc_id_field_id_);
   particle_reco2sim_->AddMatch(particlerec.GetId(), particlesim.GetId());
   rec2sim_daughters_[particlerec.GetField<int>(particle_id_field_id_)] = particlesim.GetId();
 }
@@ -271,7 +293,7 @@ void ConverterOut::InitIndexes() {
   particle_id_field_id_ = out_branch_reco.GetFieldId("particle_id");
   pt_err_field_id_ = out_branch_reco.GetFieldId("pT_err");
 
-  if (mc_particles_) {
+  if (is_write_mc_ == true) {
     auto branch_conf_sim  = config_->GetBranchConfig(mc_particles_name_);
     auto out_branch_sim   = out_config->GetBranchConfig(particle_sim_->GetId());
     mother_id_field_id_   = branch_conf_sim.GetFieldId("mother_id");
@@ -279,6 +301,7 @@ void ConverterOut::InitIndexes() {
     generation_field_id_  = out_branch_reco.GetFieldId("generation");
     g4process_field_id_w_ = out_branch_sim.GetFieldId("geant_process_id");
     mother_id_field_id_w_ = out_branch_sim.GetFieldId("mother_id");
+    mc_id_field_id_       = out_branch_sim.GetFieldId("mc_id");
   }
 
   chi2prim_field_id_ = out_branch_reco.GetFieldId("chi2_prim_first");
@@ -293,18 +316,28 @@ void ConverterOut::InitIndexes() {
   invmass_discr_field_id_ = out_branch_reco.GetFieldId("invmass_discr");
 }
 
-std::pair<int, int> ConverterOut::DetermineDaughtersMCStatus(const int daughter_rec_id, const Pdg_t mother_expected_pdg) const {
-  const int daughter_sim_id = rec_to_mc_->GetMatch(daughter_rec_id);
+std::pair<int, int> ConverterOut::DetermineDaughtersMCStatus(const int daughter_rec_id, const Pdg_t mother_expected_pdg, const int daughter_gen) const {
+
+  int daughter_sim_id;
+  if (daughter_gen == 0)
+    daughter_sim_id = rec_to_mc_->GetMatch(daughter_rec_id);
+  else 
+    if (rec2sim_daughters_.find(daughter_rec_id) != rec2sim_daughters_.end()) {
+      int daughter_sim_id_pf = rec2sim_daughters_.find(daughter_rec_id)->second;
+      daughter_sim_id = particle_sim_->GetChannel(daughter_sim_id_pf).GetField<int>(mc_id_field_id_);
+    }
+    else daughter_sim_id = -1;
+
   if(daughter_sim_id < 0) return std::make_pair(1, -999); // no match to MC
 
-  auto& daughter_sim = mc_particles_->GetChannel(daughter_sim_id);
+  auto& daughter_sim = mc_particles_->GetChannel(daughter_sim_id); 
   const int mother_sim_id = daughter_sim.GetField<int>(mother_id_field_id_);
   if(mother_sim_id < 0) return std::make_pair(2, -999); // daughter is primary
 
   const int geant_process = daughter_sim.GetField<int>(g4process_field_id_);
   auto& mother_sim = mc_particles_->GetChannel(mother_sim_id);
   auto mother_pdg = mother_sim.GetPid();
-
+ 
   int daughter_status{-999};
 
   if(geant_process != 4 && mother_pdg != mother_expected_pdg) daughter_status = 3; // daughter not from decay, mother's pdg unexpected
@@ -321,11 +354,12 @@ int ConverterOut::DetermineMotherMCStatus(const int mid1, const int mid2) {
   else             return 2;
 }
 
-int ConverterOut::DetermineBGType(AnalysisTree::Particle& particle, const int Ndaughters) {
+int ConverterOut::DetermineBGType(const OutputContainer& candidate, AnalysisTree::Particle& particle, const int Ndaughters) {
   std::vector<std::pair<int, int>> daughters_statuses;
   for (int i = 0; i < Ndaughters; i++) {
     auto daughter_rec_id = particle.GetField<int>(daughter_id_field_id_ + i);
-    daughters_statuses.emplace_back(DetermineDaughtersMCStatus(daughter_rec_id, particle.GetPid()));
+    int daughter_gen = candidate.GetDaughterGenerations().at(i);
+    daughters_statuses.emplace_back(DetermineDaughtersMCStatus(daughter_rec_id, particle.GetPid(), daughter_gen));
   }
 
   int result{0};
