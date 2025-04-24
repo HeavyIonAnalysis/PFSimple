@@ -17,7 +17,6 @@ using namespace AnalysisTree;
 using json = nlohmann::json;
 
 #define LIST_CONTAINS(list, value) std::find(list.begin(), list.end(), value) != list.end()
-
 void set_json_value(json& j, const std::string& path, const std::string& value);
 
 int main(int argc, char** argv) {
@@ -46,7 +45,7 @@ int main(int argc, char** argv) {
                 if (eqPos != std::string::npos) {
                     std::string key = arg.substr(0, eqPos);
                     std::string value = arg.substr(eqPos + 1);
-                    overrides.emplace_back(key, value);  // ← Save for later
+                    overrides.emplace_back(key, value);  // Save for later
                 } else {
                     std::cerr << "Invalid --set format: use key=value\n";
                     return 1;
@@ -81,7 +80,7 @@ int main(int argc, char** argv) {
     }
 
     // For demonstration
-    std::cout << "Modified config:\n" << config.dump(2) << std::endl;
+    //std::cout << "Modified config:\n" << config.dump(2) << std::endl;
 
     // Setup PFSimple from JSON config
     auto* man = TaskManager::GetInstance();
@@ -104,8 +103,6 @@ int main(int argc, char** argv) {
         for (const auto& daughter_cfg : daughters_cfg) {
             std::vector<Pdg_t> pdg_codes = daughter_cfg["pdg_codes"].get<std::vector<Pdg_t>>();
 
-            std::cout << "Setting up daughter " << pdg_codes[0] << std::endl;
-
             if (pdg_codes.size() > 1)
                 daughters.emplace_back(Daughter(pdg_codes[0], pdg_codes));
             else
@@ -114,7 +111,6 @@ int main(int argc, char** argv) {
             auto& d = daughters.back();
             d.CancelCuts();
             if (daughter_cfg.contains("cuts")) {
-              std::cout << "Applying daughter cuts" << std::endl;
               auto cuts = daughter_cfg["cuts"];
               if (cuts.contains("chi2prim")) d.SetCutChi2Prim(cuts["chi2prim"]);
               if (cuts.contains("cos"))      d.SetCutCos(cuts["cos"]);
@@ -157,6 +153,7 @@ int main(int argc, char** argv) {
             const auto& options = mother_cfg["save_options"];
             if (LIST_CONTAINS(options, "mass_constraint")) decay.SetIsApplyMassConstraint();
             if (LIST_CONTAINS(options, "transport_to_pv")) decay.SetIsTransportToPV();
+            if (LIST_CONTAINS(options, "do_not_write_mother")) decay.SetIsDoNotWriteMother();
         }
 
         decays.push_back(decay);
@@ -184,6 +181,7 @@ int main(int argc, char** argv) {
     out_converter->SetSimTracksName("SimParticles");
     out_converter->SetPFSimpleTask(pf_task);
     out_converter->SetDecays(decays);
+    if (config["io"].contains("write_detailed_bg")) out_converter->SetIsWriteDetailedBG(config["io"]["write_detailed_bg"]);
     
     man->AddTask(in_converter);
     man->AddTask(pf_task);
@@ -207,6 +205,7 @@ int main(int argc, char** argv) {
       std::string branchname_rec = "Candidates";
       tree_task->SetInputBranchNames({branchname_rec});
       tree_task->AddBranch(branchname_rec);
+      //tree_task->SetIsPrependLeavesWithBranchName(false); //Uncomment when most recent AnalysisTree is installed in cbmroot
 
       man->AddTask(tree_task);
 
