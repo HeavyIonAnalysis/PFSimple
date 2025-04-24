@@ -1,0 +1,33 @@
+{
+    "io" : {
+        "input_treename" : "rTree",
+        "rectracks_branchname" : "VtxTracks",
+        "n_events" : -1,
+        "make_plain_tree" : false
+    },
+    "pid_mode" : 0,
+    "decays" : [
+        {
+            "mother" : {
+                "name" : "Lambda",
+                "pdg_code" : 3122,
+                "cuts" : {
+                    "LdL" : 5.0,
+                    "dist" : 1.0,
+                    "chi2geo" : 3.0
+                },
+                "save_options" : []
+            },
+            "daughters" : [
+                {
+                    "pdg_codes" : [-211, -1],
+                    "cuts" : {"chi2prim" : 18.42}
+                },
+                {
+                    "pdg_codes" : [2212, 1],
+                    "cuts" : {"chi2prim" : 18.42}
+                }
+            ]
+        }
+    ]
+}

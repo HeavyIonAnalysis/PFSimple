@@ -26,6 +26,11 @@ add_dependencies(main KFMan)
 add_target_property(main COMPILE_FLAGS "-DDO_TPCCATRACKER_EFF_PERFORMANCE -DNonhomogeneousField -DCBM -DUSE_TIMERS")
 target_link_libraries(main KFMan KFParticleSimple KFParticleInterface KFParticle Vc)
 
+add_executable(main_json main_json.cpp)
+add_dependencies(main_json KFMan)
+add_target_property(main_json COMPILE_FLAGS "-DDO_TPCCATRACKER_EFF_PERFORMANCE -DNonhomogeneousField -DCBM -DUSE_TIMERS")
+target_link_libraries(main_json KFMan KFParticleSimple KFParticleInterface KFParticle Vc)
+
 install(TARGETS KFMan EXPORT KFManTargets
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
@@ -49,4 +54,4 @@ install(
         lib
         OPTIONAL
 )
-install (TARGETS main RUNTIME DESTINATION bin)
+install (TARGETS main main_json RUNTIME DESTINATION bin)

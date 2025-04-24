@@ -1,0 +1,56 @@
+{
+    "io" : {
+        "input_treename" : "rTree",
+        "rectracks_branchname" : "VtxTracks",
+        "n_events" : -1,
+        "make_plain_tree" : false
+    },
+    "pid_mode" : 1,
+    "decays" : [
+        {
+            "mother" : {
+                "name" : "Lambda",
+                "pdg_code" : 3122,
+                "cuts" : {
+                    "LdL" : 4.0,
+                    "dist" : 0.15,
+                    "chi2geo" : 11.0,
+                    "chi2topo" : 29.0
+                },
+                "save_options" : []
+            },
+            "daughters" : [
+                {
+                    "pdg_codes" : [-211],
+                    "cuts" : {"chi2prim" : 110}
+                },
+                {
+                    "pdg_codes" : [2212],
+                    "cuts" : {"chi2prim" : 26, "cos" : 0.99825}
+                }
+            ]
+        },
+        {
+            "mother" : {
+                "name" : "Omega",
+                "pdg_code" : 3334,
+                "cuts" : {
+                    "chi2topo" : 5.0,
+                    "LdL" : 5.0,
+                    "chi2geo" : 6.0,
+                    "dist" : 1.0
+                },
+                "save_options" : ["transport_to_pv"]
+            },
+            "daughters" : [
+                {
+                    "pdg_codes" : [-321],
+                    "cuts" : {"chi2prim" : 18.42}
+                },
+                {
+                    "pdg_codes" : [3122]
+                }
+            ]
+        }
+    ]
+}
