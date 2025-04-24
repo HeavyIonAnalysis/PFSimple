@@ -23,9 +23,9 @@ Lambda              name mother
 -1,                    cut cosopen
 --------------------------------------------------------------------------
 ## Geometrical cuts for mother
--1,                    cut chi2topo
+5.0,                   cut chi2topo
 -1,                    cut costopo
-5.0,                   cut LdL
+10.0,                 cut LdL
 -1,                    cut decaylength L
 -1,                    cut distance to PV line
 3.0,                   cut invariant mass discrepancy in terms of expected width
