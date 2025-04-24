@@ -28,7 +28,6 @@ int main(int argc, char** argv) {
     std::vector<std::pair<std::string, std::string>> overrides;
 
     //Parse command line args
-
     static struct option long_options[] = {
         {"output", required_argument, nullptr, 'o'},
         {"plain-output", required_argument, nullptr, 'p'},
@@ -192,7 +191,7 @@ int main(int argc, char** argv) {
     man->SetVerbosityPeriod(100);
     
     man->Init({input_file}, {config["io"]["input_treename"]});
-    man->Run(config["io"]["n_events"]);// -1 = all events
+    man->Run(config["io"]["n_events"]);
     man->Finish();
     man->ClearTasks();
 
@@ -212,7 +211,7 @@ int main(int argc, char** argv) {
       man->AddTask(tree_task);
 
       man->Init({"filelist.txt"}, {"pTree"});
-      man->Run(config["io"]["n_events"]);// -1 = all events
+      man->Run(config["io"]["n_events"]);
       man->Finish();
     }
 
