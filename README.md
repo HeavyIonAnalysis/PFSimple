@@ -138,18 +138,21 @@ The user can select:
    - Output format: default output is analysistree format  
       optional: plain tree: output is a simple root tree containing the candidates
 
+### 3-body-decays
 For 3-body decays, the list of available cuts is extended, amoung others, to cuts
 on the secondary mothers (SM) of combinations of 2 daughters. E.g. for
 H3L->p + pi + d, cuts on the SM of p-pi can be applied. The cuts
 that test the mother against the PV, e.g. chi2topo, are inverted for
 the SM to exclude SMs that come from the PV.
 
+### Multiple decays
 If more than one decay should be reconstructed in the same run, additional
 parfiles at_interface/parfile2_add.txt or at_interface/parfile3_add.txt can be added
 where 1.) - 3.) can be selected. 4.) - 6.) can not be changed in the same run. The 
 decays can be independent or build a cascade decay. Multiple additional
 parfiles can be added.
 
+### Cascade decays
 The reconstruction of a cascade decay works the same way as adding an additional decay
 to the run as described above. The order of the parfiles need to be from last generation to
 first generation. Cascade decays with multiple stages as well as combinations of

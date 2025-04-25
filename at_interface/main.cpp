@@ -82,8 +82,8 @@ int main(int argc, char** argv) {
     fscanf(inputInfo, "%*[^\n]%*c");
   
     fscanf(inputInfo, "%f %*[^\n]%*c", &dist);
-    fscanf(inputInfo, "%f %*[^\n]%*c", &distSV);
     if (ndaughters == 3) {
+      fscanf(inputInfo, "%f %*[^\n]%*c", &distSV);
       fscanf(inputInfo, "%f %*[^\n]%*c", &chi2geoSM.at(0));
       fscanf(inputInfo, "%f %*[^\n]%*c", &chi2geoSM.at(1));
       fscanf(inputInfo, "%f %*[^\n]%*c", &chi2geoSM.at(2));
@@ -148,7 +148,7 @@ int main(int argc, char** argv) {
       atree_name = atree_name_c;
       rec_tracks_name = rec_tracks_name_c;
     }
-
+    
     fclose(inputInfo);
  
     std::vector<Daughter> daughters;
