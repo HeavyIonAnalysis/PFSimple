@@ -67,8 +67,8 @@ H3L                    name mother
 0.7,                    specific purity tof for background (optional, if = -1: purity for all species will be used)
 --------------------------------------------------------------------------
 ## Input / Output information
-pTree                  treename in input analysistree
-RecTracks          branchname for reconstructed tracks in input analysistree
+aTree                  treename in input analysistree
+RecParticles          branchname for reconstructed tracks in input analysistree
 0,                       write detailed BG information
 -1,                     number of events to be processed (-1 = all events)
 1,                       make plain tree: =1; make no plain tree: =0
