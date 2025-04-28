@@ -178,7 +178,7 @@ int main(int argc, char** argv) {
     if (pid_purity_cfg.contains("pions"))      in_converter->SetPidPurityPion(pid_purity_cfg["pions"]);
     if (pid_purity_cfg.contains("kaons"))      in_converter->SetPidPurityKaon(pid_purity_cfg["kaons"]);
     if (pid_purity_cfg.contains("deuterons"))  in_converter->SetPidPurityDeuteron(pid_purity_cfg["deuterons"]);
-    if (pid_purity_cfg.contains("background")) in_converter->SetPidPurityDeuteron(pid_purity_cfg["background"]);
+    if (pid_purity_cfg.contains("background")) in_converter->SetPidPurityBG(pid_purity_cfg["background"]);
 
     auto* pf_task = new PFSimpleTask();
     pf_task->SetInTask(in_converter);
