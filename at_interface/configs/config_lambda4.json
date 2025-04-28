@@ -2,8 +2,8 @@
 //(Lambda pid 2)
 {
     "io" : {
-        "input_treename" : "aTree",
-        "rectracks_branchname" : "RecParticles",
+        "input_treename" : "pTree",
+        "rectracks_branchname" : "RecTracks",
         "n_events" : -1,
         "make_plain_tree" : true
     },
