@@ -19,6 +19,19 @@ using json = nlohmann::json;
 #define LIST_CONTAINS(list, value) std::find(list.begin(), list.end(), value) != list.end()
 void set_json_value(json& j, const std::string& path, const std::string& value);
 
+nlohmann::json load_config(const std::string& filepath) {
+    std::ifstream file_stream(filepath);
+    if (!file_stream.is_open()) {
+        throw std::runtime_error("Failed to open file: " + filepath);
+    }
+
+    try {
+        return nlohmann::json::parse(file_stream, nullptr, true, true); // last 'true' enables comment support
+    } catch (const nlohmann::json::parse_error& e) {
+        throw std::runtime_error("JSON parse error in file " + filepath + ": " + e.what());
+    }
+}
+
 int main(int argc, char** argv) {
     std::string input_file;
     std::string config_file;
@@ -28,9 +41,9 @@ int main(int argc, char** argv) {
 
     //Parse command line args
     static struct option long_options[] = {
-        {"output", required_argument, nullptr, 'o'},
+        {"output",       required_argument, nullptr, 'o'},
         {"plain-output", required_argument, nullptr, 'p'},
-        {"set", required_argument, nullptr, 's'},
+        {"set",          required_argument, nullptr, 's'},
         {0, 0, 0, 0}
     };
 
@@ -66,13 +79,7 @@ int main(int argc, char** argv) {
     config_file = argv[optind + 1];
 
     // Load config JSON file
-    json config;
-    std::ifstream cfg_file(config_file);
-    if (!cfg_file) {
-        std::cerr << "Cannot open config file: " << config_file << "\n";
-        return 1;
-    }
-    cfg_file >> config;
+    json config = load_config(config_file);
 
     // Apply deferred overrides
     for (const auto& [key, value] : overrides) {
@@ -97,7 +104,7 @@ int main(int argc, char** argv) {
     for (const auto& decay_cfg : config["decays"]) {
         printf("Configuring decay %s\n", decay_cfg["mother"]["name"].get<std::string>().c_str());
 
-        //
+        // Load daughters & cuts
         auto daughters_cfg = decay_cfg["daughters"];
         std::vector<Daughter> daughters;
         for (const auto& daughter_cfg : daughters_cfg) {
@@ -117,6 +124,7 @@ int main(int argc, char** argv) {
             }
         }
 
+        // Load mother
         auto mother_cfg = decay_cfg["mother"];
         Mother mother(mother_cfg["pdg_code"]);
         mother.CancelCuts();
@@ -147,12 +155,13 @@ int main(int argc, char** argv) {
             if (combo_cuts.contains("costopo"))  mother.SetCutCosTopoSM(combo_cuts["costopo"].get<std::vector<Float_t>>());
         }
 
+        // Construct decay and set save options
         Decay decay(mother_cfg["name"], mother, {daughters});
 
         if (mother_cfg.contains("save_options")) {
             const auto& options = mother_cfg["save_options"];
-            if (LIST_CONTAINS(options, "mass_constraint")) decay.SetIsApplyMassConstraint();
-            if (LIST_CONTAINS(options, "transport_to_pv")) decay.SetIsTransportToPV();
+            if (LIST_CONTAINS(options, "mass_constraint"))     decay.SetIsApplyMassConstraint();
+            if (LIST_CONTAINS(options, "transport_to_pv"))     decay.SetIsTransportToPV();
             if (LIST_CONTAINS(options, "do_not_write_mother")) decay.SetIsDoNotWriteMother();
         }
 
@@ -164,11 +173,12 @@ int main(int argc, char** argv) {
     auto pid_purity_cfg = config["pid_purity"];
 
     in_converter->SetPidMode(pid_mode);
-    if (pid_purity_cfg.contains("default"))   in_converter->SetPidPurity(pid_purity_cfg["default"]);
-    if (pid_purity_cfg.contains("protons"))   in_converter->SetPidPurityProton(pid_purity_cfg["protons"]);
-    if (pid_purity_cfg.contains("pions"))     in_converter->SetPidPurityPion(pid_purity_cfg["pions"]);
-    if (pid_purity_cfg.contains("kaons"))     in_converter->SetPidPurityKaon(pid_purity_cfg["kaons"]);
-    if (pid_purity_cfg.contains("deuterons")) in_converter->SetPidPurityDeuteron(pid_purity_cfg["deuterons"]);
+    if (pid_purity_cfg.contains("default"))    in_converter->SetPidPurity(pid_purity_cfg["default"]);
+    if (pid_purity_cfg.contains("protons"))    in_converter->SetPidPurityProton(pid_purity_cfg["protons"]);
+    if (pid_purity_cfg.contains("pions"))      in_converter->SetPidPurityPion(pid_purity_cfg["pions"]);
+    if (pid_purity_cfg.contains("kaons"))      in_converter->SetPidPurityKaon(pid_purity_cfg["kaons"]);
+    if (pid_purity_cfg.contains("deuterons"))  in_converter->SetPidPurityDeuteron(pid_purity_cfg["deuterons"]);
+    if (pid_purity_cfg.contains("background")) in_converter->SetPidPurityDeuteron(pid_purity_cfg["background"]);
 
     auto* pf_task = new PFSimpleTask();
     pf_task->SetInTask(in_converter);
@@ -194,29 +204,31 @@ int main(int argc, char** argv) {
     man->ClearTasks();
 
     if (config["io"]["make_plain_tree"]) {
-      std::ofstream filelist;
-      filelist.open("filelist.txt");
-      filelist << output_file;
-      filelist << "\n";
-      filelist.close();
+        std::ofstream filelist;
+        filelist.open("filelist.txt");
+        filelist << output_file;
+        filelist << "\n";
+        filelist.close();
 
-      auto* tree_task = new PlainTreeFiller();
-      tree_task->SetOutputName(plain_output_file, "plain_tree");
-      std::string branchname_rec = "Candidates";
-      tree_task->SetInputBranchNames({branchname_rec});
-      tree_task->AddBranch(branchname_rec);
-      //tree_task->SetIsPrependLeavesWithBranchName(false); //Uncomment when most recent AnalysisTree is installed in cbmroot
+        auto* tree_task = new PlainTreeFiller();
+        tree_task->SetOutputName(plain_output_file, "plain_tree");
+        std::string branchname_rec = "Candidates";
+        tree_task->SetInputBranchNames({branchname_rec});
+        tree_task->AddBranch(branchname_rec);
+        //tree_task->SetIsPrependLeavesWithBranchName(false); //Uncomment when most recent AnalysisTree is installed in cbmroot
 
-      man->AddTask(tree_task);
+        man->AddTask(tree_task);
 
-      man->Init({"filelist.txt"}, {"pTree"});
-      man->Run(config["io"]["n_events"]);
-      man->Finish();
+        man->Init({"filelist.txt"}, {"pTree"});
+        man->Run(config["io"]["n_events"]);
+        man->Finish();
     }
 
     return 0;
 }
 
+
+/* Function to overide a value inside the json config, e.g. decays[0].mother.cuts.LdL=4.0 */
 void set_json_value(json& config, const std::string& path, const std::string& value) {
     std::cout << "[DEBUG] Setting " << path << " to " << value << std::endl;
 
@@ -270,6 +282,8 @@ void set_json_value(json& config, const std::string& path, const std::string& va
                 try {
                     if (value == "true" || value == "false") {
                         target = (value == "true");
+                    } else if (value == "null") {
+                      target = nlohmann::json();
                     } else if (value.find('.') != std::string::npos) {
                         target = std::stod(value);
                     } else {

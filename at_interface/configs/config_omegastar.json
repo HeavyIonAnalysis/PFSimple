@@ -3,7 +3,8 @@
         "input_treename" : "rTree",
         "rectracks_branchname" : "VtxTracks",
         "n_events" : -1,
-        "make_plain_tree" : false
+        "write_detailed_bg" : true,
+        "make_plain_tree" : true
     },
     "pid_mode" : 1,
     "decays" : [
@@ -12,18 +13,21 @@
                 "name" : "Lambda",
                 "pdg_code" : 3122,
                 "cuts" : {
-                    "LdL" : 5.0,
+                    "LdL" : 10.0,
                     "dist" : 1.0,
-                    "chi2geo" : 3.0
-                }
+                    "chi2geo" : 3.0,
+                    "chi2topo" : 5.0,
+                    "invmass" : 3.0
+                },
+                "save_options" : ["mass_constraint"]
             },
             "daughters" : [
                 {
-                    "pdg_codes" : [-211],
+                    "pdg_codes" : [-211, -1],
                     "cuts" : {"chi2prim" : 18.42}
                 },
                 {
-                    "pdg_codes" : [2212],
+                    "pdg_codes" : [2212, 1],
                     "cuts" : {"chi2prim" : 18.42}
                 }
             ]
@@ -34,14 +38,16 @@
                 "pdg_code" : 3312,
                 "cuts" : {
                     "chi2topo" : 5.0,
+                    "dist" : 1.0,
                     "LdL" : 5.0,
-                    "invmass" : 3,
-                    "chi2geo" : 6.0
-                }
+                    "chi2geo" : 6.0,
+                    "invmass" : 3.0
+                },
+                "save_options" : ["mass_constraint"]
             },
             "daughters" : [
                 {
-                    "pdg_codes" : [-211],
+                    "pdg_codes" : [-211, -1],
                     "cuts" : {"chi2prim" : 18.42}
                 },
                 {
@@ -53,12 +59,12 @@
             "mother" : {
                 "name" : "Omega*-",
                 "pdg_code" : 1003334,
+                "mass" : 2.252,
+                "mass_sigma" : 0.055,
                 "cuts" : {
                     "dist" : 1.0,
                     "chi2topo" : 1000.0,
                     "LdL" : 5.0,
-                    "mass" : 2.252,
-                    "mass_sigma" : 0.055,
                     "chi2geo" : 3.0
                 }
             },

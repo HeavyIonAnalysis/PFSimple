@@ -3,20 +3,23 @@
         "input_treename" : "rTree",
         "rectracks_branchname" : "VtxTracks",
         "n_events" : -1,
-        "make_plain_tree" : false
+        "write_detailed_bg" : true,
+        "make_plain_tree" : true
     },
-    "pid_mode" : 0,
+    "pid_mode" : 1,
     "decays" : [
         {
             "mother" : {
                 "name" : "Lambda",
                 "pdg_code" : 3122,
                 "cuts" : {
-                    "LdL" : 5.0,
+                    "LdL" : 10.0,
                     "dist" : 1.0,
-                    "chi2geo" : 3.0
+                    "chi2geo" : 3.0,
+                    "chi2topo" : 5.0,
+                    "invmass" : 3.0
                 },
-                "save_options" : []
+                "save_options" : ["mass_constraint"]
             },
             "daughters" : [
                 {
@@ -35,11 +38,11 @@
                 "pdg_code" : 3312,
                 "cuts" : {
                     "chi2topo" : 5.0,
+                    "dist" : 1.0,
                     "LdL" : 5.0,
-                    "invmass" : 3,
                     "chi2geo" : 6.0
                 },
-                "save_options" : []
+                "save_options" : ["transport_to_pv"]
             },
             "daughters" : [
                 {
