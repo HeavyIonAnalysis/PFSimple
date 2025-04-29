@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
     }
 
     if (optind + 2 > argc) {
-        std::cerr << "Usage: " << argv[0] << " input.root config.json [--output file] [--plain-output file] [--set key=value]\n";
+        std::cerr << "Usage: " << argv[0] << " filelist.txt config.json [--output file] [--plain-output file] [--set key=value]\n";
         return 1;
     }
 
@@ -192,6 +192,19 @@ int main(int argc, char** argv) {
     out_converter->SetPFSimpleTask(pf_task);
     out_converter->SetDecays(decays);
     if (config["io"].contains("write_detailed_bg")) out_converter->SetIsWriteDetailedBG(config["io"]["write_detailed_bg"]);
+
+    if (config.contains("output_cuts"))
+    {
+        std::vector<AnalysisTree::SimpleCut> vec_output_cuts = {};
+        for (const auto& cut_cfg : config["output_cuts"]) {
+          if (cut_cfg.contains("equal"))
+            vec_output_cuts.push_back(AnalysisTree::EqualsCut("Candidates." + cut_cfg["var"].get<std::string>(), cut_cfg["equal"]));
+          else if (cut_cfg.contains("from"))
+            vec_output_cuts.push_back(AnalysisTree::RangeCut("Candidates." + cut_cfg["var"].get<std::string>(), cut_cfg["from"], cut_cfg["to"]));
+        }
+        AnalysisTree::Cuts* output_cuts = new AnalysisTree::Cuts("output_cuts", vec_output_cuts);
+        out_converter->SetOutputCuts(output_cuts);
+    }
     
     man->AddTask(in_converter);
     man->AddTask(pf_task);
