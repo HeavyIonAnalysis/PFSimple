@@ -2,7 +2,7 @@
 
 ## General information
 
-The Paticle Finder Simple package is simplified version of the KF Partice package based on its mathematical apparatus. It is developed for the complete reconstruction of short-lived particles with their momentum, energy, mass, lifetime, decaylength, rapidity, etc.
+The Paticle Finder Simple package is simplified version of the KF Partice package based on its mathematical apparatus. It is developed for the complete reconstruction of short-lived particles with their momentum, energy, mass, lifetime, decaylength, rapidity, etc. 2- and 3-body decays can get reconstructed. It is also possible to reconstruct multiple decays in one run as well as cascade decays.
 
 ## Requirements
 
@@ -50,15 +50,12 @@ cmake -DCMAKE_INSTALL_PREFIX=/path-to-install-pfsimple /path-to-source-pfsimple
 make -j install
 ```
 ## Configuration of decay settings
+The program is configured with a JSON config file which contains various settings related to input and output as well as the decays to reconstruct. In the following, the different blocks are explained.
 
-The reconstruction will be executed with ```at_interface/main_json filelist.txt config.json [--output <file>] [--plain-output <file>] [--set <key>=<value>]```. The binary accepts 2 positional arguments: The path of the input filelist.txt file and the config file in JSON format. It is also possible to modify the output file paths with the `--output` and `--plain-output` optional arguments as well as to override keys in the JSON config file by adding keys like `--set decays[0].mother.cuts.LdL=4.0`.
-
-The config file contains various settings related to input and output as well as the decays to reconstruct. In the following, the different blocks are explained.
-
-### io block
+### io
 | Key                            | Description                                                                                                                                               |
 | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `input_treename`               | Name of the input AnalysisTree (normally `rTree`, after running PID framework `pTree`)                                                                    |
+| `input_treename`               | Name of the input AnalysisTree (for standard analysistree `rTree`, after running PID framework `pTree`)                                                   |
 | `rectracks_branchname`         | branchname of reconstructed tracks in input analysistree, default names: `VtxTracks` for standard analyistree, `RecParticles` after running Pid-framework |
 | `n_events`                     | Number of events to be processed, set to `-1` to process all events                                                                                       |
 | `make_plain_tree`              | Set to `true` to output a normal root tree containing the candidates (besides the default output tree in AnalysisTree format)                             |
@@ -85,66 +82,51 @@ If detailed background is not selected or if mc match for mother is found, value
 1 - mother is primary particle  
 2 - mother is second generation etc.
 
-### pid mode
+### pid_mode
 The method for particle identification is configured in the `pid_mode` variable and can be one of the following ones:
 | `pid_mode` | Description                                                                                              |
 | ---------- | -------------------------------------------------------------------------------------------------------- |
-| `0`        | mc-pid                                                                                                   |
-| `1`        | reconstructed TOF pid - default from Pid-framework                                                       |
-| `2`        | reconstructed TOF pid - pdg with max. pdg-purity is selected, if pdg-purity >min. purity                 |
-| `3`        | reconstructed TOF pid - pdg is selected, if pdg-purity > min. purity (pdg-specfic purities are possible) |
+| `0`        | no pid (only charge information is used! optional daughers must be set to 1 / -1 for pos / neg pdgs!)    |
+| `1`        | mc-pid                                                                                                   |
+| `2`        | reconstructed TOF pid - default from Pid-framework                                                       |
+| `3`        | reconstructed TOF pid - pdg with max. pdg-purity is selected, if pdg-purity >min. purity                 |
 | `4`        | reconstructed TOF pid - pdg is selected, if pdg-purity > min. purity (pdg-specfic purities are possible) |
 
-for 2-4: Pid-framework needs to be applied first to include TOF-pid & probabilities into the analysistree input-file
+**for 2-4: Pid-framework needs to be applied first to include TOF-pid & probabilities into the analysistree input-file**
 
-### pid_purity block
-This block is fully optional and defines the minium purities for pid-mode 3 & 4:
+### pid_purity
+This block is required in pid-mode 3 & 4 and defines the minium purities to be used:
    - for pid-mode 3: minimum purity is set for all pdgs (pdg-spefic purities need to be omitted)
    - for pid-mode 4: minimum purity can be set for all pdgs or specifically for every pdg (general purity will be overwritten, if pdg-specific purity is given)
 
-### decays block
+### decays
 The decay block contains the specific decays PFSimple shall reconstruct. Each decay is defined by several sub-blocks:
 
-#### mother block
+#### mother
 The mother block must contain the fields `pdg_code` and `name` (chosen by user). You can optionally set the keys `mass` (Unit: GeV/c^2) and `mass_sigma` to be used when calculating mass decrepancies or setting nonlinear mass constrains, otherwise values from KFParticleDatabase are taken.
-It is possible to define several cuts to be applied to the mother particle in the `cuts` subblock:
-| Field        | Function                                           |
-| ------------ | -------------------------------------------------- |
-| `dist`       | `mother.SetCutDistance(cuts["dist"]);`             |
-| `distSV`     | `mother.SetCutDistanceToSV(cuts["distSV"]);`       |
-| `chi2geo`    | `mother.SetCutChi2Geo(cuts["chi2geo"]);`           |
-| `cosopen`    | `mother.SetCutCosOpen(cuts["cosopen"]);`           |
-| `chi2topo`   | `mother.SetCutChi2Topo(cuts["chi2topo"]);`         |
-| `costopo`    | `mother.SetCutCosTopo(cuts["costopo"]);`           |
-| `LdL`        | `mother.SetCutLdL(cuts["LdL"]);`                   |
-| `L`          | `mother.SetCutDecayLength(cuts["L"]);`             |
-| `distPVline` | `mother.SetCutDistancePVLine(cuts["distPVline"]);` |
-| `invmass`    | `mother.SetCutInvMass(cuts["invmass"]);`           |
+It is possible to define several cuts to be applied to the mother particle in the `cuts` subblock by using the fields `dist`, `distSV` (3-body decays only), `chi2geo`, `cosopen`, `chi2topo`, `costopo`, `LdL`, `L`, `distPVline` and `invmass`. Cuts which shall not be applied you can just delete or comment out. For more information on specific cuts see `Constants.hpp`.
 
-Cuts which shall not be applied you can just delete or comment out. For more information on specific cuts see `Constants.hpp`.
-
-#### daughters block
-The daughters block is a list consisting of 2 to 3 subblocks, each defining a daugher particle of the mother. It is required to give a list of PDG codes to be considered as possible daughter candidates of the decay in the `pdg_codes` field. This is normally the official PDG code of the daugher and in some cases an additional code:
+#### daughters
+The daughters block is a list consisting of 2 to 3 subblocks, each defining a daugher particle of the mother. It is required to give a JSON list in the `pdg_codes` field which contains the of PDG codes to be considered as possible daughter candidates of the decay in the. Optionally, alternative pdgs can be considered or further options can be selected for the reconstruction:
 - for background: set to "1" / "-1" for pos / neg daughters
 - for tracks without TOF id: set to "2" / "-2" for pos / neg daughters (in pid-mode 2, 3, 4)
 - In pid-mode 0 optional daughers "1" / "-1" for pos / neg pdgs must be added
 
 Analogously to the mother you can also apply cuts for the daughters in the `cuts` subblock (`chi2prim` and `cos`).
 
-#### daughter_combination_cuts block (3-body-decays)
-For 3-body decays, the list of available cuts is extended, amoung others, to cuts
-on the secondary mothers (SM) of combinations of 2 daughters. E.g. for
-H3L->p + pi + d, cuts on the SM of p-pi can be applied. The cuts
-that test the mother against the PV, e.g. chi2topo, are inverted for
-the SM to exclude SMs that come from the PV. They are defined in the optional `daughter_combination_cuts` subblock of the decay, which can contain for each of the 4 possible variables `chi2geo`, `cosopen`, `chi2topo` and `costopo` a list with up to 3 entries. The entries respectively reflect the cuts to be applied between daugher 1 & 2, daughter 1 & 3 and daughter 2 & 3.
+#### daughter_combination_cuts (3-body-decays)
+For 3-body decays, the list of available cuts is extended, amoung others, to cuts on the secondary mothers (SM) of combinations of 2 daughters. E.g. for H3L->p + pi + d, cuts on the SM of p-pi can be applied. The cuts that test the mother against the PV, e.g. chi2topo, are inverted for the SM to exclude SMs that come from the PV. They are defined in the optional `secondary_mother_cuts` block of the decay, which can contain for each of the 4 possible variables `chi2geo`, `cosopen`, `chi2topo` and `costopo` a list with up to 3 entries. The entries respectively reflect the cuts to be applied on the secondary mothers of daughter combinations 1 & 2, 1 & 3 and 2 & 3.
 
-#### save_options block
+#### save_options
 The optional `save_options` block can contain specific string values which enable features related to the saving of the reconstructed mother:
 | Flag                  | Description                                                                                                                                                                               |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `mass_constraint`     | A nonlinear mass constraint can be applied on the mother particle which modifies the mother's state vector and covariance matrix to assure the 4-momentum is consitent with the pdg mass. |
 | `transport_to_pv`     | The mother is transported to the PV before saving                                                                                                                                         |
 | `do_not_write_mother` | The writing of the mother into the output-file (e.g. the lower-level mother in cascade decays) can get surpressed. But if this option is selected, it is not possible to peform the MC-matching for the upper-level mother. |
+
+### output_cuts
+The optional `output_cuts` block contains AnalysisTree field cuts to be applied to the output candidates before storing them to disk. One can either select a certain range for a cut variable with `from` and `to` or select a specific value with `equal`. It is possible to chain as many cuts as you want. 
 
 ### Cascade decays
 The reconstruction of a cascade decay works the same way as adding an additional decay
@@ -154,24 +136,26 @@ first generation. Cascade decays with multiple stages as well as combinations of
 
 Several example parameter files can be found in the folder `at_interface/configs`.
 
-### output_cuts block
-The optional `output_cuts` block contains AnalysisTree field cuts to be applied to the output candidates before storing them to disk. It is possible to either impose an `EqualsCut` or a `RangeCut`, depending on the given fields in the block. To save only signal candidates one can e.g. write
-```json
-    "output_cuts" : [
-        {"var" : "generation", "from" : 0.9, "to" : 1000}
-    ]
-```
-If instead of `from` and `to` fields a field named `equal` would be given, an `EqualsCut` would be used. It is possible to chain as many cuts as you want.
+## Example Configs
+In the `at_interface/configs` directory are some example configs which have the following purpose:
+| File                      | Description                                                                                                                                                         |
+|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| config_lambda1.json       | Reconstructs Lambda with MC-PID mode (mode 1) using KFParticle cuts                                                                                                 |
+| config_lambda2.json       | Reconstructs Lambda with MC-PID mode (mode 1) using cuts optimized by O. Lubynets                                                                                   |
+| config_lambda3.json       | Reconstructs Lambda without PID (mode 0)                                                                                                                            |
+| config_lambda4.json       | Reconstructs Lambda with the PID frameworks default PID mode (mode 2)                                                                                               |
+| config_lambda_ml.json     | Reconstructs Lambda with very loose cuts needed for machine learning applications, saves only mc-true signal candidates using `save_options` block                  |
+| config_antilambda_ml.json | Reconstructs Anti-Lambda with very loose cuts needed for machine learning applications, saves only mc-true signal candidates using `save_options` block             |
+| config_H3L1.json          | Reconstructs H3L with MC-PID mode (mode 1), example for 3-body decay and secondary mother cuts                                                                      |
+| config_H3L2.json          | Reconstructs H3L with PID mode 4, shows application of minimum purities                                                                                             |
+| config_He5L.json          | Reconstructs He5L with MC-PID mode (mode 1), example for 3-body decay and secondary mother cuts                                                                     |
+| config_xi.json            | Reconstructs Xi and Lambda with MC-PID mode (mode 1), basic example for the the cascade decay feature                                                               |
+| config_omega.json         | Reconstructs Omega and Lambda with MC-PID mode (mode 1), basic example for the the cascade decay feature                                                            |
+| config_omegastar.json     | Reconstructs Omega*, Xi and Lambda with MC-PID mode (mode 1), advanced example for the the cascade decay feature including a 3-body decay and secondary mother cuts |
 
-## filelist.txt
-filelist.txt must be a text file with names (including paths) to AnalysisTree
-files which you want to analyze with PFSimple. Each file name should
-be on the next line, and the last symbol should also be a switch to
-next line. The example of filelist is in the source directory of
-PFSimple (filelist_example.txt)
+
 
 ## First run
-
 Each time before running the prepared executable you should set the environment variables to let your system know where to find libraries:
 ```
 source /path-to-root/install/bin/thisroot.sh
@@ -179,4 +163,16 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path-to-pfsimple-installation/lib/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path-to-pfsimple-installation/external/lib/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path-to-analysistree-installation/lib/ #can be ommitted if PFSimple_BUNDLED_AT was set to ON
 ```
-Then run the executable as described above.
+
+The reconstruction will be executed with the following command:
+```
+at_interface/main_json filelist.txt config.json [--output <file>] [--plain-output <file>] [--set <key>=<value>]
+```
+The binary accepts 2 positional arguments: The path of the input filelist.txt file and the config file in JSON format. It is also possible to modify the output file paths with the `--output` and `--plain-output` optional arguments as well as to override keys in the JSON config file by adding keys like `--set decays[0].mother.cuts.LdL=4.0`.
+
+### filelist.txt
+filelist.txt must be a text file with names (including paths) to AnalysisTree
+files which you want to analyze with PFSimple. Each file name should
+be on the next line, and the last symbol should also be a switch to
+next line. The example of filelist is in the source directory of
+PFSimple (filelist_example.txt)

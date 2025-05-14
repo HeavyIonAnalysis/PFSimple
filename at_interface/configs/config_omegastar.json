@@ -82,8 +82,8 @@
                     "cuts" : {"chi2prim" : 18.42}
                 }
             ],
-            "daughter_combination_cuts" : {
-                "comment" : "daugher 1 & 2, daughter 1 & 3, daughter 2 & 3",
+            "secondary_mother_cuts" : {
+                //daugher 1 & 2, daughter 1 & 3, daughter 2 & 3
                 "chi2geo" : [3.0]
             }
         }

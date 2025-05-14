@@ -146,8 +146,8 @@ int main(int argc, char** argv) {
         }
 
         // Secondary mother cuts (SM)
-        if (decay_cfg.contains("daughter_combination_cuts")) {
-            auto combo_cuts = decay_cfg["daughter_combination_cuts"];
+        if (decay_cfg.contains("secondary_mother_cuts")) {
+            auto combo_cuts = decay_cfg["secondary_mother_cuts"];
 
             if (combo_cuts.contains("chi2geo"))  mother.SetCutChi2GeoSM(combo_cuts["chi2geo"].get<std::vector<Float_t>>());
             if (combo_cuts.contains("cosopen"))  mother.SetCutCosOpenSM(combo_cuts["cosopen"].get<std::vector<Float_t>>());
