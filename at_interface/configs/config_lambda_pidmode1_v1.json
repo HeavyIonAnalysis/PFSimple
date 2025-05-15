@@ -1,5 +1,4 @@
-//from parfile2.txt
-//(Lambda pid 1, cuts KFParticle)
+//(Lambda pid 1, cuts from KFParticle)
 {
     "io" : {
         "input_treename" : "rTree",
