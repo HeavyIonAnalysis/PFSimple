@@ -1,32 +1,34 @@
+//(Lambda pid 1, cuts optimized)
 {
     "io" : {
         "input_treename" : "rTree",
         "rectracks_branchname" : "VtxTracks",
         "n_events" : -1,
-        "make_plain_tree" : false
+        "make_plain_tree" : true
     },
     "pid_mode" : 1, // pid mode: =0: no pid; =1: mc pid; =2: rec pid (default); =3: rec pid (max. purity & purity > min. purity); =4 (purity > min. purity)
     "decays" : [
         {
             "mother" : {
-                "name" : "Anti-Lambda",
-                "pdg_code" : -3122,
+                "name" : "Lambda",
+                "pdg_code" : 3122,
                 "cuts" : {
-                    "dist" : 100.0,
-                    "chi2geo" : 1000.0
+                    "LdL" : 4.0,
+                    "dist" : 0.15,
+                    "chi2geo" : 11.0,
+                    "chi2topo" : 29.0
                 }
             },
             "daughters" : [
                 {
-                    "pdg_codes" : [211]
+                    "pdg_codes" : [-211],
+                    "cuts" : {"chi2prim" : 110.00}
                 },
                 {
-                    "pdg_codes" : [-2212]
+                    "pdg_codes" : [2212],
+                    "cuts" : {"chi2prim" : 26.00, "cos" : 0.99825}
                 }
             ]
         }
-    ],
-    "output_cuts" : [
-        {"var" : "generation", "from" : 0.9, "to" : 1000}
     ]
 }

@@ -216,7 +216,7 @@ int main(int argc, char** argv) {
     man->Finish();
     man->ClearTasks();
 
-    if (config["io"]["make_plain_tree"]) {
+    if (config["io"].contains("make_plain_tree") && config["io"]["make_plain_tree"]) {
         std::ofstream filelist;
         filelist.open("filelist.txt");
         filelist << output_file;

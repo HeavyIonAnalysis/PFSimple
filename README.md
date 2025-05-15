@@ -58,7 +58,7 @@ The program is configured with a JSON config file which contains various setting
 | `input_treename`               | Name of the input AnalysisTree (for standard analysistree `rTree`, after running PID framework `pTree`)                                                   |
 | `rectracks_branchname`         | branchname of reconstructed tracks in input analysistree, default names: `VtxTracks` for standard analyistree, `RecParticles` after running Pid-framework |
 | `n_events`                     | Number of events to be processed, set to `-1` to process all events                                                                                       |
-| `make_plain_tree`              | Set to `true` to output a normal root tree containing the candidates (besides the default output tree in AnalysisTree format)                             |
+| `make_plain_tree` (optional)   | normal root tree containing the candidates is written besides the default output tree in AnalysisTree format (set to `true`)                              |
 | `write_detailed_bg` (optional) | optional detailed background information in output variable `generation` (see below)                                                                      |
 
 The format of the detailed background information in the `generation` variable is as follows:
@@ -104,7 +104,7 @@ The decay block contains the specific decays PFSimple shall reconstruct. Each de
 
 #### mother
 The mother block must contain the fields `pdg_code` and `name` (chosen by user). You can optionally set the keys `mass` (Unit: GeV/c^2) and `mass_sigma` to be used when calculating mass decrepancies or setting nonlinear mass constrains, otherwise values from KFParticleDatabase are taken.
-It is possible to define several cuts to be applied to the mother particle in the `cuts` subblock by using the fields `dist`, `distSV` (3-body decays only), `chi2geo`, `cosopen`, `chi2topo`, `costopo`, `LdL`, `L`, `distPVline` and `invmass`. Cuts which shall not be applied you can just delete or comment out. For more information on specific cuts see `Constants.hpp`.
+It is possible to define several cuts to be applied to the mother particle in the `cuts` subblock, see `at_interface/config/config_dummy.json` for the available JSON keys. For more information on specific cuts see `Constants.hpp`.
 
 #### daughters
 The daughters block is a list consisting of 2 to 3 subblocks, each defining a daugher particle of the mother. It is required to give a JSON list in the `pdg_codes` field which contains the of PDG codes to be considered as possible daughter candidates of the decay in the. Optionally, alternative pdgs can be considered or further options can be selected for the reconstruction:
@@ -129,8 +129,7 @@ The optional `save_options` block can contain specific string values which enabl
 The optional `output_cuts` block contains AnalysisTree field cuts to be applied to the output candidates before storing them to disk. One can either select a certain range for a cut variable with `from` and `to` or select a specific value with `equal`. It is possible to chain as many cuts as you want. 
 
 ### Cascade decays
-The reconstruction of a cascade decay works the same way as adding an additional decay
-to the run as described above. The order of the decays need to be from last generation to
+The reconstruction of a cascade decay works by adding all consecutive decays in one config file. The order of the decays need to be from last generation to
 first generation. Cascade decays with multiple stages as well as combinations of
 2- and 3-body-decays can get reconstructed.
 
@@ -138,20 +137,20 @@ Several example parameter files can be found in the folder `at_interface/configs
 
 ## Example Configs
 In the `at_interface/configs` directory are some example configs which have the following purpose:
-| File                      | Description                                                                                                                                                         |
-|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| config_lambda1.json       | Reconstructs Lambda with MC-PID mode (mode 1) using KFParticle cuts                                                                                                 |
-| config_lambda2.json       | Reconstructs Lambda with MC-PID mode (mode 1) using cuts optimized by O. Lubynets                                                                                   |
-| config_lambda3.json       | Reconstructs Lambda without PID (mode 0)                                                                                                                            |
-| config_lambda4.json       | Reconstructs Lambda with the PID frameworks default PID mode (mode 2)                                                                                               |
-| config_lambda_ml.json     | Reconstructs Lambda with very loose cuts needed for machine learning applications, saves only mc-true signal candidates using `save_options` block                  |
-| config_antilambda_ml.json | Reconstructs Anti-Lambda with very loose cuts needed for machine learning applications, saves only mc-true signal candidates using `save_options` block             |
-| config_H3L1.json          | Reconstructs H3L with MC-PID mode (mode 1), example for 3-body decay and secondary mother cuts                                                                      |
-| config_H3L2.json          | Reconstructs H3L with PID mode 4, shows application of minimum purities                                                                                             |
-| config_He5L.json          | Reconstructs He5L with MC-PID mode (mode 1), example for 3-body decay and secondary mother cuts                                                                     |
-| config_xi.json            | Reconstructs Xi and Lambda with MC-PID mode (mode 1), basic example for the the cascade decay feature                                                               |
-| config_omega.json         | Reconstructs Omega and Lambda with MC-PID mode (mode 1), basic example for the the cascade decay feature                                                            |
-| config_omegastar.json     | Reconstructs Omega*, Xi and Lambda with MC-PID mode (mode 1), advanced example for the the cascade decay feature including a 3-body decay and secondary mother cuts |
+| File                             | Particle(s)        | `pid_mode` | Comment                                                                                                                        |
+|----------------------------------|--------------------|------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `config_dummy.json`              | Lambda             | `1`        | shows all available JSON fields, cuts are unphysical                                                                           |
+| `config_lambda_pidmode1_v1.json` | Lambda             | `1`        | using KFParticle cuts                                                                                                          |
+| `config_lambda_pidmode1_v2.json` | Lambda             | `1`        | using optimized cuts                                                                                                           |
+| `config_lambda_pidmode0.json`    | Lambda             | `0`        |                                                                                                                                |
+| `config_lambda_pidmode2.json`    | Lambda             | `2`        | using PID frameworks default PID mode                                                                                          |
+| `config_lambda_pidmode1_v3.json` | Lambda             | `1`        | with very loose cuts needed for machine learning applications, saves only mc-true signal candidates using `save_options` block |
+| `config_H3L_pidmode1.json`       | H3L                | `1`        | with MC-PID mode (mode 1), example for 3-body decay and secondary mother cuts                                                  |
+| `config_H3L_pidmode4.json`       | H3L                | `4`        | shows application of minimum purities                                                                                          |
+| `config_He5L_pidmode1.json`      | He5L               | `1`        | example for 3-body decay and secondary mother cuts                                                                             |
+| `config_xi_pidmode1.json`        | Xi, Lambda         | `1`        | basic example for the the cascade decay feature                                                                                |
+| `config_omega_pidmode1.json`     | Omega, Lambda      | `1`        | basic example for the the cascade decay feature                                                                                |
+| `config_omegastar_pidmode1.json` | Omega*, Xi, Lambda | `1`        | advanced example for the the cascade decay feature including a 3-body decay and secondary mother cuts                          |
 
 
 
