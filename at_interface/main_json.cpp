@@ -193,15 +193,22 @@ int main(int argc, char** argv) {
     out_converter->SetDecays(decays);
     if (config["io"].contains("write_detailed_bg")) out_converter->SetIsWriteDetailedBG(config["io"]["write_detailed_bg"]);
 
+    std::vector<AnalysisTree::SimpleCut> vec_output_cuts = {};
     if (config.contains("output_cuts"))
     {
-        std::vector<AnalysisTree::SimpleCut> vec_output_cuts = {};
         for (const auto& cut_cfg : config["output_cuts"]) {
           if (cut_cfg.contains("equal"))
             vec_output_cuts.push_back(AnalysisTree::EqualsCut("Candidates." + cut_cfg["var"].get<std::string>(), cut_cfg["equal"]));
           else if (cut_cfg.contains("from"))
             vec_output_cuts.push_back(AnalysisTree::RangeCut("Candidates." + cut_cfg["var"].get<std::string>(), cut_cfg["from"], cut_cfg["to"]));
         }
+    }
+
+    if (config["io"].contains("save_signal_only") && config["io"]["save_signal_only"])
+        vec_output_cuts.push_back(AnalysisTree::SimpleCut({"Candidates.generation"}, []( std::vector<double>& var ) { return var.at(0) != 0; }));
+
+    if (vec_output_cuts.size() > 0)
+    {
         AnalysisTree::Cuts* output_cuts = new AnalysisTree::Cuts("output_cuts", vec_output_cuts);
         out_converter->SetOutputCuts(output_cuts);
     }

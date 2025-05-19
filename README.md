@@ -60,6 +60,7 @@ The program is configured with a JSON config file which contains various setting
 | `n_events`                     | Number of events to be processed, set to `-1` to process all events                                                                                       |
 | `make_plain_tree` (optional)   | normal root tree containing the candidates is written besides the default output tree in AnalysisTree format (set to `true`)                              |
 | `write_detailed_bg` (optional) | optional detailed background information in output variable `generation` (see below)                                                                      |
+| `save_signal_only` (optional)  | save only mc-true signal candidates (set to `true`)                                                                                                       |
 
 The format of the detailed background information in the `generation` variable is as follows:
 format for bg for 2-body-decay: -m12 0 d2 d1  
