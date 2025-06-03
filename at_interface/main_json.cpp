@@ -108,7 +108,7 @@ int main(int argc, char** argv) {
         auto daughters_cfg = decay_cfg["daughters"];
         std::vector<Daughter> daughters;
         for (const auto& daughter_cfg : daughters_cfg) {
-            std::vector<Pdg_t> pdg_codes = daughter_cfg["pdg_codes"].get<std::vector<Pdg_t>>();
+            std::vector<Pdg_t> pdg_codes = daughter_cfg["pdg_code"].get<std::vector<Pdg_t>>();
 
             if (pdg_codes.size() > 1)
                 daughters.emplace_back(Daughter(pdg_codes[0], pdg_codes));
@@ -162,7 +162,7 @@ int main(int argc, char** argv) {
             const auto& options = mother_cfg["save_options"];
             if (LIST_CONTAINS(options, "mass_constraint"))     decay.SetIsApplyMassConstraint();
             if (LIST_CONTAINS(options, "transport_to_pv"))     decay.SetIsTransportToPV();
-            if (LIST_CONTAINS(options, "do_not_write_mother")) decay.SetIsDoNotWriteMother();
+            if (LIST_CONTAINS(options, "do_not_save_mother")) decay.SetIsDoNotWriteMother();
         }
 
         decays.push_back(decay);

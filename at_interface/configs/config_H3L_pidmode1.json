@@ -19,15 +19,15 @@
             },
             "daughters" : [
                 {
-                    "pdg_codes" : [2212],
+                    "pdg_code" : [2212],
                     "cuts" : {"chi2prim" : 18.42}
                 },
                 {
-                    "pdg_codes" : [-211],
+                    "pdg_code" : [-211],
                     "cuts" : {"chi2prim" : 18.42}
                 },
                 {
-                    "pdg_codes" : [1000010020],
+                    "pdg_code" : [1000010020],
                     "cuts" : {"chi2prim" : 10.0}
                 }
             ],

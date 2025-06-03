@@ -23,11 +23,11 @@
             },
             "daughters" : [
                 {
-                    "pdg_codes" : [-211, -1],
+                    "pdg_code" : [-211, -1],
                     "cuts" : {"chi2prim" : 18.42}
                 },
                 {
-                    "pdg_codes" : [2212, 1],
+                    "pdg_code" : [2212, 1],
                     "cuts" : {"chi2prim" : 18.42}
                 }
             ]
@@ -46,11 +46,11 @@
             },
             "daughters" : [
                 {
-                    "pdg_codes" : [-321],
+                    "pdg_code" : [-321],
                     "cuts" : {"chi2prim" : 18.42}
                 },
                 {
-                    "pdg_codes" : [3122]
+                    "pdg_code" : [3122]
                 }
             ]
         }

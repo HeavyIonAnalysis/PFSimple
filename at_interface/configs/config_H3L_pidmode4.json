@@ -7,7 +7,7 @@
     },
     "pid_mode" : 4, // pid mode: =0: no pid; =1: mc pid; =2: rec pid (default); =3: rec pid (max. purity & purity > min. purity); =4 (purity > min. purity)
     "pid_purity" : {
-        "default" : 0.5,
+        "all_pdgs" : 0.5,
         "protons" : 0.7,
         "pions" : 0.7,
         "kaons" : 0.7,
@@ -27,15 +27,15 @@
             },
             "daughters" : [
                 {
-                    "pdg_codes" : [2212],
+                    "pdg_code" : [2212],
                     "cuts" : {"chi2prim" : 18.42}
                 },
                 {
-                    "pdg_codes" : [-211],
+                    "pdg_code" : [-211],
                     "cuts" : {"chi2prim" : 18.42}
                 },
                 {
-                    "pdg_codes" : [1000010020],
+                    "pdg_code" : [1000010020],
                     "cuts" : {"chi2prim" : 10.0}
                 }
             ],

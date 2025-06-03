@@ -18,10 +18,10 @@
             },
             "daughters" : [
                 {
-                    "pdg_codes" : [-211]
+                    "pdg_code" : [-211]
                 },
                 {
-                    "pdg_codes" : [2212]
+                    "pdg_code" : [2212]
                 }
             ]
         }
