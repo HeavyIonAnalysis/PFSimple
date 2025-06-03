@@ -2,8 +2,7 @@
     "io" : {
         "input_treename" : "rTree",
         "rectracks_branchname" : "VtxTracks",
-        "n_events" : -1,
-        "make_plain_tree" : false
+        "n_events" : -1
     },
     "pid_mode" : 1, // pid mode: =0: no pid; =1: mc pid; =2: rec pid (default); =3: rec pid (max. purity & purity > min. purity); =4 (purity > min. purity)
                     // for 2-4: Pid-framework needs to be applied first

@@ -53,14 +53,18 @@ make -j install
 The program is configured with a JSON config file which contains various settings related to input and output as well as the decays to reconstruct. In the following, the different blocks and fields are explained. In `at_interface/config/config_template.json` all available JSON fields are listed.
 
 ### io
-| Key                            | Description                                                                                                                                               |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `input_treename`               | name of the input AnalysisTree (for standard analysistree `rTree`, after running PID framework `pTree`)                                                   |
-| `rectracks_branchname`         | branchname of reconstructed tracks in input analysistree, default names: `VtxTracks` for standard analyistree, `RecParticles` after running Pid-framework |
-| `n_events`                     | number of events to be processed, set to `-1` to process all events                                                                                       |
-| `make_plain_tree` (optional)   | normal root tree containing the candidates is written besides the default output tree in AnalysisTree format                              |
-| `save_signal_only` (optional)  | save only mc-true signal candidates                                                                                                   |
-| `write_detailed_bg` (optional) | detailed background information in output variable `generation`*                                                                      |
+| Key                       | Description                                                                                                                                               |
+| --------------------------| --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `input_treename`          | name of the input AnalysisTree (for standard analysistree `rTree`, after running PID framework `pTree`)                                                   |
+| `rectracks_branchname`    | branchname of reconstructed tracks in input analysistree, default names: `VtxTracks` for standard analyistree, `RecParticles` after running Pid-framework |
+| `n_events`                | number of events to be processed, set to `-1` to process all events                                                                                       |
+| `save_options` (optional) | defines save options for the candidates of all decays in this config (see next table)                                                                     |
+
+| `save_options` Flag       | Description                                                                                                                                               |
+| --------------------------| --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `make_plain_tree`         | normal root tree containing the candidates is written besides the default output tree in AnalysisTree format                                              |
+| `signal_only`             | save only mc-true signal candidates                                                                                                                       |
+| `write_detailed_bg`       | detailed background information in output variable `generation`*                                                                                          |
 
 *Format of detailed background information in the `generation` variable:
 

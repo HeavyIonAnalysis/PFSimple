@@ -160,8 +160,8 @@ int main(int argc, char** argv) {
 
         if (mother_cfg.contains("save_options")) {
             const auto& options = mother_cfg["save_options"];
-            if (LIST_CONTAINS(options, "mass_constraint"))     decay.SetIsApplyMassConstraint();
-            if (LIST_CONTAINS(options, "transport_to_pv"))     decay.SetIsTransportToPV();
+            if (LIST_CONTAINS(options, "mass_constraint"))    decay.SetIsApplyMassConstraint();
+            if (LIST_CONTAINS(options, "transport_to_pv"))    decay.SetIsTransportToPV();
             if (LIST_CONTAINS(options, "do_not_save_mother")) decay.SetIsDoNotWriteMother();
         }
 
@@ -191,7 +191,7 @@ int main(int argc, char** argv) {
     out_converter->SetSimTracksName("SimParticles");
     out_converter->SetPFSimpleTask(pf_task);
     out_converter->SetDecays(decays);
-    if (config["io"].contains("write_detailed_bg")) out_converter->SetIsWriteDetailedBG(config["io"]["write_detailed_bg"]);
+    if(LIST_CONTAINS(config["io"]["save_options"], "write_detailed_bg")) out_converter->SetIsWriteDetailedBG(true);
 
     std::vector<AnalysisTree::SimpleCut> vec_output_cuts = {};
     if (config.contains("output_cuts"))
@@ -204,7 +204,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    if (config["io"].contains("save_signal_only") && config["io"]["save_signal_only"])
+    if(LIST_CONTAINS(config["io"]["save_options"], "signal_only"))
         vec_output_cuts.push_back(AnalysisTree::SimpleCut({"Candidates.generation"}, []( std::vector<double>& var ) { return var.at(0) != 0; }));
 
     if (vec_output_cuts.size() > 0)
@@ -223,7 +223,7 @@ int main(int argc, char** argv) {
     man->Finish();
     man->ClearTasks();
 
-    if (config["io"].contains("make_plain_tree") && config["io"]["make_plain_tree"]) {
+    if(LIST_CONTAINS(config["io"]["save_options"], "make_plain_tree")) {
         std::ofstream filelist;
         filelist.open("filelist.txt");
         filelist << output_file;
@@ -248,7 +248,10 @@ int main(int argc, char** argv) {
 }
 
 
-/* Function to overide a value inside the json config, e.g. decays[0].mother.cuts.LdL=4.0 */
+/* 
+Function to overide a value inside the json config, e.g. decays[0].mother.cuts.LdL=4.0
+Command line argument usage example for lists: --set 'io.save_options=["signal_only"]'
+*/
 void set_json_value(json& config, const std::string& path, const std::string& value) {
     std::cout << "[DEBUG] Setting " << path << " to " << value << std::endl;
 
@@ -261,13 +264,11 @@ void set_json_value(json& config, const std::string& path, const std::string& va
     for (auto it = tokens_begin; it != tokens_end; ++it) {
         std::string key = (*it)[1];
         std::string index_str = (*it)[2];
-
         bool is_last = (std::next(it) == tokens_end);
 
         if (!index_str.empty()) {
-            // Key points to an array
+            // Handle arrays
             int index = std::stoi(index_str);
-
             if (!(*current)[key].is_array()) {
                 (*current)[key] = json::array();
             }
@@ -277,13 +278,14 @@ void set_json_value(json& config, const std::string& path, const std::string& va
             }
 
             if (is_last) {
-                // Set value at the array element
                 json& target = (*current)[key][index];
                 try {
                     if (value == "true" || value == "false") {
                         target = (value == "true");
                     } else if (value == "null") {
-                      target = nlohmann::json();
+                        target = json();
+                    } else if (!value.empty() && value.front() == '[' && value.back() == ']') {
+                        target = json::parse(value);  // Parse list
                     } else if (value.find('.') != std::string::npos) {
                         target = std::stod(value);
                     } else {
@@ -303,7 +305,9 @@ void set_json_value(json& config, const std::string& path, const std::string& va
                     if (value == "true" || value == "false") {
                         target = (value == "true");
                     } else if (value == "null") {
-                      target = nlohmann::json();
+                        target = json();
+                    } else if (!value.empty() && value.front() == '[' && value.back() == ']') {
+                        target = json::parse(value);  // Parse list
                     } else if (value.find('.') != std::string::npos) {
                         target = std::stod(value);
                     } else {
