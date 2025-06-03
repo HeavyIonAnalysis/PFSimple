@@ -144,20 +144,21 @@ Cascade decays with multiple stages as well as combinations of 2- and 3-body-dec
 ## Example Configs
 Several example parameter files can be found in the folder `at_interface/configs`.
 
-| File                             | Particle(s)        | `pid_mode` | Comment                                                                                                                        |
-|----------------------------------|--------------------|------------|--------------------------------------- |
-| `config_template.json`           | -                  | -          | all available JSON fields listed       |
-| `config_lambda_pidmode1_v1.json` | Lambda             | `1`        | KFParticle cuts                        |
-| `config_lambda_pidmode1_v2.json` | Lambda             | `1`        | optimized cuts                         |
-| `config_lambda_pidmode0.json`    | Lambda             | `0`        |                                        |
-| `config_lambda_pidmode2.json`    | Lambda             | `2`        |                                        |
-| `config_lambda_pidmode1_v3.json` | Lambda             | `1`        | for machine learning applications      |
-| `config_H3L_pidmode1.json`       | H3L                | `1`        | 3-body decay                           |
-| `config_H3L_pidmode4.json`       | H3L                | `4`        | 3-body decay, minimum purities applied |
-| `config_He5L_pidmode1.json`      | He5L               | `1`        | 3-body decay                           |
-| `config_xi_pidmode1.json`        | Xi, Lambda         | `1`        | cascade decay                          |
-| `config_omega_pidmode1.json`     | Omega, Lambda      | `1`        | cascade decay                          |
-| `config_omegastar_pidmode1.json` | Omega*, Xi, Lambda | `1`        | cascade decay, 3-body decay            |
+| File                                  | Particle(s)        | `pid_mode` | Comment                                                                                                                        |
+|-------------------------------------- |--------------------|------------|--------------------------------------- |
+| `config_template.json`                | -                  | -          | all available JSON fields listed       |
+| `config_lambda_pidmode1_v1.json`      | Lambda             | `1`        | KFParticle cuts                        |
+| `config_lambda_pidmode1_v2.json`      | Lambda             | `1`        | optimized cuts                         |
+| `config_lambda_pidmode0.json`         | Lambda             | `0`        |                                        |
+| `config_lambda_pidmode2.json`         | Lambda             | `2`        |                                        |
+| `config_lambda_pidmode1_v3.json`      | Lambda             | `1`        | for machine learning applications      |
+| `config_H3L_pidmode1.json`            | H3L                | `1`        | 3-body decay                           |
+| `config_H3L_pidmode4.json`            | H3L                | `4`        | 3-body decay, minimum purities applied |
+| `config_He5L_pidmode1.json`           | He5L               | `1`        | 3-body decay                           |
+| `config_xi_pidmode1.json`             | Xi, Lambda         | `1`        | cascade decay                          |
+| `config_omega_pidmode1.json`          | Omega, Lambda      | `1`        | cascade decay                          |
+| `config_omegastar_pidmode1.json`      | Omega*, Xi, Lambda | `1`        | cascade decay, 3-body decay            |
+| `config_lambda_k0short_pidmode1.json` | Lambda, K0Short    | `1`        |                                        |
 
 
 

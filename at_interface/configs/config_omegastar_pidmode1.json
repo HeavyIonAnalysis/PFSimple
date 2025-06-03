@@ -6,7 +6,8 @@
         "write_detailed_bg" : true,
         "make_plain_tree" : true
     },
-    "pid_mode" : 1,
+    "pid_mode" : 1, // pid mode: =0: no pid; =1: mc pid; =2: rec pid (default); =3: rec pid (max. purity & purity > min. purity); =4 (purity > min. purity)
+                    // for 2-4: Pid-framework needs to be applied first
     "decays" : [
         {
             "mother" : {
@@ -82,7 +83,7 @@
                     "cuts" : {"chi2prim" : 18.42}
                 }
             ],
-            "secondary_mother_cuts" : {
+            "secondary_mother_cuts" : { // for 3-body decay
                 //daugher 1 & 2, daughter 1 & 3, daughter 2 & 3
                 "chi2geo" : [3.0]
             }
