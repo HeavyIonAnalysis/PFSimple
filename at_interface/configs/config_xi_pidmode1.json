@@ -1,0 +1,58 @@
+{
+    "io" : {
+        "input_treename" : "rTree",              // "rTree" for standard analysistree, "pTree" after running PID-framework (for pid_mode > 2)
+        "rectracks_branchname" : "VtxTracks",    // "VtxTracks" for standard analyistree, "RecParticles" after running Pid-framework (for pid_mode > 2)
+        "n_events" : -1,
+        "save_options": ["make_plain_tree", "write_detailed_bg"]
+    },
+    "pid_mode" : 1, // pid mode: =0: no pid; =1: mc pid; =2: rec pid (default); =3: rec pid (max. purity & purity > min. purity); =4 (purity > min. purity)
+                    // for 2-4: Pid-framework needs to be applied first
+    "decays" : [
+        {
+            "mother" : {
+                "name" : "Lambda",
+                "pdg_code" : 3122,
+                "cuts" : {
+                    "LdL" : 10.0,
+                    "dist" : 1.0,
+                    "chi2geo" : 3.0,
+                    "chi2topo" : 5.0,
+                    "invmass" : 3.0
+                },
+                "save_options" : ["mass_constraint"]
+            },
+            "daughters" : [
+                {
+                    "pdg_code" : [-211, -1],
+                    "cuts" : {"chi2prim" : 18.42}
+                },
+                {
+                    "pdg_code" : [2212, 1],
+                    "cuts" : {"chi2prim" : 18.42}
+                }
+            ]
+        },
+        {
+            "mother" : {
+                "name" : "Xi-",
+                "pdg_code" : 3312,
+                "cuts" : {
+                    "chi2topo" : 5.0,
+                    "dist" : 1.0,
+                    "LdL" : 5.0,
+                    "chi2geo" : 6.0
+                },
+                "save_options" : ["transport_to_pv"]
+            },
+            "daughters" : [
+                {
+                    "pdg_code" : [-211, -1],
+                    "cuts" : {"chi2prim" : 18.42}
+                },
+                {
+                    "pdg_code" : [3122]
+                }
+            ]
+        }
+    ]
+}

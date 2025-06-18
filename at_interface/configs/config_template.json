@@ -1,0 +1,62 @@
+{
+    "io" : {
+        "input_treename" : "name_tree",            // "rTree" for standard analysistree, "pTree" after running PID-framework (for pid_mode > 2)
+        "rectracks_branchname" : "name_tracks",    // "VtxTracks" for standard analyistree, "RecParticles" after running Pid-framework (for pid_mode > 2)
+        "n_events" : -1,
+        "save_options": ["make_plain_tree", "write_detailed_bg" , "signal_only"]
+    },
+    "pid_mode" : number,    // pid_mode: =0: no pid; =1: mc pid; =2: rec pid (default); =3: rec pid (max. purity & purity > min. purity); =4 (purity > min. purity)
+                            // for pid_mode 2-4: Pid-framework needs to be applied first!
+    "pid_purity" : {        // this block is only needed in pid_mode > 2
+        "all_pdgs" : purity_value,
+        "protons" : purity_value,
+        "pions" : purity_value,
+        "kaons" : purity_value,
+        "deuterons" : purity_value,
+        "background" : purity_value
+    },
+    "decays" : [
+        {
+            "mother" : {
+                "name" : "mother_name",
+                "pdg_code" : mother_pdg,
+                "cuts" : {
+                    "dist" : cut_value,      
+                    "distSV" : cut_value,   //for 3-body decay only
+                    "chi2geo" : cut_value,  
+                    "cosopen" : cut_value,  
+                    "chi2topo" : cut_value,  
+                    "costopo" : cut_value,   
+                    "LdL" : cut_value,      
+                    "L" : cut_value,      
+                    "distPVline" : cut_value,
+                    "invmass" : cut_value  
+                },
+                "save_options" : ["mass_constraint", "transport_to_pv", "do_not_save_mother"]
+            },
+            "daughters" : [
+                {
+                    "pdg_code" : [daughter_1_pdg],
+                    "cuts" : {"chi2prim" : cut_value, "cos" : cut_value}
+                },
+                {
+                    "pdg_code" : [daughter_2_pdg],
+                    "cuts" : {"chi2prim" : cut_value, "cos" : cut_value}
+                }
+            ],
+            "secondary_mother_cuts" : {   // for 3-body decay only
+                // up to 3 entries for: daugher 1 & 2, daughter 1 & 3, daughter 2 & 3
+                "chi2geo" : [cut_value, cut_value, cut_value],
+                "cosopen" : [cut_value, cut_value, cut_value],
+                "chi2topo" : [cut_value, cut_value, cut_value],
+                "costopo" : [cut_value, cut_value, cut_value]
+            }
+  
+        }
+        //add more decays to this list if needed...
+    ],
+    "output_cuts" : [
+        {"var" : "x", "from" : cut_value1, "to" : cut_value2},
+        {"var" : "y", "from" : cut_value1, "to" : cut_value2}
+    ]
+}
