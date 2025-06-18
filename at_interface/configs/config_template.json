@@ -54,5 +54,9 @@
   
         }
         //add more decays to this list if needed...
+    ],
+    "output_cuts" : [
+        {"var" : "x", "from" : cut_value1, "to" : cut_value2},
+        {"var" : "y", "from" : cut_value1, "to" : cut_value2}
     ]
 }

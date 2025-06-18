@@ -1,7 +1,7 @@
 {
     "io" : {
-        "input_treename" : "pTree",
-        "rectracks_branchname" : "RecTracks",
+        "input_treename" : "pTree",              // "rTree" for standard analysistree, "pTree" after running PID-framework (for pid_mode > 2)
+        "rectracks_branchname" : "RecTracks",    // "VtxTracks" for standard analyistree, "RecParticles" after running Pid-framework (for pid_mode > 2)
         "n_events" : -1,
         "save_options": ["make_plain_tree"]
     },

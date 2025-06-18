@@ -1,8 +1,8 @@
 //(Lambda pid 1, cuts from KFParticle)
 {
     "io" : {
-        "input_treename" : "rTree",
-        "rectracks_branchname" : "VtxTracks",
+        "input_treename" : "rTree",              // "rTree" for standard analysistree, "pTree" after running PID-framework (for pid_mode > 2)
+        "rectracks_branchname" : "VtxTracks",    // "VtxTracks" for standard analyistree, "RecParticles" after running Pid-framework (for pid_mode > 2)
         "n_events" : -1,
         "save_options": ["make_plain_tree"]
     },

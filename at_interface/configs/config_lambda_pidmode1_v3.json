@@ -1,8 +1,9 @@
 {
     "io" : {
-        "input_treename" : "rTree",
-        "rectracks_branchname" : "VtxTracks",
-        "n_events" : -1
+        "input_treename" : "rTree",              // "rTree" for standard analysistree, "pTree" after running PID-framework (for pid_mode > 2)
+        "rectracks_branchname" : "VtxTracks",    // "VtxTracks" for standard analyistree, "RecParticles" after running Pid-framework (for pid_mode > 2)
+        "n_events" : -1,
+        "save_options": ["signal_only"]
     },
     "pid_mode" : 1, // pid mode: =0: no pid; =1: mc pid; =2: rec pid (default); =3: rec pid (max. purity & purity > min. purity); =4 (purity > min. purity)
                     // for 2-4: Pid-framework needs to be applied first
@@ -27,6 +28,12 @@
         }
     ],
     "output_cuts" : [
-        {"var" : "generation", "from" : 0.9, "to" : 1000}
+        {"var" : "mass", "from" : 1.07, "to" : 1.2},
+        {"var" : "x", "from" : -50, "to" : 50},
+        {"var" : "y", "from" : -50, "to" : 50},
+        {"var" : "distance", "from" : 0, "to" : 100},
+        {"var" : "eta", "from" : 1, "to" : 6.5},
+        {"var" : "chi2_topo", "from" : 0, "to" : 100000},
+        {"var" : "chi2_geo", "from" : 0, "to" : 1000}
     ]
 }
