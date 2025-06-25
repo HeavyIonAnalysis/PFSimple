@@ -96,11 +96,11 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#ifndef KFPARTICLESIMPLE_KFSIMPLE_SIMPLEFINDER_HPP_</span></div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#define KFPARTICLESIMPLE_KFSIMPLE_SIMPLEFINDER_HPP_</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &lt;map&gt;</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;map&gt;</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &lt;KFParticle.h&gt;</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;KFPTrack.h&gt;</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &lt;KFPTrack.h&gt;</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;KFParticle.h&gt;</span></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#include &lt;KFParticleSIMD.h&gt;</span></div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &lt;KFVertex.h&gt;</span></div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &lt;TVector3.h&gt;</span></div>
@@ -151,14 +151,14 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>  <a class="code hl_class" href="../../da/d97/classNonLinearCutBase.html">NonLinearCutBase</a>* ml_cuts_{<span class="keyword">nullptr</span>};</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  std::map&lt;Pdg_t, std::vector&lt;int&gt;&gt; indexes_{};</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  std::map&lt;int, int&gt; id2index_{}; </div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  Parameters_t params_{};   </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  <a class="code hl_struct" href="../../de/d87/structSelectionValues.html">SelectionValues</a> values_{};</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  std::map&lt;int, int&gt; id2index_{};              </div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  Parameters_t params_{};                      </div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  <a class="code hl_struct" href="../../de/d87/structSelectionValues.html">SelectionValues</a> values_{};                   </div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>  std::vector&lt;OutputContainer&gt; output_{};</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>  <span class="keywordtype">int</span> current_candidate_id_{0};</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>  <span class="keywordtype">int</span> last_track_id_{0};</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>  </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span></div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>  std::vector&lt;int&gt; GetGoodDaughtersIndexes(<span class="keyword">const</span> <a class="code hl_class" href="../../df/d41/classDaughter.html">Daughter</a>&amp; cuts);</div>
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>  <span class="keywordtype">bool</span> IsGoodDaughter(<span class="keyword">const</span> KFParticle&amp; track, <span class="keyword">const</span> <a class="code hl_class" href="../../df/d41/classDaughter.html">Daughter</a>&amp; cuts);</div>
@@ -171,7 +171,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>  <span class="keywordtype">bool</span> IsGoodCos(<span class="keyword">const</span> KFParticleSIMD&amp; mother, <span class="keyword">const</span> <a class="code hl_class" href="../../d9/df4/classDecay.html">Decay</a>&amp; decay);</div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>  <span class="keywordtype">bool</span> IsGoodTrackIdsGenerations(<span class="keyword">const</span> std::vector&lt;KFParticle&gt; tracks);</div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>  KFParticleSIMD ConstructMother(<span class="keyword">const</span> std::vector&lt;KFParticle&gt;&amp; tracks, <span class="keyword">const</span> std::vector&lt;Pdg_t&gt;&amp; pdgs, <span class="keyword">const</span> <a class="code hl_class" href="../../d9/df4/classDecay.html">Decay</a>&amp; decay, <span class="keywordtype">bool</span> print=<span class="keyword">false</span>);</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>  KFParticleSIMD ConstructMother(<span class="keyword">const</span> std::vector&lt;KFParticle&gt;&amp; tracks, <span class="keyword">const</span> std::vector&lt;Pdg_t&gt;&amp; pdgs, <span class="keyword">const</span> <a class="code hl_class" href="../../d9/df4/classDecay.html">Decay</a>&amp; decay, <span class="keywordtype">bool</span> print = <span class="keyword">false</span>);</div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>  <span class="keywordtype">void</span> CalculateSecondaryVertex();</div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>  <span class="keywordtype">void</span> CalculateParamsInPCA(<span class="keyword">const</span> KFParticle&amp; track1, <span class="keywordtype">int</span> pid1, <span class="keyword">const</span> KFParticle&amp; track2, <span class="keywordtype">int</span> pid2);</div>
@@ -201,7 +201,6 @@ $(function(){ initResizable(false); });
 </div>
 <div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
 <div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span><span class="preprocessor">#endif</span><span class="comment">//KFPARTICLESIMPLE_KFSIMPLE_SIMPLEFINDER_HPP_</span></div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
 <div class="ttc" id="aclassDaughter_html"><div class="ttname"><a href="../../df/d41/classDaughter.html">Daughter</a></div><div class="ttdef"><b>Definition</b> Daughter.hpp:8</div></div>
 <div class="ttc" id="aclassDecay_html"><div class="ttname"><a href="../../d9/df4/classDecay.html">Decay</a></div><div class="ttdef"><b>Definition</b> Decay.hpp:13</div></div>
 <div class="ttc" id="aclassInputContainer_html"><div class="ttname"><a href="../../d8/da4/classInputContainer.html">InputContainer</a></div><div class="ttdoc">Container with input information about event (vertex and tracks) and cuts used in the certain event.</div><div class="ttdef"><b>Definition</b> InputContainer.hpp:32</div></div>

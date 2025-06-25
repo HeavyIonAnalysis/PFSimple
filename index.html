@@ -89,7 +89,7 @@ $(function(){ initResizable(false); });
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_README"></a></p>
 <h1>General information</h1>
-<p>The Paticle Finder Simple package is simplified version of the KF Partice package based on its mathematical apparatus. It is developed for the complete reconstruction of short-lived particles with their momentum, energy, mass, lifetime, decaylength, rapidity, etc.</p>
+<p>The Paticle Finder Simple package is simplified version of the KF Partice package based on its mathematical apparatus. It is developed for the complete reconstruction of short-lived particles with their momentum, energy, mass, lifetime, decaylength, rapidity, etc. 2- and 3-body decays can get reconstructed. It is also possible to reconstruct multiple decays in one run as well as cascade decays.</p>
 <h1>Requirements</h1>
 <h2>Root</h2>
 <p><a href="https://root.cern/install/">https://root.cern/install/</a></p>
@@ -101,53 +101,42 @@ $(function(){ initResizable(false); });
 <p>AnalysisTree with c++17 standard is strongly recommended.</p>
 <h1>Installation</h1>
 <p>Clone PFSimple</p>
-<p>Source ROOT </p><pre class="fragment">source /path-to-root/install/bin/thisroot.sh
-</pre><p>To use pre-installed AnalysisTree set the environment variable: export AnalysisTree_DIR=/path-to-analysistree/install/lib/cmake/AnalysisTree To build AnalysisTree automatically together with PFSimple use following cmake keys: -DPFSimple_BUNDLED_AT=ON -DPFSimple_BUNDLED_AT_VERSION=v2.3.4</p>
-<p>You need to source root and export AnalysisTree each time when you are compiling project from 0 (perform cmake command) but have no need to do it when just recompiling project (perform just make).</p>
-<p>Install PFSimple </p><pre class="fragment">mkdir build
-cd build
-cmake -DCMAKE_INSTALL_PREFIX=/path-to-install-pfsimple /path-to-source-pfsimple
-make -j install
-</pre><h1>Configuration of decay settings</h1>
-<p>The reconstruction will be executed with at_interface/main.cpp.</p>
-<p>The reconstruction can be configured with the parameter-files at_interface/parfile2.txt for 2-body decays and at_interface/parfile3.txt for 3-body decays.</p>
-<p>The user can select: 1) <a class="el" href="d9/df4/classDecay.html">Decay</a>: mother and daughters </p><pre class="fragment">Pdg mass and pdg mass sigma for mother: if set to "-1" values from
-KFParticleDatabase are taken
-</pre><p>Option for daughters: alternative pdgs can be used in addition for the reconstruction</p><ul>
-<li>for background: set to "1" / "-1" for pos / neg daughters</li>
-<li>for tracks without TOF id: set to "2" / "-2" for pos / neg daughters (in pid-mode 2, 3, 4)</li>
-<li>In pid-mode 0 optional daughers "1" / "-1" for pos / neg pdgs must be added.</li>
-</ul>
-<p>If no alternative pdgs should be used, set to "0".</p>
-<p>If more optional pdgs than 2 should be added, change in main2.cpp / main3.cpp and recompile.</p>
-<p>2) Geometrical cuts to be applied and cut-values</p>
-<p>If a cut should not be used, set to "-1".</p>
-<p>For more information on specific cuts see " Constants.hpp".</p>
-<p>3) Options for the saving of the reconstructed mother </p><pre class="fragment">- A nonlinear mass constraint can be applied on the mother particle which modifies the mother's state vector and covariance matrix to
-assure the 4-momentum is consitent with the pdg mass. 
-
-- The mother can be transported to the PV.
-
-- The writing out of the mother into the output-file (e.g. the lower-level mother in cascade decays) can get surpressed. But
-if this option is selected, it is not possible to peform the MC-matching for the upper-level mother.
-</pre><p>4) Pid-method:</p>
-<ul>
-<li>0: no pid (only charge information is used ! optional daughers must be set to "1" / "-1" for pos / neg pdgs !)</li>
-<li>1: mc-pid</li>
-<li>2: reconstructed TOF pid - default from Pid-framework</li>
-<li>3: reconstructed TOF pid - pdg with max. pdg-purity is selected, if pdg-purity &gt;min. purity</li>
-<li>4: reconstructed TOF pid - pdg is selected, if pdg-purity &gt; min. purity (pdg-specfic purities are possible)</li>
-</ul>
-<p>for 2-4: Pid-framework needs to be applied first to include TOF-pid &amp; probabilities into the analysistree input-file</p>
-<p>5) Minium purities for pid-mode 3 &amp; 4:</p><ul>
-<li>for pid-mode 3: minimum purity is set for all pdgs (pdg-spefic purities need to be set to "-1")</li>
-<li>for pid-mode 4: minimum purity can be set for all pdgs or specifically for every pdg (general purity will be overwritten, if pdg-specific purity is not set to "-1")</li>
-</ul>
-<p>6) Input/Output information:</p><ul>
-<li>treename in input aTree, default names: "rTree" for standard aTree, "aTree" after running Pid-framework</li>
-<li>branchname of reconstructed tracks in input analysistree, default names: "VtxTracks" for standard analyistree, "RecParticles" after running Pid-framework</li>
-<li><p class="startli">optional detailed background information in output variable "generation": <br  />
- format for bg for 2-body-decay: -m12 0 d2 d1 <br  />
+<p>Source ROOT </p><div class="fragment"><div class="line">source /path-to-root/install/bin/thisroot.sh</div>
+</div><!-- fragment --><p> To use pre-installed AnalysisTree set the environment variable: </p><div class="fragment"><div class="line">export AnalysisTree_DIR=/path-to-analysistree/install/lib/cmake/AnalysisTree</div>
+</div><!-- fragment --><p> To build AnalysisTree automatically together with PFSimple use following cmake keys: </p><div class="fragment"><div class="line">-DPFSimple_BUNDLED_AT=ON</div>
+<div class="line">-DPFSimple_BUNDLED_AT_VERSION=v2.3.4</div>
+</div><!-- fragment --><p>You need to source root and export AnalysisTree each time when you are compiling project from 0 (perform cmake command) but have no need to do it when just recompiling project (perform just make).</p>
+<p>Install PFSimple </p><div class="fragment"><div class="line">mkdir build</div>
+<div class="line">cd build</div>
+<div class="line">cmake -DCMAKE_INSTALL_PREFIX=/path-to-install-pfsimple /path-to-source-pfsimple</div>
+<div class="line">make -j install</div>
+</div><!-- fragment --> <h1>Configuration of decay settings</h1>
+<p>The program is configured with a JSON config file which contains various settings related to input and output as well as the decays to reconstruct. In the following, the different blocks and fields are explained. In <code>at_interface/config/config_template.json</code> all available JSON fields are listed.</p>
+<h2>io</h2>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Key   </th><th class="markdownTableHeadNone">Description    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>input_treename</code>   </td><td class="markdownTableBodyNone">name of the input AnalysisTree (for standard analysistree <code>rTree</code>, after running PID framework <code>pTree</code>)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>rectracks_branchname</code>   </td><td class="markdownTableBodyNone">branchname of reconstructed tracks in input analysistree, default names: <code>VtxTracks</code> for standard analyistree, <code>RecParticles</code> after running Pid-framework    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>n_events</code>   </td><td class="markdownTableBodyNone">number of events to be processed, set to <code>-1</code> to process all events    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>save_options</code> (optional)   </td><td class="markdownTableBodyNone">defines save options for the candidates of all decays in this config (see next table)   </td></tr>
+</table>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone"><code>save_options</code> Flag   </th><th class="markdownTableHeadNone">Description    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>make_plain_tree</code>   </td><td class="markdownTableBodyNone">normal root tree containing the candidates is written besides the default output tree in AnalysisTree format    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>signal_only</code>   </td><td class="markdownTableBodyNone">save only mc-true signal candidates    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>write_detailed_bg</code>   </td><td class="markdownTableBodyNone">detailed background information in output variable <code>generation</code>*   </td></tr>
+</table>
+<p>*Format of detailed background information in the <code>generation</code> variable:</p>
+<p>format for bg for 2-body-decay: -m12 0 d2 d1 <br  />
  format for bg for 3-body-decay: -m13 m23 m12 d3 d2 d1 <br  />
  with m12: mother of daughter 1 &amp; 2 etc. <br  />
  code for daughters (d): <br  />
@@ -162,35 +151,107 @@ if this option is selected, it is not possible to peform the MC-matching for the
  2 - daughters have different mothers <br  />
  0 - at least one daughter does not have mother (e.g. primary) <br  />
 </p>
-<p class="startli">If detailed background is not selected or if mc match for mother is found, value of variable "generation" is: <br  />
+<p>If detailed background is not selected or if mc match for mother is found, value of variable "generation" is: <br  />
  0 - no mc match for mother <br  />
  1 - mother is primary particle <br  />
- 2 - mother is second generation etc. <br  />
-</p>
+ 2 - mother is second generation etc.</p>
+<h2>pid_mode</h2>
+<p>Methods for particle identification: </p><table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone"><code>pid_mode</code>   </th><th class="markdownTableHeadNone">Description    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>0</code>   </td><td class="markdownTableBodyNone">no pid (only charge information is used! optional daughers must be set to 1 / -1 for pos / neg pdgs!)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>1</code>   </td><td class="markdownTableBodyNone">mc-pid    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>2</code>   </td><td class="markdownTableBodyNone">reconstructed TOF pid - default from Pid-framework*    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>3</code>   </td><td class="markdownTableBodyNone">reconstructed TOF pid - pdg with max. pdg-purity is selected, if pdg-purity &gt;min. purity*    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>4</code>   </td><td class="markdownTableBodyNone">reconstructed TOF pid - pdg is selected, if pdg-purity &gt; min. purity (pdg-specfic purities are possible)*   </td></tr>
+</table>
+<p>** *for 2-4: Pid-framework needs to be applied first to include TOF-pid &amp; probabilities into the analysistree input-file**</p>
+<h2>pid_purity</h2>
+<p>Mimimum purities for pid-mode 3 &amp; 4:</p><ul>
+<li><code>all_pdgs</code>: minimum purity is set for all pdgs (pdg-spefic purities need to be omitted) (in pid-mode 3 &amp; 4)</li>
+<li><code>protons</code>, <code>pions</code>, etc: minimum purity is set specifically for every pdg (general purity will be overwritten, if pdg-specific purity is given) (in pid-mode 4)</li>
+</ul>
+<h2>decays</h2>
+<p>One or multiple decays get can reconstructed in one run. Each decay is defined by several sub-blocks:</p>
+<h3>mother</h3>
+<ul>
+<li><code>pdg_code</code></li>
+<li><code>name</code> (chosen by user)</li>
+<li><code>mass</code> (Unit: GeV/c^2) and <code>mass_sigma</code> (optional): if set to "-1" values from KFParticleDatabase are taken (if available)</li>
+<li><code>cuts</code>: subblock for the definition of cuts to be applied to the mother (See <code>at_interface/config/config_template.json</code> for the available JSON keys and <code><a class="el" href="d6/de9/Constants_8hpp_source.html">Constants.hpp</a></code> for more details.)</li>
+<li><code>save_options</code>: options for the saving of the reconstructed mother:</li>
+</ul>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Flag   </th><th class="markdownTableHeadNone">Description    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>mass_constraint</code>   </td><td class="markdownTableBodyNone">nonlinear mass constraint is applied on the mother particle which modifies the mother's state vector and covariance matrix to assure the 4-momentum is consitent with the pdg mass    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>transport_to_pv</code>   </td><td class="markdownTableBodyNone">mother is transported to the PV before saving    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>do_not_save_mother</code>   </td><td class="markdownTableBodyNone">writing of the mother into the output-file (e.g. the lower-level mother in cascade decays) is surpressed. If this option is selected, it is not possible to peform the MC-matching for the upper-level mother.   </td></tr>
+</table>
+<h3>daughters</h3>
+<p>The 2 (3) daughters of the mother are be defined in 2 (3) subblocks (for 2-/3-body decays).</p><ul>
+<li><code>pdg_code</code> (in JSON list format): first entry: daugher PDG; second and following entries (optional): additional pdgs or background can be considered as possible daughter candidates, for background set:<ul>
+<li>for background: set to "1" / "-1" for pos / neg daughters</li>
+<li>for tracks without TOF id: set to "2" / "-2" for pos / neg daughters (in pid-mode 2, 3, 4) In pid-mode 0 optional daughers "1" / "-1" for pos / neg pdgs must be added</li>
+</ul>
 </li>
-<li>number of events to be processed (-1 = all events)</li>
-<li>Output format: default output is analysistree format <br  />
- optional: plain tree: output is a simple root tree containing the candidates</li>
+<li><code>cuts</code>: subblock for the definition of cuts to be applied to the daughter (See <code>at_interface/config/config_template.json</code> for the available JSON keys and <code><a class="el" href="d6/de9/Constants_8hpp_source.html">Constants.hpp</a></code> for more details.)</li>
 </ul>
-<h2>3-body-decays</h2>
-<p>For 3-body decays, the list of available cuts is extended, amoung others, to cuts on the secondary mothers (SM) of combinations of 2 daughters. E.g. for H3L-&gt;p + pi + d, cuts on the SM of p-pi can be applied. The cuts that test the mother against the PV, e.g. chi2topo, are inverted for the SM to exclude SMs that come from the PV.</p>
-<h2>Multiple decays</h2>
-<p>If more than one decay should be reconstructed in the same run, additional parfiles at_interface/parfile2_add.txt or at_interface/parfile3_add.txt can be added where 1.) - 3.) can be selected. 4.) - 6.) can not be changed in the same run. The decays can be independent or build a cascade decay. Multiple additional parfiles can be added.</p>
+<h3>secondary_mother_cuts (3-body-decays)</h3>
+<p>Cuts on the secondary mothers (SM) of combinations of 2 daughters can have up to 3 entries (JSON list format): cuts for daughter combinations [1 &amp; 2, 1 &amp; 3, 2 &amp; 3]. E.g. for H3L-&gt;p + pi + d, a cut on the SM of p-pi can be applied. The cuts that test the mother against the PV, e.g. chi2topo, are inverted for the SM to exclude SMs that come from the PV. (See <code>at_interface/config/config_template.json</code> for the available JSON keys and <code><a class="el" href="d6/de9/Constants_8hpp_source.html">Constants.hpp</a></code> for more details.)</p>
+<h2>output_cuts</h2>
+<p>The optional <code>output_cuts</code> block contains AnalysisTree field cuts to be applied to the output candidates before storing them to disk. One can either select a certain range for a cut variable with <code>from</code> and <code>to</code> or select a specific value with <code>equal</code>. It is possible to chain several cuts.</p>
 <h2>Cascade decays</h2>
-<p>The reconstruction of a cascade decay works the same way as adding an additional decay to the run as described above. The order of the parfiles need to be from last generation to first generation. Cascade decays with multiple stages as well as combinations of 2- and 3-body-decays can get reconstructed.</p>
-<p>Several example parameter files can be found in the folder at_interface/example_parfiles.</p>
+<p>For the reconstruction of a cascade decay all consecutive decays are added into one config-file. The order of the decays need to be from last generation to first generation. Cascade decays with multiple stages as well as combinations of 2- and 3-body-decays can get reconstructed.</p>
+<h1>Example Configs</h1>
+<p>Several example parameter files can be found in the folder <code>at_interface/configs</code>.</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">File   </th><th class="markdownTableHeadNone">Particle(s)   </th><th class="markdownTableHeadNone"><code>pid_mode</code>   </th><th class="markdownTableHeadNone">Comment    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>config_template.json</code>   </td><td class="markdownTableBodyNone">-   </td><td class="markdownTableBodyNone">-   </td><td class="markdownTableBodyNone">all available JSON fields listed    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>config_lambda_pidmode1_v1.json</code>   </td><td class="markdownTableBodyNone">Lambda   </td><td class="markdownTableBodyNone"><code>1</code>   </td><td class="markdownTableBodyNone">KFParticle cuts    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>config_lambda_pidmode1_v2.json</code>   </td><td class="markdownTableBodyNone">Lambda   </td><td class="markdownTableBodyNone"><code>1</code>   </td><td class="markdownTableBodyNone">optimized cuts    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>config_lambda_pidmode0.json</code>   </td><td class="markdownTableBodyNone">Lambda   </td><td class="markdownTableBodyNone"><code>0</code>   </td><td class="markdownTableBodyNone"></td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>config_lambda_pidmode2.json</code>   </td><td class="markdownTableBodyNone">Lambda   </td><td class="markdownTableBodyNone"><code>2</code>   </td><td class="markdownTableBodyNone"></td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>config_lambda_pidmode1_v3.json</code>   </td><td class="markdownTableBodyNone">Lambda   </td><td class="markdownTableBodyNone"><code>1</code>   </td><td class="markdownTableBodyNone">for machine learning applications    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>config_H3L_pidmode1.json</code>   </td><td class="markdownTableBodyNone">H3L   </td><td class="markdownTableBodyNone"><code>1</code>   </td><td class="markdownTableBodyNone">3-body decay    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>config_H3L_pidmode4.json</code>   </td><td class="markdownTableBodyNone">H3L   </td><td class="markdownTableBodyNone"><code>4</code>   </td><td class="markdownTableBodyNone">3-body decay, minimum purities applied    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>config_He5L_pidmode1.json</code>   </td><td class="markdownTableBodyNone">He5L   </td><td class="markdownTableBodyNone"><code>1</code>   </td><td class="markdownTableBodyNone">3-body decay    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>config_xi_pidmode1.json</code>   </td><td class="markdownTableBodyNone">Xi, Lambda   </td><td class="markdownTableBodyNone"><code>1</code>   </td><td class="markdownTableBodyNone">cascade decay    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>config_omega_pidmode1.json</code>   </td><td class="markdownTableBodyNone">Omega, Lambda   </td><td class="markdownTableBodyNone"><code>1</code>   </td><td class="markdownTableBodyNone">cascade decay    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>config_omegastar_pidmode1.json</code>   </td><td class="markdownTableBodyNone">Omega*, Xi, Lambda   </td><td class="markdownTableBodyNone"><code>1</code>   </td><td class="markdownTableBodyNone">cascade decay, 3-body decay    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>config_lambda_k0short_pidmode1.json</code>   </td><td class="markdownTableBodyNone">Lambda, K0Short   </td><td class="markdownTableBodyNone"><code>1</code>   </td><td class="markdownTableBodyNone"></td></tr>
+</table>
 <h1>First run</h1>
-<p>Each time before running the prepared executable you should set the environment variables to let your system know where to find libraries: </p><pre class="fragment">source /path-to-root/install/bin/thisroot.sh
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path-to-pfsimple-installation/lib/
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path-to-pfsimple-installation/external/lib/
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path-to-analysistree-installation/lib/
-</pre><p>Then run the executable: </p><pre class="fragment">./main filelist.txt dataset parfile2.txt (parfile2_add.txt parfile3_add.txt)
-</pre><p>or </p><pre class="fragment">./main filelist.txt dataset parfile3.txt (parfile2_add.txt parfile3_add.txt)
-</pre><p>where filelist.txt must be a text file with names (including paths) to files which you want to analyze with PFSimple. Each file name should be on the next line, and the last symbol should also be a switch to next line. The example of filelist is in the source directory of PFSimple (filelist_example.txt)</p>
-<p>and where [dataset] specifies the names of the outputfiles:</p><ul>
-<li>analyistree: [dataset].PFSimpleOutput.root</li>
-<li>plain tree: [dataset].PFSimplePlainTree.root </li>
-</ul>
+<p>Each time before running the prepared executable you should set the environment variables to let your system know where to find libraries: </p><div class="fragment"><div class="line">source /path-to-root/install/bin/thisroot.sh</div>
+<div class="line">export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path-to-pfsimple-installation/lib/</div>
+<div class="line">export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path-to-pfsimple-installation/external/lib/</div>
+<div class="line">export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path-to-analysistree-installation/lib/ #can be ommitted if PFSimple_BUNDLED_AT was set to ON</div>
+</div><!-- fragment --><p>The reconstruction will be executed with the following command: </p><div class="fragment"><div class="line">at_interface/main_json filelist.txt config.json [--output &lt;file&gt;] [--plain-output &lt;file&gt;] [--set &lt;key&gt;=&lt;value&gt;]</div>
+</div><!-- fragment --><p> The binary accepts 2 positional arguments: The path of the input filelist.txt file and the config file in JSON format. It is also possible to modify the output file paths with the <code>--output</code> and <code>--plain-output</code> optional arguments as well as to override keys in the JSON config file by adding keys like <code>--set decays[0].mother.cuts.LdL=4.0</code>.</p>
+<h2>filelist.txt</h2>
+<p>filelist.txt must be a text file with names (including paths) to AnalysisTree files which you want to analyze with PFSimple. Each file name should be on the next line, and the last symbol should also be a switch to next line. The example of filelist is in the source directory of PFSimple (filelist_example.txt) </p>
 </div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
 </div><!-- contents -->
