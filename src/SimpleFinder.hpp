@@ -13,11 +13,11 @@
 #ifndef KFPARTICLESIMPLE_KFSIMPLE_SIMPLEFINDER_HPP_
 #define KFPARTICLESIMPLE_KFSIMPLE_SIMPLEFINDER_HPP_
 
-#include <vector>
 #include <map>
+#include <vector>
 
-#include <KFParticle.h>
 #include <KFPTrack.h>
+#include <KFParticle.h>
 #include <KFParticleSIMD.h>
 #include <KFVertex.h>
 #include <TVector3.h>
@@ -67,14 +67,14 @@ class SimpleFinder {
   NonLinearCutBase* ml_cuts_{nullptr};///< input information: non-linear cuts class (optional)
 
   std::map<Pdg_t, std::vector<int>> indexes_{};///< map of indexes for a given particle specie
-  std::map<int, int> id2index_{}; ///< map of track Ids to indexes       
-  Parameters_t params_{};   ///< vector of daughter parameters at current SV estimation
-  SelectionValues values_{};///< struct with mother and daughters properties used to apply cuts
+  std::map<int, int> id2index_{};              ///< map of track Ids to indexes
+  Parameters_t params_{};                      ///< vector of daughter parameters at current SV estimation
+  SelectionValues values_{};                   ///< struct with mother and daughters properties used to apply cuts
 
   std::vector<OutputContainer> output_{};///< output information: vector of candidates
   int current_candidate_id_{0};
   int last_track_id_{0};
-  
+
   /**
   * Find indexes of good daughters
   * @param cuts daughter particle cuts container
@@ -92,7 +92,7 @@ class SimpleFinder {
   bool IsGoodCos(const KFParticleSIMD& mother, const Decay& decay);
   bool IsGoodTrackIdsGenerations(const std::vector<KFParticle> tracks);
 
-  KFParticleSIMD ConstructMother(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs, const Decay& decay, bool print=false);
+  KFParticleSIMD ConstructMother(const std::vector<KFParticle>& tracks, const std::vector<Pdg_t>& pdgs, const Decay& decay, bool print = false);
   void CalculateSecondaryVertex();
 
   void CalculateParamsInPCA(const KFParticle& track1, int pid1, const KFParticle& track2, int pid2);
@@ -121,4 +121,3 @@ class SimpleFinder {
 };
 
 #endif//KFPARTICLESIMPLE_KFSIMPLE_SIMPLEFINDER_HPP_
-

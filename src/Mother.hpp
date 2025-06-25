@@ -2,8 +2,8 @@
 #define KFPARTICLESIMPLE_KFSIMPLE_MOTHERCUTS_HPP_
 
 #include <limits>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "Constants.hpp"
 
@@ -17,7 +17,10 @@ class Mother {
   Mother& operator=(const Mother&) = default;
   ~Mother() = default;
 
-  explicit Mother(Pdg_t pdg) : pdg_(pdg) { mass_pdg_ = -1.0; mass_pdg_sigma_ = -1.0; }
+  explicit Mother(Pdg_t pdg) : pdg_(pdg) {
+    mass_pdg_ = -1.0;
+    mass_pdg_sigma_ = -1.0;
+  }
 
   void SetMassPdg(float mass_pdg) { mass_pdg_ = mass_pdg; }
   void SetMassPdgSigma(float mass_pdg_sigma) { mass_pdg_sigma_ = mass_pdg_sigma; }
@@ -44,7 +47,7 @@ class Mother {
     for (std::size_t i = 1; i < cos_open_sm.size() + 1; ++i) cos_open_.at(i) = cos_open_sm.at(i - 1);
   }
   void SetCutInvMass(float value) { invmass_discrepancy_ = value; }
-  
+
   void CancelCutDistance() { this->SetCutDistance(huge_value); }
   void CancelCutDistanceToSV() { this->SetCutDistanceToSV(huge_value); }
   void CancelCutChi2Geo() { this->SetCutChi2Geo(huge_value); }
@@ -58,16 +61,18 @@ class Mother {
   void CancelCutCosTopoSM() { this->SetCutCosTopoSM({huge_value, huge_value, huge_value}); }
   void CancelCutCosOpen() { this->SetCutCosOpen(-huge_value); }
   void CancelCutCosOpenSM() { this->SetCutCosOpenSM({-huge_value, -huge_value, -huge_value}); }
-  void CancelCutInvMass()  { this->SetCutInvMass(huge_value); }
+  void CancelCutInvMass() { this->SetCutInvMass(huge_value); }
   void CancelCuts();
 
   Pdg_t GetPdg() const { return pdg_; }
   float GetMassPdg() {
     if (mass_pdg_ < 0) mass_pdg_ = GetMassKFDatabase();
-    return mass_pdg_; };
+    return mass_pdg_;
+  };
   float GetMassPdgSigma() {
     if (mass_pdg_sigma_ < 0) mass_pdg_sigma_ = GetMassSigmaKFDatabase();
-    return mass_pdg_sigma_; }
+    return mass_pdg_sigma_;
+  }
   float GetMassKFDatabase() const;
   float GetMassSigmaKFDatabase() const;
   float GetCutDistance() const { return distance_; }
@@ -85,7 +90,7 @@ class Mother {
   Pdg_t pdg_{-1};
   float mass_pdg_{-1.0};
   float mass_pdg_sigma_{-1.0};
-  float mass_kaon_{0.497614}; // default mass value in KFParticleDatabase
+  float mass_kaon_{0.497614};// default mass value in KFParticleDatabase
 
   float distance_{1.f};///< lower value
   float distance_sv_{1.f};
