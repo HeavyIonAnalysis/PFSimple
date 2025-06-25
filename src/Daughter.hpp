@@ -27,7 +27,7 @@ class Daughter {
   float GetCutChi2Prim() const { return chi2_prim_; }
   float GetCutCos() const { return cos_; }
   int GetId() const { return id_; }
-  
+
   void SetGeneration(int generation) { generation_ = generation; }
   void SetCutChi2Prim(float value) { chi2_prim_ = value; }
   void SetCutCos(float value) { cos_ = value; }

@@ -1,11 +1,11 @@
 #ifndef KFPARTICLESIMPLE_KFSIMPLE_DECAY_HPP_
 #define KFPARTICLESIMPLE_KFSIMPLE_DECAY_HPP_
 
+#include <iostream>
 #include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
-#include <iostream>
 
 #include "Daughter.hpp"
 #include "Mother.hpp"
@@ -46,14 +46,14 @@ class Decay {
   void SetMother(const Mother& mother) { mother_ = mother; }
 
   int GetNDaughters() const { return daughters_.size(); }
-  
+
   void SetIsApplyMassConstraint(bool is = true) { is_apply_mass_constraint_ = is; }
   void SetIsTransportToPV(bool is = true) { is_transport_to_pv_ = is; }
   void SetIsDoNotWriteMother(bool is = true) {
-        std::cout << "WARNING!! If the mother particle is not written in the output-tree, MC-matching is not possible for upper-level mothers from cascade decays. "<< std::endl;
-	is_do_not_write_mother_ = is;
+    std::cout << "WARNING!! If the mother particle is not written in the output-tree, MC-matching is not possible for upper-level mothers from cascade decays. " << std::endl;
+    is_do_not_write_mother_ = is;
   }
-  
+
   bool GetIsApplyMassConstraint() const { return is_apply_mass_constraint_; }
   bool GetIsTransportToPV() const { return is_transport_to_pv_; }
   bool GetIsDoNotWriteMother() const { return is_do_not_write_mother_; }
@@ -63,7 +63,7 @@ class Decay {
 
   Mother mother_;                    ///< cuts for mother particle
   std::vector<Daughter> daughters_{};///< cuts for daughter particles
-  
+
   bool is_apply_mass_constraint_{false};
   bool is_transport_to_pv_{false};
   bool is_do_not_write_mother_{false};

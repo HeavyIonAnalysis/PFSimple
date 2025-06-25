@@ -7,12 +7,12 @@ using std::to_string;
 void SimpleFinder::Init(std::vector<KFParticle>&& tracks, const KFVertex& pv) {
   output_.clear();
   current_candidate_id_ = 0;
-  
+
   if (!tracks.empty())
     last_track_id_ = tracks.at(tracks.size() - 1).Id();
-  else 
+  else
     last_track_id_ = 0;
-  
+
   tracks_ = tracks;
   prim_vx_ = pv;
 }
@@ -71,10 +71,10 @@ void SimpleFinder::CalculateParamsInSV(const std::array<KFParticle, 3>& tracks, 
   }
 
   for (int i = 0; i < 3; i++)
-    sec_vx_.at(i) = (sec_vx.at(0).at(i) + sec_vx.at(1).at(i) + sec_vx.at(2).at(i)) / 3 ;
-  
+    sec_vx_.at(i) = (sec_vx.at(0).at(i) + sec_vx.at(1).at(i) + sec_vx.at(2).at(i)) / 3;
+
   params_.resize(3);
-    
+
   for (int itrack = 0; itrack < 3; itrack++) {
     KFParticle particle(tracks.at(itrack));
     particle.SetPDG(pids.at(itrack));
@@ -112,7 +112,7 @@ KFParticleSIMD SimpleFinder::ConstructMother(const std::vector<KFParticle>& trac
   std::vector<KFParticleSIMD> particles_simd{};
 
   for (size_t i = 0; i < n; ++i) {
-    if(tracks.at(i).Id() <= last_track_id_)
+    if (tracks.at(i).Id() <= last_track_id_)
       SetKFParticleEnergy(particles.at(i), pdgs.at(i));
     particles.at(i).SetPDG(pdgs.at(i));
     particles.at(i).SetId(tracks.at(i).Id());// TODO rm obsolet ID copying?
@@ -138,17 +138,15 @@ KFParticleSIMD SimpleFinder::ConstructMother(const std::vector<KFParticle>& trac
     const KFParticleSIMD* vDaughtersPointer[2] = {&particles_simd.at(0), &particles_simd.at(1)};
     mother.Construct(vDaughtersPointer, 2, nullptr);
 
-    if((tracks.at(0).Id() <= last_track_id_ || tracks.at(1).Id() <= last_track_id_) && print)
-      {
-	std::cout << particles_simd.at(0).GetPx()[0] << "\t" << particles_simd.at(0).GetPy()[0] << "\t" << particles_simd.at(0).GetPz()[0] << "\t" << particles_simd.at(0).GetE()[0] << "\n";
-	std::cout << particles_simd.at(1).GetPx()[0] << "\t" << particles_simd.at(1).GetPy()[0] << "\t" << particles_simd.at(1).GetPz()[0] << "\t" << particles_simd.at(1).GetE()[0] << "\n";
-	std::cout << mother.GetPx()[0] << "\t" << mother.GetPy()[0] << "\t" << mother.GetPz()[0] << "\t" << mother.GetE()[0] << "\n";
-      }
-     
+    if ((tracks.at(0).Id() <= last_track_id_ || tracks.at(1).Id() <= last_track_id_) && print) {
+      std::cout << particles_simd.at(0).GetPx()[0] << "\t" << particles_simd.at(0).GetPy()[0] << "\t" << particles_simd.at(0).GetPz()[0] << "\t" << particles_simd.at(0).GetE()[0] << "\n";
+      std::cout << particles_simd.at(1).GetPx()[0] << "\t" << particles_simd.at(1).GetPy()[0] << "\t" << particles_simd.at(1).GetPz()[0] << "\t" << particles_simd.at(1).GetE()[0] << "\n";
+      std::cout << mother.GetPx()[0] << "\t" << mother.GetPy()[0] << "\t" << mother.GetPz()[0] << "\t" << mother.GetE()[0] << "\n";
+    }
+
   } else if (n == 3) {
     const KFParticleSIMD* vDaughtersPointer[3] = {&particles_simd.at(0), &particles_simd.at(1), &particles_simd.at(2)};
     mother.Construct(vDaughtersPointer, 3, nullptr);
-    
   }
 
   return mother;
@@ -239,18 +237,13 @@ bool SimpleFinder::IsGoodDaughter(const KFParticle& track, const Daughter& daugh
   values_.chi2_prim.at(id) = CalculateChiToPrimaryVertex(track, daughter.GetPdgHypo());
 
   if (values_.chi2_prim.at(id) < daughter.GetCutChi2Prim() || std::isnan(values_.chi2_prim.at(id))) { return false; }
-  
-  if (! (track.Id() > last_track_id_)) {
-    if (TMath::Abs(daughter.GetPdgHypo()) == 3112 ||
-	TMath::Abs(daughter.GetPdgHypo()) == 3312 ||
-	TMath::Abs(daughter.GetPdgHypo()) == 3334 ||
-	TMath::Abs(daughter.GetPdgHypo()) == 11 ||
-	TMath::Abs(daughter.GetPdgHypo()) == 13) {
+
+  if (!(track.Id() > last_track_id_)) {
+    if (TMath::Abs(daughter.GetPdgHypo()) == 3112 || TMath::Abs(daughter.GetPdgHypo()) == 3312 || TMath::Abs(daughter.GetPdgHypo()) == 3334 || TMath::Abs(daughter.GetPdgHypo()) == 11 || TMath::Abs(daughter.GetPdgHypo()) == 13) {
       if ((TMath::Sign(1, daughter.GetPdgHypo()) > 0 && track.Q() != -1) || (TMath::Sign(1, daughter.GetPdgHypo()) < 0 && track.Q() != +1)) { return false; }
-    }
-    else {
+    } else {
       if ((TMath::Sign(1, daughter.GetPdgHypo()) > 0 && track.Q() != +1) || (TMath::Sign(1, daughter.GetPdgHypo()) < 0 && track.Q() != -1)) { return false; }
-    } 
+    }
   }
 
   return true;
@@ -262,7 +255,7 @@ bool SimpleFinder::IsGoodPair(const KFParticle& track1,
 
   if (track1.Id() == track2.Id()) { return false; }
 
-  std::vector<KFParticle> tracks = { track1, track2};
+  std::vector<KFParticle> tracks = {track1, track2};
   if (IsGoodTrackIdsGenerations(tracks) == false) { return false; }
 
   int generation1 = track1.Id() > last_track_id_ ? 1 : 0;
@@ -272,8 +265,7 @@ bool SimpleFinder::IsGoodPair(const KFParticle& track1,
   for (int i = 0; i < tracks.size(); i++)
     generation.push_back(tracks[i].Id() > last_track_id_ ? 1 : 0);
 
-  if (std::accumulate(generation.begin(), generation.end(), 0) > 0) 
-    {
+  if (std::accumulate(generation.begin(), generation.end(), 0) > 0) {
     KFParticle track1_nonconst = track1;
     KFParticle track2_nonconst = track2;
     KFParticleSIMD track1_simd = KFParticleSIMD(track1_nonconst);
@@ -281,8 +273,7 @@ bool SimpleFinder::IsGoodPair(const KFParticle& track1,
     track1_simd.SetPDG(decay.GetDaughters().at(0).GetPdgHypo());
     track2_simd.SetPDG(decay.GetDaughters().at(1).GetPdgHypo());
     values_.distance = CalculateDistanceBetweenParticles(track1_simd, track2_simd);
-    }
-  else
+  } else
     values_.distance = CalculateDistanceBetweenParticles();
 
   if (values_.distance > decay.GetMother().GetCutDistance() || std::isnan(values_.distance)) { return false; }
@@ -302,8 +293,8 @@ bool SimpleFinder::IsGoodThree(const KFParticle& track1,
   if (track1.Id() == track2.Id()) { return false; }
   if (track1.Id() == track3.Id()) { return false; }
   if (track2.Id() == track3.Id()) { return false; }
-  
-  std::vector<KFParticle> tracks = { track1, track2, track3 };
+
+  std::vector<KFParticle> tracks = {track1, track2, track3};
   if (IsGoodTrackIdsGenerations(tracks) == false) { return false; }
 
   values_.distance_sv = CalculateDistanceToSV();
@@ -316,9 +307,9 @@ bool SimpleFinder::IsGoodThree(const KFParticle& track1,
   }
 
   std::vector<float> cos_tmp;
-  for (int i = 1; i < 4; i++) 
+  for (int i = 1; i < 4; i++)
     cos_tmp.push_back(values_.cos_open[i]);
-  
+
   values_.cos_open[0] = *std::min_element(cos_tmp.begin(), cos_tmp.end());
   if (values_.cos_open[0] < decay.GetMother().GetCutCosOpen()[0] || std::isnan(values_.cos_open[0])) { return false; }
 
@@ -328,13 +319,13 @@ bool SimpleFinder::IsGoodThree(const KFParticle& track1,
 bool SimpleFinder::IsGoodMother(const KFParticleSIMD& kf_mother, const Mother& mother, const int id_mother) {
   values_.chi2_geo[id_mother] = kf_mother.Chi2()[0] / simd_cast<float_v>(kf_mother.NDF())[0];
   if (values_.chi2_geo[id_mother] > mother.GetCutChi2Geo()[id_mother] || std::isnan(values_.chi2_geo[id_mother])) { return false; }
-  if (values_.chi2_geo[id_mother] < 0. || ! std::isfinite(values_.chi2_geo[id_mother])) { return false; }
+  if (values_.chi2_geo[id_mother] < 0. || !std::isfinite(values_.chi2_geo[id_mother])) { return false; }
   return true;
 }
 
 bool SimpleFinder::IsGoodMotherMass(const KFParticleSIMD& kf_mother, const Mother& mother) {
   KFParticle particle;
-  KFParticleSIMD(kf_mother).GetKFParticle(particle, 0);   
+  KFParticleSIMD(kf_mother).GetKFParticle(particle, 0);
   values_.invmassdisc = CalculateInvMassDiscrepancy(particle, mother);
   if (std::fabs(values_.invmassdisc) > mother.GetCutInvMass()) { return false; }
   return true;
@@ -361,9 +352,9 @@ bool SimpleFinder::IsMotherFromPV(const KFParticleSIMD& kf_mother, const Mother&
   }
 
   KFParticle particle;
-  KFParticleSIMD(kf_mother).GetKFParticle(particle, 0); 
+  KFParticleSIMD(kf_mother).GetKFParticle(particle, 0);
   values_.chi2_prim_mother = CalculateChiToPrimaryVertex(particle, mother.GetPdg());
-  
+
   return true;
 }
 
@@ -396,19 +387,18 @@ bool SimpleFinder::IsGoodDecayLength(const KFParticleSIMD& kf_mother, const Moth
 void SimpleFinder::SaveParticle(KFParticleSIMD& particle_simd, const Decay& decay) {
 
   KFParticle particle;
-  
+
   auto mothertmp = decay.GetMother();
-  if(decay.GetIsApplyMassConstraint())
+  if (decay.GetIsApplyMassConstraint())
     particle_simd.SetNonlinearMassConstraint(float_v(mothertmp.GetMassPdg()));
-  
-  if(decay.GetIsTransportToPV())
-    {
-      KFVertex prim_vx_tmp = prim_vx_;
-      const KFParticleSIMD prim_vx_Simd(prim_vx_tmp);
-      const float_v point[3] = {prim_vx_Simd.X(), prim_vx_Simd.Y(), prim_vx_Simd.Z()};
-      particle_simd.TransportToPoint(point);
-    }
-  
+
+  if (decay.GetIsTransportToPV()) {
+    KFVertex prim_vx_tmp = prim_vx_;
+    const KFParticleSIMD prim_vx_Simd(prim_vx_tmp);
+    const float_v point[3] = {prim_vx_Simd.X(), prim_vx_Simd.Y(), prim_vx_Simd.Z()};
+    particle_simd.TransportToPoint(point);
+  }
+
   particle_simd.GetKFParticle(particle, 0);
   particle.SetPDG(decay.GetMother().GetPdg());
 
@@ -417,7 +407,7 @@ void SimpleFinder::SaveParticle(KFParticleSIMD& particle_simd, const Decay& deca
   particle.SetId(track_id);
   tracks_.emplace_back(particle);
   current_candidate_id_++;
-  
+
   if (decay.GetIsDoNotWriteMother() == true) return;
 
   OutputContainer mother(particle);
@@ -426,7 +416,7 @@ void SimpleFinder::SaveParticle(KFParticleSIMD& particle_simd, const Decay& deca
 
   std::vector<int> daughters_generation;
   for (int i = 0; i < particle.NDaughters(); i++)
-    if (particle.DaughterIds().at(i) > last_track_id_ )
+    if (particle.DaughterIds().at(i) > last_track_id_)
       daughters_generation.push_back(1);
     else
       daughters_generation.push_back(0);
@@ -465,7 +455,7 @@ bool SimpleFinder::IsGoodCos(const KFParticleSIMD& mother, const Decay& decay) {
 float SimpleFinder::CalculateCosOpen(const int id_daughter_1, const int id_daughter_2) const {
   const auto& par1 = params_.at(id_daughter_1);
   const auto& par2 = params_.at(id_daughter_2);
-  const float sp   = par1[kPx] * par2[kPx] + par1[kPy] * par2[kPy] + par1[kPz] * par2[kPz];
+  const float sp = par1[kPx] * par2[kPx] + par1[kPy] * par2[kPy] + par1[kPz] * par2[kPz];
   const float norm = std::sqrt(par1[kPx] * par1[kPx] + par1[kPy] * par1[kPy] + par1[kPz] * par1[kPz]) * std::sqrt(par2[kPx] * par2[kPx] + par2[kPy] * par2[kPy] + par2[kPz] * par2[kPz]);
 
   return sp / norm;
@@ -485,47 +475,47 @@ bool SimpleFinder::IsGoodTrackIdsGenerations(const std::vector<KFParticle> track
 
   std::vector<std::vector<int>> trackIdsGen0;
   std::vector<std::vector<KFParticle>> tracksLevel;
-  
+
   tracksLevel.resize(1);
   for (int i = 0; i < n; i++)
     tracksLevel.at(0).push_back(tracks[i]);
-  
+
   int ilevel = 0;
-  while (tracksLevel.at(ilevel).size() > 0) {    
+  while (tracksLevel.at(ilevel).size() > 0) {
     int ntracksL = tracksLevel.at(ilevel).size();
 
-    trackIdsGen0.resize(ilevel+1);
-    tracksLevel.resize(ilevel+2);
-    
+    trackIdsGen0.resize(ilevel + 1);
+    tracksLevel.resize(ilevel + 2);
+
     for (int i = 0; i < ntracksL; i++) {
-      if( !(tracksLevel.at(ilevel)[i].Id() > last_track_id_))
-	trackIdsGen0.at(ilevel).push_back(tracksLevel.at(ilevel)[i].Id());
+      if (!(tracksLevel.at(ilevel)[i].Id() > last_track_id_))
+        trackIdsGen0.at(ilevel).push_back(tracksLevel.at(ilevel)[i].Id());
       else {
-	for (int idaughter = 0; idaughter < tracksLevel.at(ilevel)[i].DaughterIds().size(); idaughter++) {
-	  int daughterId = tracksLevel.at(ilevel)[i].DaughterIds().at(idaughter);
-	  int index = id2index_.find(daughterId)->second;
-	  tracksLevel.at(ilevel + 1).push_back(tracks_[index]);
-	}
+        for (int idaughter = 0; idaughter < tracksLevel.at(ilevel)[i].DaughterIds().size(); idaughter++) {
+          int daughterId = tracksLevel.at(ilevel)[i].DaughterIds().at(idaughter);
+          int index = id2index_.find(daughterId)->second;
+          tracksLevel.at(ilevel + 1).push_back(tracks_[index]);
+        }
       }
     }
-    ilevel ++;
+    ilevel++;
   }
-  
+
   ilevel = 0;
   while (trackIdsGen0.size() > ilevel + 1) {
-    if (trackIdsGen0.at(ilevel+1).size() == 0)
-      return false;  
-    for (int itrack = 0; itrack <  trackIdsGen0.at(ilevel).size(); itrack++) {
+    if (trackIdsGen0.at(ilevel + 1).size() == 0)
+      return false;
+    for (int itrack = 0; itrack < trackIdsGen0.at(ilevel).size(); itrack++) {
       int jlevel = ilevel + 1;
       while (trackIdsGen0.size() > jlevel) {
-	for (int jtrack = 0; jtrack <  trackIdsGen0.at(jlevel).size(); jtrack++) {
-	  if (trackIdsGen0.at(ilevel)[itrack] == trackIdsGen0.at(jlevel)[jtrack]) 
-	    return false;
-	}
-	jlevel ++;
+        for (int jtrack = 0; jtrack < trackIdsGen0.at(jlevel).size(); jtrack++) {
+          if (trackIdsGen0.at(ilevel)[itrack] == trackIdsGen0.at(jlevel)[jtrack])
+            return false;
+        }
+        jlevel++;
       }
     }
-    ilevel ++;
+    ilevel++;
   }
   return true;
 }
@@ -564,7 +554,7 @@ void SimpleFinder::ReconstructDecay(const Decay& decay) {
         track.at(1).Pz() *= std::abs(charge);
       }
 
-      CalculateParamsInPCA(track.at(0), pdgs.at(0), track.at(1), pdgs.at(1)); 
+      CalculateParamsInPCA(track.at(0), pdgs.at(0), track.at(1), pdgs.at(1));
       if (!IsGoodPair(track.at(0), track.at(1), decay)) continue;
 
       KFParticleSIMD kf_mother = ConstructMother({track.at(0), track.at(1)}, pdgs, decay, false);
@@ -575,8 +565,8 @@ void SimpleFinder::ReconstructDecay(const Decay& decay) {
         if (!IsMotherFromPV(kf_mother, decay.GetMother(), id_mother)) continue;
         if (!IsGoodDecayLength(kf_mother, decay.GetMother())) continue;
         if (!IsGoodCos(kf_mother, decay)) continue;
-	if (!IsGoodMotherMass(kf_mother, decay.GetMother())) continue;
-	    
+        if (!IsGoodMotherMass(kf_mother, decay.GetMother())) continue;
+
         FillDaughtersInfo({track.at(0), track.at(1)}, pdgs);
         SaveParticle(kf_mother, decay);
 
@@ -599,27 +589,27 @@ void SimpleFinder::ReconstructDecay(const Decay& decay) {
             track.at(2).Pz() *= std::abs(charge);
           }
 
-	  CalculateParamsInSV(track, pdgs);
-	  
+          CalculateParamsInSV(track, pdgs);
+
           if (!IsGoodThree(track.at(0), track.at(1), track.at(2), decay)) continue;
 
-	  id_mother = 2;
-          kf_mother = ConstructMother({track.at(0), track.at(2)}, {pdgs.at(0), pdgs.at(2)}, decay);   
+          id_mother = 2;
+          kf_mother = ConstructMother({track.at(0), track.at(2)}, {pdgs.at(0), pdgs.at(2)}, decay);
           if (!IsGoodMother(kf_mother, decay.GetMother(), id_mother)) continue;
           if (IsMotherFromPV(kf_mother, decay.GetMother(), id_mother)) continue;
 
-	  id_mother = 3;
-          kf_mother = ConstructMother({track.at(1), track.at(2)}, {pdgs.at(1), pdgs.at(2)}, decay); 
+          id_mother = 3;
+          kf_mother = ConstructMother({track.at(1), track.at(2)}, {pdgs.at(1), pdgs.at(2)}, decay);
           if (!IsGoodMother(kf_mother, decay.GetMother(), id_mother)) continue;
           if (IsMotherFromPV(kf_mother, decay.GetMother(), id_mother)) continue;
 
-	  id_mother = 0;
-	  kf_mother = ConstructMother({track.at(0), track.at(1), track.at(2)}, pdgs, decay);
+          id_mother = 0;
+          kf_mother = ConstructMother({track.at(0), track.at(1), track.at(2)}, pdgs, decay);
           if (!IsGoodMother(kf_mother, decay.GetMother(), id_mother)) continue;
           if (!IsMotherFromPV(kf_mother, decay.GetMother(), id_mother)) continue;
           if (!IsGoodDecayLength(kf_mother, decay.GetMother())) continue;
           if (!IsGoodCos(kf_mother, decay)) continue;
-	  if (!IsGoodMotherMass(kf_mother, decay.GetMother())) continue;
+          if (!IsGoodMotherMass(kf_mother, decay.GetMother())) continue;
 
           FillDaughtersInfo({track.at(0), track.at(1), track.at(2)}, pdgs);
 
@@ -637,6 +627,3 @@ void SimpleFinder::FillDaughtersInfo(const std::vector<KFParticle>& tracks, cons
     values_.chi2_prim[i] = CalculateChiToPrimaryVertex(tracks.at(i), pdgs.at(i));
   }
 }
-
-
-
