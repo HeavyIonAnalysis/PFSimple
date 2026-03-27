@@ -2,6 +2,7 @@
     "io" : {
         "input_treename" : "name_tree",            // "rTree" for standard analysistree, "pTree" after running PID-framework (for pid_mode > 2)
         "rectracks_branchname" : "name_tracks",    // "VtxTracks" for standard analyistree, "RecParticles" after running Pid-framework (for pid_mode > 2)
+        "receventheader_branchname" : "name_eh",   // "RecEventHeader" for standard analyistree, "AnaEventHeader" after running centrality-framework
         "n_events" : -1,
         "save_options": ["make_plain_tree", "write_detailed_bg" , "signal_only"]
     },
