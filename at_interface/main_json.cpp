@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
     auto* man = TaskManager::GetInstance();
 
     auto* in_converter = new ConverterIn();
-    in_converter->SetRecEventHeaderName("RecEventHeader");
+    in_converter->SetRecEventHeaderName(config["io"].value("receventheader_branchname", "RecEventHeader"));
     in_converter->SetRecTracksName(config["io"]["rectracks_branchname"]);
     in_converter->SetSimTracksName("SimParticles");
     in_converter->SetTrackCuts(new Cuts("Cut to reproduce KFPF", {EqualsCut((config["io"]["rectracks_branchname"].get<std::string>() + ".pass_cuts").c_str(), 1)}));
