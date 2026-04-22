@@ -14,10 +14,10 @@
                 "name" : "Lambda",
                 "pdg_code" : 3122,
                 "cuts" : {
-                    "LdL" : 4.0,
                     "dist" : 0.15,
                     "chi2geo" : 11.0,
-                    "chi2topo" : 29.0
+                    "chi2topo" : 29.0,
+		    "LdL" : 4.0
                 }
             },
             "daughters" : [

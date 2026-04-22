@@ -21,9 +21,9 @@
                 "name" : "H3L",
                 "pdg_code" : 3004,
                 "cuts" : {
-                    "LdL" : 10.0,
                     "dist" : 0.2,
-                    "distSV" : 0.2 //for 3-body decay
+                    "distSV" : 0.2, //for 3-body decay
+		    "LdL" : 10.0
                 }
             },
             "daughters" : [

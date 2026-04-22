@@ -13,10 +13,8 @@
                 "name" : "Lambda",
                 "pdg_code" : 3122,
                 "cuts" : {
-                    "LdL" : 10.0,
                     "dist" : 1.0,
                     "chi2geo" : 3.0,
-                    "chi2topo" : 5.0,
                     "invmass" : 3.0
                 },
                 "save_options" : ["mass_constraint"]
@@ -37,10 +35,10 @@
                 "name" : "Omega",
                 "pdg_code" : 3334,
                 "cuts" : {
+		    "dist" : 1.0,
+		    "chi2geo" : 6.0,
                     "chi2topo" : 5.0,
-                    "LdL" : 5.0,
-                    "chi2geo" : 6.0,
-                    "dist" : 1.0
+                    "LdL" : 5.0
                 },
                 "save_options" : ["transport_to_pv"]
             },

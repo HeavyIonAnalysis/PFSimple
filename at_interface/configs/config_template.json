@@ -20,7 +20,9 @@
         {
             "mother" : {
                 "name" : "mother_name",
-                "pdg_code" : mother_pdg,
+                "pdg_code" : mother_pdg,  
+		"mass" : particle_mass,
+                "mass_sigma" : mass_sigma,
                 "cuts" : {
                     "dist" : cut_value,      
                     "distSV" : cut_value,   //for 3-body decay only
