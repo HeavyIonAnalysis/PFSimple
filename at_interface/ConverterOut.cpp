@@ -290,7 +290,6 @@ void ConverterOut::InitIndexes() {
   auto out_config = AnalysisTree::TaskManager::GetInstance()->GetConfig();
 
   const auto& out_branch_reco = out_config->GetBranchConfig(particle_reco_->GetId());
-  //const auto& out_branch_sim = out_config->GetBranchConfig(particle_sim_->GetId());
 
   if (mc_info_available_)
   {
