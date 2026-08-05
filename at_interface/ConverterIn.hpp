@@ -38,6 +38,8 @@ class ConverterIn : public AnalysisTree::Task {
   void SetRecEventHeaderName(const std::string& name) { rec_event_header_name_ = name; }
   void SetRecTracksName(const std::string& name) { kf_tracks_name_ = name; }
   void SetSimTracksName(const std::string& name) { sim_tracks_name_ = name; }
+  
+  void SetMcInfoAvailable(bool mc_info_available = false) {mc_info_available_ = mc_info_available;}
 
   void UseNoPID() { pid_mode_ = 0; }
   void UseMcPID() { pid_mode_ = 1; }
@@ -99,6 +101,8 @@ class ConverterIn : public AnalysisTree::Task {
   std::string rec_event_header_name_;
   std::string kf_tracks_name_;
   std::string sim_tracks_name_;
+  
+  bool mc_info_available_{true};
 
   // fields for input parameters
 

@@ -97,6 +97,7 @@ int main(int argc, char** argv) {
     in_converter->SetRecTracksName(config["io"]["rectracks_branchname"]);
     in_converter->SetSimTracksName("SimParticles");
     in_converter->SetTrackCuts(new Cuts("Cut to reproduce KFPF", {EqualsCut((config["io"]["rectracks_branchname"].get<std::string>() + ".pass_cuts").c_str(), 1)}));
+    in_converter->SetMcInfoAvailable(config["io"].value("mc_info_available", true));
 
 
     std::vector<Decay> decays;
@@ -192,6 +193,7 @@ int main(int argc, char** argv) {
     out_converter->SetPFSimpleTask(pf_task);
     out_converter->SetDecays(decays);
     if(LIST_CONTAINS(config["io"]["save_options"], "write_detailed_bg")) out_converter->SetIsWriteDetailedBG(true);
+	out_converter->SetMcInfoAvailable(config["io"].value("mc_info_available", true));
 
     std::vector<AnalysisTree::SimpleCut> vec_output_cuts = {};
     if (config.contains("output_cuts"))

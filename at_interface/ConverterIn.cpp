@@ -33,6 +33,7 @@ void ConverterIn::FillParticle(const AnalysisTree::BranchChannel& rec_particle) 
     pdg = q;
     container_.AddTrack(par, cov_matrix, mf, q, pdg, id);
   } else if (pid_mode_ == 1) {
+	assert(mc_info_available_);
     const int sim_id = kf2sim_tracks_->GetMatch(rec_particle.GetId());
     if(sim_id<0) pdg = q;
     else         pdg = sim_tracks_[sim_id][sim_pdg_field_];
@@ -83,12 +84,19 @@ void ConverterIn::FillParticle(const AnalysisTree::BranchChannel& rec_particle) 
 void ConverterIn::Init() {
   auto* chain = AnalysisTree::TaskManager::GetInstance()->GetChain();
 
-  this->SetInputBranchNames({rec_event_header_name_, kf_tracks_name_, sim_tracks_name_});
+  if (mc_info_available_)
+    this->SetInputBranchNames({rec_event_header_name_, kf_tracks_name_, sim_tracks_name_});
+  else
+    this->SetInputBranchNames({rec_event_header_name_, kf_tracks_name_});
 
   rec_event_header_ = chain->GetBranch(rec_event_header_name_);
   kf_tracks_ = chain->GetBranch(kf_tracks_name_);
-  sim_tracks_ = chain->GetBranch(sim_tracks_name_);
-  kf2sim_tracks_ = chain->GetMatching(kf_tracks_name_, sim_tracks_name_);
+  
+  if (mc_info_available_)
+  {
+	sim_tracks_ = chain->GetBranch(sim_tracks_name_);
+    kf2sim_tracks_ = chain->GetMatching(kf_tracks_name_, sim_tracks_name_);
+  }
 
   for (auto& mf_comp : {"cx0", "cx1", "cx2", "cy0", "cy1", "cy2", "cz0", "cz1", "cz2", "z0"})
     mf_field_.push_back(kf_tracks_.GetField(mf_comp));
@@ -126,8 +134,11 @@ void ConverterIn::Init() {
   for (int i = 0; i < Ncov; i++)
     cov_field_.push_back(kf_tracks_.GetField(("cov" + std::to_string(i + 1)).c_str()));
 
-  mother_id_field_ = sim_tracks_.GetField("mother_id");
-  sim_pdg_field_ = sim_tracks_.GetField("pid");
+  if (mc_info_available_)
+  {
+    mother_id_field_ = sim_tracks_.GetField("mother_id");
+    sim_pdg_field_ = sim_tracks_.GetField("pid");
+  }
 
   if (track_cuts_) {
     track_cuts_->Init(*config_);
@@ -148,7 +159,7 @@ void ConverterIn::Exec() {
   for (int i_track = 0; i_track < n_tracks; ++i_track) {
     const auto& rec_track = kf_tracks_[i_track];
     if (!IsGoodTrack(rec_track)) continue;
-    if (!CheckAncestorPdgs(rec_track)) continue;
+    if (mc_info_available_ && !CheckAncestorPdgs(rec_track)) continue;
     FillParticle(rec_track);
     n_good_tracks++;
   }
@@ -212,6 +223,8 @@ bool ConverterIn::CheckAncestorPdgs(const AnalysisTree::BranchChannel& rec_track
   // Needed not for data-driven analysis, but to determine those particles which
   // are signal.
   // But some background will be also saved.
+  
+  assert(mc_info_available_);
   
   if(ancestor_pdgs_to_be_considered_.size()==0)
     return true;

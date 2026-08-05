@@ -89,7 +89,8 @@ void ConverterOut::Exec() {
 
   auto out_config = AnalysisTree::TaskManager::GetInstance()->GetConfig();
 
-  events_->SetField(float(sim_events_->GetField<float>(b_field_id_)), 0);//TODO
+  if (mc_info_available_)
+    events_->SetField(float(sim_events_->GetField<float>(b_field_id_)), 0);//TODO
 
   const auto& br_conf = out_config->GetBranchConfig(particle_reco_->GetId());
 
@@ -117,14 +118,20 @@ void ConverterOut::Exec() {
 
 void ConverterOut::Init() {
 
-  this->SetInputBranchNames({sim_events_name_, rec_tracks_name_, mc_particles_name_});
+  if (mc_info_available_)
+    this->SetInputBranchNames({sim_events_name_, rec_tracks_name_, mc_particles_name_});
+  else
+	this->SetInputBranchNames({rec_tracks_name_});
 
   auto* man = AnalysisTree::TaskManager::GetInstance();
   auto* chain = man->GetChain();
-
-  sim_events_ = ANALYSISTREE_UTILS_GET<AnalysisTree::EventHeader*>(chain->GetPointerToBranch(sim_events_name_));
-  mc_particles_ = ANALYSISTREE_UTILS_GET<AnalysisTree::Particles*>(chain->GetPointerToBranch(mc_particles_name_));
-  rec_to_mc_ = chain->GetMatchPointers().find(config_->GetMatchName(rec_tracks_name_, mc_particles_name_))->second;
+  
+  if (mc_info_available_)
+  {
+    sim_events_ = ANALYSISTREE_UTILS_GET<AnalysisTree::EventHeader*>(chain->GetPointerToBranch(sim_events_name_));
+    mc_particles_ = ANALYSISTREE_UTILS_GET<AnalysisTree::Particles*>(chain->GetPointerToBranch(mc_particles_name_));
+    rec_to_mc_ = chain->GetMatchPointers().find(config_->GetMatchName(rec_tracks_name_, mc_particles_name_))->second;
+  }
 
   auto out_config = AnalysisTree::TaskManager::GetInstance()->GetConfig();
 
@@ -283,10 +290,13 @@ void ConverterOut::InitIndexes() {
   auto out_config = AnalysisTree::TaskManager::GetInstance()->GetConfig();
 
   const auto& out_branch_reco = out_config->GetBranchConfig(particle_reco_->GetId());
-  const auto& out_branch_sim = out_config->GetBranchConfig(particle_sim_->GetId());
+  //const auto& out_branch_sim = out_config->GetBranchConfig(particle_sim_->GetId());
 
-  auto branch_conf_sim_event = config_->GetBranchConfig(sim_events_name_);
-  b_field_id_ = branch_conf_sim_event.GetFieldId("b");
+  if (mc_info_available_)
+  {
+    auto branch_conf_sim_event = config_->GetBranchConfig(sim_events_name_);
+    b_field_id_ = branch_conf_sim_event.GetFieldId("b");
+  }
 
   x_field_id_ = out_branch_reco.GetFieldId("x");
   daughter_id_field_id_ = out_branch_reco.GetFieldId("daughter1_id");
