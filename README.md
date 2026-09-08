@@ -103,7 +103,7 @@ Methods for particle identification:
 
 ### pid_purity
 Mimimum purities for pid-mode 3 & 4:
-- `all_pdgs`:  minimum purity is set for all pdgs (pdg-spefic purities need to be omitted) (in pid-mode 3 & 4)
+- `default`:  minimum purity is set for all pdgs (pdg-spefic purities need to be omitted) (in pid-mode 3 & 4)
 - `protons`,  `pions`, etc:  minimum purity is set specifically for every pdg (general purity will be overwritten, if pdg-specific purity is given) (in pid-mode 4)
 
 ### decays
