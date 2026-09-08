@@ -8,7 +8,7 @@
     "pid_mode" : 4,     // pid mode: =0: no pid; =1: mc pid; =2: rec pid (default); =3: rec pid (max. purity & purity > min. purity); =4 (purity > min. purity)
                         // for 2-4: Pid-framework needs to be applied first
     "pid_purity" : {    // this block is only needed in pid_mode > 2
-        "all_pdgs" : 0.5,
+        "default" : 0.5,
         "protons" : 0.7,
         "pions" : 0.7,
         "kaons" : 0.7,
