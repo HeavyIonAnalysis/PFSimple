@@ -1,12 +1,12 @@
 <map id="ConverterOut" name="ConverterOut">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,1301,213,1957"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,1301,213,1978"/>
 <area shape="rect" id="Node000002" title=" " alt="" coords="73,107,194,173"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="131,188,121,299,120,346,114,849,112,1302,107,1302,109,849,115,346,116,299,126,187"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="131,188,121,299,120,346,114,848,112,1301,107,1301,109,848,115,346,116,299,126,187"/>
 <area shape="rect" id="Node000003" href="$da/d57/classPFSimpleTask.html" title=" " alt="" coords="168,1001,296,1230"/>
 <area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="133,188,127,317,126,502,137,715,149,824,167,930,187,1001,181,1002,161,931,144,824,132,715,121,502,122,317,127,188"/>
 <area shape="rect" id="Node000004" href="$d0/d65/classConverterIn.html" title=" " alt="" coords="176,346,373,930"/>
 <area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="149,187,194,345,189,347,144,189"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="208,1231,194,1286,189,1285,202,1229"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="208,1231,195,1285,190,1284,203,1230"/>
 <area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="251,930,246,985,241,984,246,930"/>
 <area shape="rect" id="Node000005" href="$d8/da4/classInputContainer.html" title="Container with input information about event (vertex and tracks) and cuts used in the certain event." alt="" coords="217,5,340,275"/>
 <area shape="poly" id="edge6_Node000004_Node000005" title=" " alt="" coords="280,275,280,329,274,329,275,275"/>
