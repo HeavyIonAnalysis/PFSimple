@@ -39,7 +39,7 @@ class ConverterIn : public AnalysisTree::Task {
   void SetRecTracksName(const std::string& name) { kf_tracks_name_ = name; }
   void SetSimTracksName(const std::string& name) { sim_tracks_name_ = name; }
 
-  void SetMcInfoAvailable(bool mc_info_available = false) { mc_info_available_ = mc_info_available; }
+  void SetMcInfoAvailable(bool mc_info_available = true) { mc_info_available_ = mc_info_available; }
 
   void UseNoPID() { pid_mode_ = 0; }
   void UseMcPID() { pid_mode_ = 1; }
