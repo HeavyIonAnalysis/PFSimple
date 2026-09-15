@@ -33,7 +33,9 @@ void ConverterIn::FillParticle(const AnalysisTree::BranchChannel& rec_particle) 
     pdg = q;
     container_.AddTrack(par, cov_matrix, mf, q, pdg, id);
   } else if (pid_mode_ == 1) {
-	assert(mc_info_available_);
+    if (!mc_info_available_)
+      throw std::runtime_error("MC PDG mode (1) can only be used with available MC information.");
+    
     const int sim_id = kf2sim_tracks_->GetMatch(rec_particle.GetId());
     if(sim_id<0) pdg = q;
     else         pdg = sim_tracks_[sim_id][sim_pdg_field_];
@@ -224,7 +226,8 @@ bool ConverterIn::CheckAncestorPdgs(const AnalysisTree::BranchChannel& rec_track
   // are signal.
   // But some background will be also saved.
   
-  assert(mc_info_available_);
+  if (!mc_info_available_)
+    throw std::runtime_error("CheckAncestorPdgs can only be used with available MC information.");
   
   if(ancestor_pdgs_to_be_considered_.size()==0)
     return true;
