@@ -4,6 +4,7 @@
         "rectracks_branchname" : "name_tracks",    // "VtxTracks" for standard analyistree, "RecParticles" after running Pid-framework (for pid_mode > 2)
         "receventheader_branchname" : "name_eh",   // "RecEventHeader" for standard analyistree, "AnaEventHeader" after running centrality-framework
         "n_events" : -1,
+		"mc_info_available" : true,                //Set to false when running on Vertical Test data or later real data without MC info
         "save_options": ["make_plain_tree", "write_detailed_bg" , "signal_only"]
     },
     "pid_mode" : number,    // pid_mode: =0: no pid; =1: mc pid; =2: rec pid (default); =3: rec pid (max. purity & purity > min. purity); =4 (purity > min. purity)

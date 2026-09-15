@@ -59,6 +59,7 @@ The program is configured with a JSON config file which contains various setting
 | `rectracks_branchname`      | branchname of reconstructed tracks in input analysistree, default names: `VtxTracks` for standard analyistree, `RecParticles` after running Pid-framework                     |
 | `receventheader_branchname` | branchname of reconstructed event header in input analysistree, default names: `RecEventHeader` for standard analyistree, `AnaEventHeader` after running centrality-framework |
 | `n_events`                  | number of events to be processed, set to `-1` to process all events                                                                                                           |
+| `mc_info_available`         | Indicates if the data comes with mc info and in case it does, computes additional MC-based fields (set to `false` when analyzing Verticla Test data)                          |
 | `save_options` (optional)   | defines save options for the candidates of all decays in this config (see next table)                                                                                         |
 
 | `save_options` Flag         | Description                                                                                                                                                                   |
