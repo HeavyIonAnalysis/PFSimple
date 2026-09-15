@@ -121,13 +121,12 @@ void ConverterOut::Init() {
   if (mc_info_available_)
     this->SetInputBranchNames({sim_events_name_, rec_tracks_name_, mc_particles_name_});
   else
-	this->SetInputBranchNames({rec_tracks_name_});
+    this->SetInputBranchNames({rec_tracks_name_});
 
   auto* man = AnalysisTree::TaskManager::GetInstance();
   auto* chain = man->GetChain();
-  
-  if (mc_info_available_)
-  {
+
+  if (mc_info_available_) {
     sim_events_ = ANALYSISTREE_UTILS_GET<AnalysisTree::EventHeader*>(chain->GetPointerToBranch(sim_events_name_));
     mc_particles_ = ANALYSISTREE_UTILS_GET<AnalysisTree::Particles*>(chain->GetPointerToBranch(mc_particles_name_));
     rec_to_mc_ = chain->GetMatchPointers().find(config_->GetMatchName(rec_tracks_name_, mc_particles_name_))->second;
@@ -291,8 +290,7 @@ void ConverterOut::InitIndexes() {
 
   const auto& out_branch_reco = out_config->GetBranchConfig(particle_reco_->GetId());
 
-  if (mc_info_available_)
-  {
+  if (mc_info_available_) {
     auto branch_conf_sim_event = config_->GetBranchConfig(sim_events_name_);
     b_field_id_ = branch_conf_sim_event.GetFieldId("b");
   }

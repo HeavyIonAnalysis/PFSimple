@@ -30,8 +30,8 @@ class ConverterOut : public AnalysisTree::Task {
   void SetRecTracksName(const std::string& name) { rec_tracks_name_ = name; }
   void SetSimTracksName(const std::string& name) { mc_particles_name_ = name; }
   void SetIsWriteDetailedBG(bool is=true) { is_detailed_bg_ = is; }
-  
-  void SetMcInfoAvailable(bool mc_info_available = true) {mc_info_available_ = mc_info_available;}
+
+  void SetMcInfoAvailable(bool mc_info_available = true) { mc_info_available_ = mc_info_available; }
 
  protected:
   void InitIndexes();
@@ -116,7 +116,7 @@ class ConverterOut : public AnalysisTree::Task {
 
   bool is_detailed_bg_{false};
   bool is_write_mc_{true};
-  
+
   bool mc_info_available_{true};
 };
 

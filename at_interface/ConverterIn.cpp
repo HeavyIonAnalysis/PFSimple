@@ -35,7 +35,7 @@ void ConverterIn::FillParticle(const AnalysisTree::BranchChannel& rec_particle) 
   } else if (pid_mode_ == 1) {
     if (!mc_info_available_)
       throw std::runtime_error("MC PDG mode (1) can only be used with available MC information.");
-    
+
     const int sim_id = kf2sim_tracks_->GetMatch(rec_particle.GetId());
     if(sim_id<0) pdg = q;
     else         pdg = sim_tracks_[sim_id][sim_pdg_field_];
@@ -93,10 +93,9 @@ void ConverterIn::Init() {
 
   rec_event_header_ = chain->GetBranch(rec_event_header_name_);
   kf_tracks_ = chain->GetBranch(kf_tracks_name_);
-  
-  if (mc_info_available_)
-  {
-	sim_tracks_ = chain->GetBranch(sim_tracks_name_);
+
+  if (mc_info_available_) {
+    sim_tracks_ = chain->GetBranch(sim_tracks_name_);
     kf2sim_tracks_ = chain->GetMatching(kf_tracks_name_, sim_tracks_name_);
   }
 
@@ -136,8 +135,7 @@ void ConverterIn::Init() {
   for (int i = 0; i < Ncov; i++)
     cov_field_.push_back(kf_tracks_.GetField(("cov" + std::to_string(i + 1)).c_str()));
 
-  if (mc_info_available_)
-  {
+  if (mc_info_available_) {
     mother_id_field_ = sim_tracks_.GetField("mother_id");
     sim_pdg_field_ = sim_tracks_.GetField("pid");
   }
@@ -225,10 +223,10 @@ bool ConverterIn::CheckAncestorPdgs(const AnalysisTree::BranchChannel& rec_track
   // Needed not for data-driven analysis, but to determine those particles which
   // are signal.
   // But some background will be also saved.
-  
+
   if (!mc_info_available_)
     throw std::runtime_error("CheckAncestorPdgs can only be used with available MC information.");
-  
+
   if(ancestor_pdgs_to_be_considered_.size()==0)
     return true;
 
