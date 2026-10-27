@@ -15,7 +15,7 @@ void ConverterIn::FillParticle(const AnalysisTree::BranchChannel& rec_particle) 
   std::vector<float> mf(NumberOfFieldPars, 0.f);
   for (int i = 0; i < NumberOfFieldPars; i++)
     mf.at(i) = rec_particle[mf_field_.at(i)];
-  
+
   auto cov_matrix = GetCovMatrixCbm(rec_particle);
 
   std::vector<float> par(kNumberOfTrackPars, 0.f);
@@ -37,14 +37,10 @@ void ConverterIn::FillParticle(const AnalysisTree::BranchChannel& rec_particle) 
       throw std::runtime_error("MC PDG mode (1) can only be used with available MC information.");
 
     const int sim_id = kf2sim_tracks_->GetMatch(rec_particle.GetId());
-    if(sim_id<0) pdg = q;
-    else         pdg = sim_tracks_[sim_id][sim_pdg_field_];
-    if (TMath::Abs(pdg == 3122) ||
-	TMath::Abs(pdg) == 3212 ||
-	TMath::Abs(pdg) == 3322 ||
-	TMath::Abs(pdg) == 4112 ||
-	TMath::Abs(pdg) == 4132 ||
-	TMath::Abs(pdg) == 4332)
+    if (sim_id < 0) pdg = q;
+    else
+      pdg = sim_tracks_[sim_id][sim_pdg_field_];
+    if (TMath::Abs(pdg == 3122) || TMath::Abs(pdg) == 3212 || TMath::Abs(pdg) == 3322 || TMath::Abs(pdg) == 4112 || TMath::Abs(pdg) == 4132 || TMath::Abs(pdg) == 4332)
       pdg = q;
     container_.AddTrack(par, cov_matrix, mf, q, pdg, id);
   } else if (pid_mode_ == 2) {
@@ -227,7 +223,7 @@ bool ConverterIn::CheckAncestorPdgs(const AnalysisTree::BranchChannel& rec_track
   if (!mc_info_available_)
     throw std::runtime_error("CheckAncestorPdgs can only be used with available MC information.");
 
-  if(ancestor_pdgs_to_be_considered_.size()==0)
+  if (ancestor_pdgs_to_be_considered_.size() == 0)
     return true;
 
   //   if (!sim_tracks_ || !kf2sim_tracks_) {
@@ -242,20 +238,18 @@ bool ConverterIn::CheckAncestorPdgs(const AnalysisTree::BranchChannel& rec_track
   const AnalysisTree::BranchChannel& sim_track = sim_tracks_[sim_id];
 
   bool ok = false;
-  
+
   int ancestor_id = sim_track[mother_id_field_];
 
-  while(ancestor_id >= 0)
-  {
+  while (ancestor_id >= 0) {
     const auto& simtrack_ancestor = sim_tracks_[ancestor_id];
     const int ancestor_pdg = simtrack_ancestor[sim_pdg_field_];
-    for(auto& good_ancestor_pdg : ancestor_pdgs_to_be_considered_)
-      if(ancestor_pdg == good_ancestor_pdg)
-      {
+    for (auto& good_ancestor_pdg : ancestor_pdgs_to_be_considered_)
+      if (ancestor_pdg == good_ancestor_pdg) {
         ok = true;
         break;
-      }      
-    if(ok == true) break;
+      }
+    if (ok == true) break;
     ancestor_id = simtrack_ancestor[mother_id_field_];
   }
 
