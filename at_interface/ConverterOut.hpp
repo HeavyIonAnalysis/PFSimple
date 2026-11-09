@@ -29,7 +29,7 @@ class ConverterOut : public AnalysisTree::Task {
   void SetSimEventHeaderName(const std::string& name) { sim_events_name_ = name; }
   void SetRecTracksName(const std::string& name) { rec_tracks_name_ = name; }
   void SetSimTracksName(const std::string& name) { mc_particles_name_ = name; }
-  void SetIsWriteDetailedBG(bool is=true) { is_detailed_bg_ = is; }
+  void SetIsWriteDetailedBG(bool is = true) { is_detailed_bg_ = is; }
 
   void SetMcInfoAvailable(bool mc_info_available = true) { mc_info_available_ = mc_info_available; }
 
@@ -52,7 +52,7 @@ class ConverterOut : public AnalysisTree::Task {
   // 1 - daughters have the same mother
   // 2 - daughters have different mothers
   // 0 - at least one daughter does not have mother (e.g. primary)
-  static int DetermineMotherMCStatus(int mid1, int mid2) ;
+  static int DetermineMotherMCStatus(int mid1, int mid2);
 
   int DetermineBGType(const OutputContainer& candidate, AnalysisTree::Particle& particle, int const Ndaughters);
 
@@ -81,7 +81,7 @@ class ConverterOut : public AnalysisTree::Task {
   PFSimpleTask* pfsimple_task_{nullptr};
 
   int Ndaughters_max_{0};
-  
+
   // field ids of simulated events
   int b_field_id_{-1};
 
